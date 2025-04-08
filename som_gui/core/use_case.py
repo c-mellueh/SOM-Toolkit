@@ -7,25 +7,25 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool
-from som_gui.module.usecases import ui
+from som_gui.module.use_case import ui
 
 
 def create_main_menu_actions(
-    usecases: Type[tool.Usecases], main_window: Type[tool.MainWindow]
+    use_case: Type[tool.UseCase], main_window: Type[tool.MainWindow]
 ):
     action = main_window.add_action(
-        "menuEdit", "UsecaseWindow", usecases.signaller.open_window.emit
+        "menuEdit", "UsecaseWindow", use_case.signaller.open_window.emit
     )
-    usecases.set_action("open_window", action)
-    usecases.connect_signals()
+    use_case.set_action("open_window", action)
+    use_case.connect_signals()
 
 
-def retranslate_ui(usecases: Type[tool.Usecases], util: Type[tool.Util]):
-    action = usecases.get_action("open_window")
+def retranslate_ui(use_case: Type[tool.UseCase], util: Type[tool.Util]):
+    action = use_case.get_action("open_window")
     text = QCoreApplication.translate("UsecaseWindow", "Usecases")
     action.setText(text)
 
-    window = usecases.get_window()
+    window = use_case.get_window()
     if not window:
         return
     title = QCoreApplication.translate("UsecaseWindow", "Usecases")
@@ -34,44 +34,43 @@ def retranslate_ui(usecases: Type[tool.Usecases], util: Type[tool.Util]):
 
     t1 = QCoreApplication.translate("UsecaseWindow", "Class")
     t2 = QCoreApplication.translate("UsecaseWindow", "Identifier")
-    usecases.get_class_header_model().first_columns = [t1,t2]
+    use_case.get_class_header_model().first_columns = [t1, t2]
 
     t1 = QCoreApplication.translate("UsecaseWindow", "PropertySet")
     t2 = QCoreApplication.translate("UsecaseWindow", "Property")
-    usecases.get_property_header_model().first_columns = [t1,t2]
+    use_case.get_property_header_model().first_columns = [t1, t2]
+
 
 def open_window(
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
     project: Type[tool.Project],
     util: Type[tool.Util],
-    search: Type[tool.Search],
 ):
-    window = usecases.create_window()
-    usecases.add_models_to_window(project.get())
-    usecases.connect_models()
-    usecases.connect_project_view()
-    usecases.connect_class_views()
-    usecases.connect_property_views()
-    usecases.add_header_view(project.get())
-    util.add_shortcut("Ctrl+F", window, usecases.signaller.search_class.emit)
-    util.add_shortcut("Ctrl+U", window, usecases.signaller.add_usecase.emit)
-    util.add_shortcut("Ctrl+P", window, usecases.signaller.add_phase.emit)
+    window = use_case.create_window()
+    use_case.add_models_to_window(project.get())
+    use_case.connect_models()
+    use_case.connect_project_view()
+    use_case.connect_class_views()
+    use_case.connect_property_views()
+    use_case.add_header_view(project.get())
+    util.add_shortcut("Ctrl+F", window, use_case.signaller.search_class.emit)
+    util.add_shortcut("Ctrl+U", window, use_case.signaller.add_use_case.emit)
+    util.add_shortcut("Ctrl+P", window, use_case.signaller.add_phase.emit)
 
-
-    usecases.signaller.retranslate_ui.emit()
+    use_case.signaller.retranslate_ui.emit()
     window.show()
 
 
 def search_class(
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
     search: Type[tool.Search],
     project: Type[tool.Project],
 ):
     som_class = search.search_class(list(project.get().get_classes(filter=True)))
     if som_class is None:
         return
-    class_view = usecases.get_class_views()[1]
-    class_model = usecases.get_class_model()
+    class_view = use_case.get_class_views()[1]
+    class_model = use_case.get_class_model()
     parent_list = [som_class]
     parent = som_class.parent
     while parent is not None:
@@ -92,13 +91,13 @@ def search_class(
     )
 
 
-def update_project_table_size(usecases: Type[tool.Usecases]):
+def update_project_table_size(use_case: Type[tool.UseCase]):
     """
     gets Called if Filters get Added or Removed externally. For example by Console Script.
     :param filter_window:
     :return:
     """
-    model = usecases.get_project_model()
+    model = use_case.get_project_model()
     old_row_count = model.old_row_count
     old_column_count = model.old_column_count
     new_row_count = model.rowCount()
@@ -132,16 +131,16 @@ def update_project_table_size(usecases: Type[tool.Usecases]):
         if old_column_count < new_col_count:
             model.beginInsertColumns(index, old_column_count, new_col_count - 1)
             model.endInsertColumns()
-    usecases.get_project_view().update_requested.emit()
+    use_case.get_project_view().update_requested.emit()
 
 
-def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
+def update_class_tree_size(index: QModelIndex, use_case: Type[tool.UseCase]):
     """
     gets Called if Filters get Added or Removed externally. For example by Console Script.
     :param filter_window:
     :return:
     """
-    model = usecases.get_class_model()
+    model = use_case.get_class_model()
     model.update_data()
     old_row_count = model.row_count_dict.get(index) or 0
     old_column_count = model.old_column_count
@@ -149,7 +148,7 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     new_column_count = model.columnCount()
     model.row_count_dict[index] = new_row_count
     model.old_column_count = new_column_count
-    header_model = usecases.get_class_header_model()
+    header_model = use_case.get_class_header_model()
     logging.info(
         f"ClassModel Update Size rowCount: {old_row_count} -> {new_row_count} columnCount:{old_column_count} -> {new_column_count} {index}"
     )
@@ -183,26 +182,26 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
             QModelIndex(), old_column_count, new_column_count - 1
         )
         header_model.endInsertColumns()
-    usecases.get_class_views()[1].update_requested.emit()
+    use_case.get_class_views()[1].update_requested.emit()
 
 
-def update_property_table_size(usecases: Type[tool.Usecases]):
+def update_property_table_size(use_case: Type[tool.UseCase]):
     """
     gets Called if Filters get Added or Removed externally. For example by Console Script.
     :param filter_window:
     :return:
     """
-    model = usecases.get_property_model()
+    model = use_case.get_property_model()
     logging.debug(
         f"Filter Changed Externally. rowCount: {model.old_row_count} -> {model.rowCount()} columnCount:{model.old_column_count} -> {model.columnCount()}"
     )
     model.update_data()
-    usecases.get_class_views()[0].selectedIndexes()
+    use_case.get_class_views()[0].selectedIndexes()
     old_row_count = model.old_row_count
     old_column_count = model.old_column_count
     new_row_count = model.rowCount()
     new_col_count = model.columnCount()
-    header_model = usecases.get_property_header_model()
+    header_model = use_case.get_property_header_model()
     model.old_row_count = new_row_count
     model.old_column_count = new_col_count
     if old_row_count == 0:
@@ -235,55 +234,55 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
             model.endInsertColumns()
             header_model.beginInsertColumns(index, old_column_count, new_col_count - 1)
             header_model.endInsertColumns()
-    usecases.get_property_views()[1].update_requested.emit()
+    use_case.get_property_views()[1].update_requested.emit()
 
 
-def update_class_selection(usecases: Type[tool.Usecases]):
-    som_class = usecases.get_active_class()
-    usecases.get_property_label().setText(som_class.name if som_class else "")
-    property_model = usecases.get_property_model()
+def update_class_selection(use_case: Type[tool.UseCase]):
+    som_class = use_case.get_active_class()
+    use_case.get_property_label().setText(som_class.name if som_class else "")
+    property_model = use_case.get_property_model()
     property_model.som_class = som_class
     property_model.update_data()
     property_model.resize_required.emit()
 
 
-def add_usecase(
-    usecases: Type[tool.Usecases],
+def add_use_case(
+    use_case: Type[tool.UseCase],
     util: Type[tool.Util],
 ):
 
-    model = usecases.get_project_model()
+    model = use_case.get_project_model()
     project = model.project
     text = QCoreApplication.translate("UsecaseWindow", "New UseCase")
     new_name = util.get_new_name(text, [uc.name for uc in project.get_usecases()])
     logging.debug(f"Add UseCase '{new_name}'")
-    usecase = SOMcreator.UseCase(new_name, new_name, new_name)
+    new_use_case = SOMcreator.UseCase(new_name, new_name, new_name)
     model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
-    usecase_index = project.add_usecase(usecase)
+    use_case_index = project.add_usecase(new_use_case)
     model.endInsertColumns()
-    usecases.signaller.rename_filter.emit(Qt.Orientation.Horizontal, usecase_index)
+    use_case.signaller.rename_filter.emit(Qt.Orientation.Horizontal, use_case_index)
 
 
-def remove_usecase(
-    usecase_index: int,
-    usecases: Type[tool.Usecases],
+def remove_use_case(
+    use_case_index: int,
+    use_case: Type[tool.UseCase],
 ):
-    model = usecases.get_project_model()
+    model = use_case.get_project_model()
     project = model.project
-    usecase = project.get_usecase_by_index(usecase_index)
-    logging.debug(f"remove UseCase '{usecase.name}'")
-    model.beginRemoveColumns(QModelIndex(), usecase_index, usecase_index)
-    project.remove_usecase(usecase)
+    selected_use_case = project.get_usecase_by_index(use_case_index)
+    logging.debug(f"remove UseCase '{selected_use_case.name}'")
+    model.beginRemoveColumns(QModelIndex(), use_case_index, use_case_index)
+    project.remove_usecase(selected_use_case)
     model.endRemoveColumns()
 
 
 def add_phase(
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
     util: Type[tool.Util],
 ):
 
     text = QCoreApplication.translate("FilterWindow", "New Phase")
-    model = usecases.get_project_model()
+    model = use_case.get_project_model()
     project = model.project
     new_name = util.get_new_name(text, [ph.name for ph in project.get_phases()])
     logging.debug(f"Add Phase '{new_name}'")
@@ -291,14 +290,14 @@ def add_phase(
     model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
     phase_index = project.add_phase(phase)
     model.endInsertRows()
-    usecases.signaller.rename_filter.emit(Qt.Orientation.Vertical, phase_index)
+    use_case.signaller.rename_filter.emit(Qt.Orientation.Vertical, phase_index)
 
 
 def remove_phase(
     phase_index: int,
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
 ):
-    model = usecases.get_project_model()
+    model = use_case.get_project_model()
     project = model.project
     phase = model.project.get_phase_by_index(phase_index)
     logging.debug(f"remove Phase '{phase.name}'")
@@ -311,13 +310,13 @@ def remove_phase(
 def create_context_menu(
     local_pos: QPoint,
     orientation: Qt.Orientation,
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
     project: Type[tool.Project],
 ):
     proj = project.get()
 
     menu_list = list()
-    project_view = usecases.get_project_view()
+    project_view = use_case.get_project_view()
     header = (
         project_view.horizontalHeader()
         if orientation == Qt.Orientation.Horizontal
@@ -332,17 +331,17 @@ def create_context_menu(
 
         if len(proj.get_usecases()) > 1:
             menu_list.append(
-                (del_uc, lambda: usecases.signaller.remove_usecase.emit(index))
+                (del_uc, lambda: use_case.signaller.remove_use_case.emit(index))
             )
         menu_list.append(
             (
                 rename_uc,
-                lambda: usecases.signaller.rename_filter.emit(
+                lambda: use_case.signaller.rename_filter.emit(
                     Qt.Orientation.Horizontal, index
                 ),
             )
         )
-        menu_list.append((add_uc, lambda: usecases.signaller.add_usecase.emit()))
+        menu_list.append((add_uc, lambda: use_case.signaller.add_use_case.emit()))
         pos = header.viewport().mapToGlobal(local_pos)
 
     elif orientation == Qt.Orientation.Vertical:
@@ -353,25 +352,25 @@ def create_context_menu(
 
         if len(proj.get_phases()) > 1:
             menu_list.append(
-                (del_ph, lambda: usecases.signaller.remove_phase.emit(index))
+                (del_ph, lambda: use_case.signaller.remove_phase.emit(index))
             )
         menu_list.append(
             (
                 rename_ph,
-                lambda: usecases.signaller.rename_filter.emit(
+                lambda: use_case.signaller.rename_filter.emit(
                     Qt.Orientation.Vertical, index
                 ),
             )
         )
-        menu_list.append((add_ph, lambda: usecases.signaller.add_phase.emit()))
+        menu_list.append((add_ph, lambda: use_case.signaller.add_phase.emit()))
         pos = header.viewport().mapToGlobal(local_pos)
-    usecases.create_context_menu(menu_list, pos)
+    use_case.create_context_menu(menu_list, pos)
 
 
 def rename_filter(
-    orientation: Qt.Orientation, logical_index: int, usecases: Type[tool.Usecases]
+    orientation: Qt.Orientation, logical_index: int, use_case: Type[tool.UseCase]
 ):
-    project_view = usecases.get_project_view()
+    project_view = use_case.get_project_view()
     header: ui.EditableHeader = (
         project_view.horizontalHeader()
         if orientation == Qt.Orientation.Horizontal
@@ -381,25 +380,25 @@ def rename_filter(
 
 
 def mouse_move_event(
-    event: QMouseEvent, source, usecases: Type[tool.Usecases], util: Type[tool.Util]
+    event: QMouseEvent, source, use_case: Type[tool.UseCase], util: Type[tool.Util]
 ):
     view = source
     index: QModelIndex = view.indexAt(event.pos())
-    if not usecases.is_mouse_pressed():
-        usecases.set_mouse_pressed(True)
+    if not use_case.is_mouse_pressed():
+        use_case.set_mouse_pressed(True)
         checkstate = not util.checkstate_to_bool(
             index.data(Qt.ItemDataRole.CheckStateRole)
         )
-        usecases.set_mouse_press_checkstate(checkstate)
-    usecases.tree_move_click_drag(index)
+        use_case.set_mouse_press_checkstate(checkstate)
+    use_case.tree_move_click_drag(index)
 
 
 def mouse_release_event(
     view: ui.ClassView | ui.PropertyView | ui.ProjectView,
-    usecases: Type[tool.Usecases],
+    use_case: Type[tool.UseCase],
 ):
-    usecases.set_mouse_pressed(False)
-    usecases.set_mouse_press_checkstate(None)
+    use_case.set_mouse_pressed(False)
+    use_case.set_mouse_press_checkstate(None)
     if isinstance(view, ui.ClassView):
         view.update_requested.emit()
     elif isinstance(view, ui.PropertyView):

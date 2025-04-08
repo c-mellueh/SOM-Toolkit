@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLabel,
     QSizePolicy, QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.usecases.ui import (ClassView, ProjectView, PropertyView)
+from som_gui.module.use_case.ui import (ClassView, ProjectView, PropertyView)
 
 class Ui_Form(object):
     def setupUi(self, Form):

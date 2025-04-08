@@ -15,12 +15,12 @@ from PySide6.QtCore import (
     Qt,
 )
 from PySide6.QtWidgets import QLabel, QApplication, QMenu
-from som_gui.module.usecases import ui
-from som_gui.module.usecases import trigger
+from som_gui.module.use_case import ui
+from som_gui.module.use_case import trigger
 import SOMcreator
 
 if TYPE_CHECKING:
-    from som_gui.module.usecases.prop import UsecasesProperties
+    from som_gui.module.use_case.prop import UseCaseProperties
 
 
 class Signaller(QObject):
@@ -28,19 +28,19 @@ class Signaller(QObject):
     retranslate_ui = Signal()
     class_selection_changed = Signal()
     search_class = Signal()
-    add_usecase = Signal()
+    add_use_case = Signal()
     add_phase = Signal()
-    remove_usecase = Signal(int)
+    remove_use_case = Signal(int)
     remove_phase = Signal(int)
     rename_filter = Signal(Qt.Orientation, int)
 
 
-class Usecases(som_gui.core.tool.Usecases):
+class UseCase(som_gui.core.tool.UseCase):
     signaller = Signaller()
 
     @classmethod
-    def get_properties(cls) -> UsecasesProperties:
-        return som_gui.UsecasesProperties
+    def get_properties(cls) -> UseCaseProperties:
+        return som_gui.UseCaseProperties
 
     @classmethod
     def set_action(cls, name, action: QAction):
@@ -52,15 +52,15 @@ class Usecases(som_gui.core.tool.Usecases):
 
     @classmethod
     def connect_signals(cls):
-        from som_gui.module.usecases import trigger
+        from som_gui.module.use_case import trigger
 
         cls.signaller.open_window.connect(trigger.open_window)
         cls.signaller.retranslate_ui.connect(trigger.retranslate_ui)
         cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
         cls.signaller.search_class.connect(trigger.search_class)
-        cls.signaller.add_usecase.connect(trigger.add_usecase)
+        cls.signaller.add_use_case.connect(trigger.add_use_case)
         cls.signaller.add_phase.connect(trigger.add_phase)
-        cls.signaller.remove_usecase.connect(trigger.remove_usecase)
+        cls.signaller.remove_use_case.connect(trigger.remove_use_case)
         cls.signaller.remove_phase.connect(trigger.remove_phase)
         cls.signaller.rename_filter.connect(trigger.rename_filter)
 
@@ -161,7 +161,7 @@ class Usecases(som_gui.core.tool.Usecases):
             lambda index: view.collapse(proxy_model.mapToSource(index))
         )
         view.clicked.connect(lambda x: view.update_requested.emit())
-        view.clicked.connect(lambda x:cls.get_property_views()[1].repaint())
+        view.clicked.connect(lambda x: cls.get_property_views()[1].repaint())
 
     @classmethod
     def connect_property_views(cls):

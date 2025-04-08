@@ -3367,7 +3367,7 @@ class Settings:
         pass
 
 
-class Usecases:
+class UseCase:
     pass
 
 
