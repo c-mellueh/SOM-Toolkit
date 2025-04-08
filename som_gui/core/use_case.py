@@ -13,6 +13,8 @@ from som_gui.module.use_case import ui
 def create_main_menu_actions(
     use_case: Type[tool.UseCase], main_window: Type[tool.MainWindow]
 ):
+    """
+    Creates the main menu actions for the use case window."""
     action = main_window.add_action(
         "menuEdit", "UsecaseWindow", use_case.signaller.open_window.emit
     )
@@ -21,6 +23,7 @@ def create_main_menu_actions(
 
 
 def retranslate_ui(use_case: Type[tool.UseCase], util: Type[tool.Util]):
+    """Retranslates the UI elements of the use case window. and the UseCase Actions."""
     action = use_case.get_action("open_window")
     text = QCoreApplication.translate("UsecaseWindow", "Usecases")
     action.setText(text)
@@ -46,9 +49,12 @@ def open_window(
     project: Type[tool.Project],
     util: Type[tool.Util],
 ):
+    """Opens the use case window and sets up the UI elements.
+    Adds Shortcuts and connects signals to the UI elements."""
     window = use_case.create_window()
     use_case.add_models_to_window(project.get())
     use_case.connect_models()
+    use_case.add_editable_header_to_view(use_case.get_project_view())
     use_case.connect_project_view()
     use_case.connect_class_views()
     use_case.connect_property_views()
@@ -66,6 +72,7 @@ def search_class(
     search: Type[tool.Search],
     project: Type[tool.Project],
 ):
+    """Searches for a class in the class tree and selects it."""
     som_class = search.search_class(list(project.get().get_classes(filter=True)))
     if som_class is None:
         return
@@ -93,8 +100,7 @@ def search_class(
 
 def update_project_table_size(use_case: Type[tool.UseCase]):
     """
-    gets Called if Filters get Added or Removed externally. For example by Console Script.
-    :param filter_window:
+    gets Called if Filters get Added or Removed.
     :return:
     """
     model = use_case.get_project_model()
@@ -136,8 +142,7 @@ def update_project_table_size(use_case: Type[tool.UseCase]):
 
 def update_class_tree_size(index: QModelIndex, use_case: Type[tool.UseCase]):
     """
-    gets Called if Filters get Added or Removed externally. For example by Console Script.
-    :param filter_window:
+    gets Called if Filters get Added or Removed.
     :return:
     """
     model = use_case.get_class_model()
@@ -187,8 +192,7 @@ def update_class_tree_size(index: QModelIndex, use_case: Type[tool.UseCase]):
 
 def update_property_table_size(use_case: Type[tool.UseCase]):
     """
-    gets Called if Filters get Added or Removed externally. For example by Console Script.
-    :param filter_window:
+    gets Called if Filters get Added or Removed.
     :return:
     """
     model = use_case.get_property_model()
@@ -238,6 +242,7 @@ def update_property_table_size(use_case: Type[tool.UseCase]):
 
 
 def update_class_selection(use_case: Type[tool.UseCase]):
+    """updates Text above property table with the selected class name and refreshes the property table."""
     som_class = use_case.get_active_class()
     use_case.get_property_label().setText(som_class.name if som_class else "")
     property_model = use_case.get_property_model()
@@ -250,7 +255,7 @@ def add_use_case(
     use_case: Type[tool.UseCase],
     util: Type[tool.Util],
 ):
-
+    """Adds a new use case to the project and updates the project model."""
     model = use_case.get_project_model()
     project = model.project
     text = QCoreApplication.translate("UsecaseWindow", "New UseCase")
@@ -267,6 +272,7 @@ def remove_use_case(
     use_case_index: int,
     use_case: Type[tool.UseCase],
 ):
+    """Removes a use case from the project and updates the project model."""
     model = use_case.get_project_model()
     project = model.project
     selected_use_case = project.get_usecase_by_index(use_case_index)
@@ -280,7 +286,7 @@ def add_phase(
     use_case: Type[tool.UseCase],
     util: Type[tool.Util],
 ):
-
+    """Adds a new phase to the project and updates the project model."""
     text = QCoreApplication.translate("FilterWindow", "New Phase")
     model = use_case.get_project_model()
     project = model.project
@@ -297,6 +303,7 @@ def remove_phase(
     phase_index: int,
     use_case: Type[tool.UseCase],
 ):
+    """Removes a phase from the project and updates the project model."""
     model = use_case.get_project_model()
     project = model.project
     phase = model.project.get_phase_by_index(phase_index)
@@ -313,8 +320,10 @@ def create_context_menu(
     use_case: Type[tool.UseCase],
     project: Type[tool.Project],
 ):
-    proj = project.get()
+    """Creates a context menu for the project view and adds actions to it.
+    Based on the orientation (horizontal or vertical) it adds different actions."""
 
+    proj = project.get()
     menu_list = list()
     project_view = use_case.get_project_view()
     header = (
@@ -370,6 +379,7 @@ def create_context_menu(
 def rename_filter(
     orientation: Qt.Orientation, logical_index: int, use_case: Type[tool.UseCase]
 ):
+    """Renames a filter (use case or phase) in the project view."""
     project_view = use_case.get_project_view()
     header: ui.EditableHeader = (
         project_view.horizontalHeader()
@@ -382,6 +392,9 @@ def rename_filter(
 def mouse_move_event(
     event: QMouseEvent, source, use_case: Type[tool.UseCase], util: Type[tool.Util]
 ):
+    """Handles the mouse move event for the project view and class tree view.
+    Starts or applies a drag operation that allows the user to check multiple items."""
+
     view = source
     index: QModelIndex = view.indexAt(event.pos())
     if not use_case.is_mouse_pressed():
@@ -397,6 +410,9 @@ def mouse_release_event(
     view: ui.ClassView | ui.PropertyView | ui.ProjectView,
     use_case: Type[tool.UseCase],
 ):
+    """
+    stops the drag operation and sets the mouse pressed state to false.
+    """
     use_case.set_mouse_pressed(False)
     use_case.set_mouse_press_checkstate(None)
     if isinstance(view, ui.ClassView):

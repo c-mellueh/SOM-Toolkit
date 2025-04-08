@@ -14,7 +14,7 @@ from PySide6.QtCore import (
     QSize,
     Qt,
 )
-from PySide6.QtWidgets import QLabel, QApplication, QMenu
+from PySide6.QtWidgets import QLabel, QMenu
 from som_gui.module.use_case import ui
 from som_gui.module.use_case import trigger
 import SOMcreator
@@ -76,50 +76,55 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def add_models_to_window(cls, project: SOMcreator.SOMProject):
+
+        # Project Model
         project_model = ui.ProjectModel(project)
         project_view = cls.get_project_view()
         project_view.setModel(project_model)
-        project_view.update_requested.connect(project_model.update_view)
-        project_model.data_changed_externally.connect(trigger.resize_project_model)
 
+        # Class Model
         class_view_1, class_view_2 = cls.get_class_views()
         class_model = ui.ClassModel(project)
         class_filter_model = ui.ClassFilterModel(class_model.fixed_column_count)
         class_filter_model.setSourceModel(class_model)
         class_view_1.setModel(class_filter_model)
         class_view_2.setModel(class_model)
-        class_view_2.hideColumn(0)
-        class_view_2.hideColumn(1)
-        class_view_2.update_requested.connect(class_view_2.update_view)
 
+        # Property MOdel
         property_view_1, property_view_2 = cls.get_property_views()
         property_model = ui.PropertyModel()
         property_filter_model = ui.ClassFilterModel(property_model.fixed_column_count)
         property_filter_model.setSourceModel(property_model)
         property_view_1.setModel(property_filter_model)
         property_view_2.setModel(property_model)
-        property_view_2.hideColumn(0)
-        property_view_2.hideColumn(1)
-
-        property_view_2.update_requested.connect(property_view_2.update_view)
 
     @classmethod
     def connect_models(cls):
         project_model = cls.get_project_model()
         class_model = cls.get_class_model()
+        property_model = cls.get_property_model()
+        index = QModelIndex()
+
+        # Project Model
         project_model.checkstate_changed.connect(
-            lambda: class_model.resize_required.emit(QModelIndex())
+            lambda: class_model.resize_required.emit(index)
         )
+        project_model.checkstate_changed.connect(property_model.resize_required.emit)
+        project_model.data_changed_externally.connect(trigger.resize_project_model)
+
+        # Class Model
         class_model.resize_required.connect(trigger.resize_class_model)
         class_model.resize_required.emit(QModelIndex())
-        property_model = cls.get_property_model()
-        project_model.checkstate_changed.connect(property_model.resize_required.emit)
+
+        # Property Model
         property_model.resize_required.connect(trigger.resize_property_model)
         property_model.resize_required.emit()
 
     @classmethod
-    def connect_project_view(cls):
-        view = cls.get_project_view()
+    def add_editable_header_to_view(cls, view: ui.ProjectView):
+        """
+        Adds header to the View that allow renaming the column/row on double click or context menu
+        """
         view.setHorizontalHeader(ui.EditableHeader(Qt.Orientation.Horizontal))
         view.setVerticalHeader(ui.EditableHeader(Qt.Orientation.Vertical))
 
@@ -134,38 +139,12 @@ class UseCase(som_gui.core.tool.UseCase):
             lambda pos: trigger.header_context_requested(pos, Qt.Orientation.Horizontal)
         )
 
+    @classmethod
+    def connect_project_view(cls):
+        view = cls.get_project_view()
         view.mouse_moved.connect(trigger.mouse_move_event)
         view.mouse_released.connect(trigger.mouse_release_event)
-
-    @classmethod
-    def connect_class_views(cls):
-
-        proxy_view, view = cls.get_class_views()
-        cls._connect_views(proxy_view, view)
-        proxy_model: QSortFilterProxyModel = proxy_view.model()
-        view.selectionModel().selectionChanged.connect(
-            lambda x, y: cls.signaller.class_selection_changed.emit()
-        )
-        # expand
-        view.expanded.connect(
-            lambda index: proxy_view.expand(proxy_model.mapFromSource(index))
-        )
-        proxy_view.expanded.connect(
-            lambda index: view.expand(proxy_model.mapToSource(index))
-        )
-        # collapsed
-        view.collapsed.connect(
-            lambda index: proxy_view.collapse(proxy_model.mapFromSource(index))
-        )
-        proxy_view.collapsed.connect(
-            lambda index: view.collapse(proxy_model.mapToSource(index))
-        )
-        view.clicked.connect(lambda x: view.update_requested.emit())
-        view.clicked.connect(lambda x: cls.get_property_views()[1].repaint())
-
-    @classmethod
-    def connect_property_views(cls):
-        cls._connect_views(*cls.get_property_views())
+        view.update_requested.connect(view.model().update_view)
 
     @classmethod
     def _connect_views(
@@ -173,6 +152,9 @@ class UseCase(som_gui.core.tool.UseCase):
         proxy_view: ui.ClassView | ui.PropertyView,
         view: ui.ClassView | ui.PropertyView,
     ):
+        """
+        Connects the proxy view and the source view so that they are synchronized.
+        """
         proxy_model: QSortFilterProxyModel = proxy_view.model()
         proxy_selection_model = proxy_view.selectionModel()
         selection_model = view.selectionModel()
@@ -208,6 +190,45 @@ class UseCase(som_gui.core.tool.UseCase):
 
         view.mouse_moved.connect(trigger.mouse_move_event)
         view.mouse_released.connect(trigger.mouse_release_event)
+        view.update_requested.connect(view.update_view)
+
+    @classmethod
+    def connect_class_views(cls):
+        """
+        Connects the class ProxyView and ClassView so that they are synchronized.
+        adds the signal for class selection changed
+        """
+        proxy_view, view = cls.get_class_views()
+        proxy_model: QSortFilterProxyModel = proxy_view.model()
+
+        cls._connect_views(proxy_view, view)
+        view.selectionModel().selectionChanged.connect(
+            lambda x, y: cls.signaller.class_selection_changed.emit()
+        )
+        # expand
+        view.expanded.connect(
+            lambda index: proxy_view.expand(proxy_model.mapFromSource(index))
+        )
+        proxy_view.expanded.connect(
+            lambda index: view.expand(proxy_model.mapToSource(index))
+        )
+        # collapsed
+        view.collapsed.connect(
+            lambda index: proxy_view.collapse(proxy_model.mapFromSource(index))
+        )
+        proxy_view.collapsed.connect(
+            lambda index: view.collapse(proxy_model.mapToSource(index))
+        )
+
+        view.clicked.connect(lambda x: view.update_requested.emit())
+        view.clicked.connect(lambda x: cls.get_property_views()[1].repaint())
+
+    @classmethod
+    def connect_property_views(cls):
+        """
+        Connects the Property ProxyView and PropertyView so that they are synchronized.
+        """
+        cls._connect_views(*cls.get_property_views())
 
     @classmethod
     def get_project_view(cls) -> ui.ProjectView:
@@ -215,6 +236,92 @@ class UseCase(som_gui.core.tool.UseCase):
         if window is None:
             return None
         return window.ui.project_tableView
+
+    @classmethod
+    def add_header_view(cls, project: SOMcreator.SOMProject):
+        # Class Header
+        cv1, cv2 = cls.get_class_views()
+        hv1, hv2 = cls.create_header_views(project, ["Class", "Identifier"])
+        cv1.setHeader(hv1)
+        cv2.setHeader(hv2)
+        cv2.hideColumn(0)
+        cv2.hideColumn(1)
+
+        # Property Header
+        pv1, pv2 = cls.get_property_views()
+        hv1, hv2 = cls.create_header_views(project, ["PropertySet", "Property"])
+        pv1.setHorizontalHeader(hv1)
+        pv2.setHorizontalHeader(hv2)
+        pv2.hideColumn(0)
+        pv2.hideColumn(1)
+
+    @classmethod
+    def create_header_views(
+        cls, project: SOMcreator.SOMProject, first_columns: list[str]
+    ):
+        """
+        Create CustomHeaderViews for the Class and Property View. They are multiRow First row is UseCase and second row is Phase.
+        """
+        header_model = ui.CustomHeaderModel(project, first_columns)
+        header_view_1 = ui.CustomHeaderView(first_columns)
+        header_view_2 = ui.CustomHeaderView(first_columns)
+        baseSectionSize = QSize()
+        baseSectionSize.setWidth(header_model.base_width)
+        baseSectionSize.setHeight(header_model.base_height)
+        for row in range(header_model.rowCount()):
+            for col in range(header_model.columnCount()):
+                index = header_model.index(row, col)
+                header_model.setData(
+                    index, baseSectionSize, Qt.ItemDataRole.SizeHintRole
+                )
+        filter_model = ui.ClassFilterModel(len(first_columns))
+        filter_model.setSourceModel(header_model)
+        header_view_1.setModel(filter_model)
+        header_view_2.setModel(header_model)
+        header_view_1.setStretchLastSection(True)
+        header_view_2.setStretchLastSection(True)
+        return header_view_1, header_view_2
+
+    @classmethod
+    def create_context_menu(cls, menu_list: list[tuple[str, Callable]], pos):
+        """
+        Creates a context menu with the given list of actions and their corresponding functions.
+        """
+        menu = QMenu()
+        actions = list()
+        for [action_name, action_func] in menu_list:
+            action = QAction(action_name)
+            actions.append(action)
+            action.triggered.connect(action_func)
+        menu.addActions(actions)
+        menu.exec(pos)
+
+    @classmethod
+    def tree_move_click_drag(cls, index: QModelIndex):
+        """
+        Handles the click and drag event for the tree view. It sets the checkstate of the item to the active checkstate.
+        """
+        active_checkstate = cls.get_mouse_press_checkstate()
+        if active_checkstate is None or not index.isValid():
+            return
+        model = index.model()
+
+        if isinstance(model, (ui.ClassModel, ui.PropertyModel)):
+            fixed_column_count = model.fixed_column_count
+        else:
+            fixed_column_count = 0
+
+        if (
+            index.column() < fixed_column_count
+            or not Qt.ItemFlag.ItemIsEnabled in index.flags()
+        ):
+            return
+
+        model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
+        model.dataChanged.emit(
+            model.createIndex(0, 0),
+            model.createIndex(model.rowCount(), model.columnCount()),
+        )
 
     @classmethod
     def get_project_model(cls) -> ui.ProjectModel:
@@ -286,56 +393,6 @@ class UseCase(som_gui.core.tool.UseCase):
         return view1.model().mapToSource(indexes[0]).internalPointer()
 
     @classmethod
-    def add_header_view(cls, project: SOMcreator.SOMProject):
-        cv1, cv2 = cls.get_class_views()
-        hv1, hv2 = cls.create_header_views(project, ["Class", "Identifier"])
-        cv1.setHeader(hv1)
-        cv2.setHeader(hv2)
-        cv2.hideColumn(0)
-        cv2.hideColumn(1)
-        pv1, pv2 = cls.get_property_views()
-        hv1, hv2 = cls.create_header_views(project, ["PropertySet", "Property"])
-        pv1.setHorizontalHeader(hv1)
-        pv2.setHorizontalHeader(hv2)
-        pv2.hideColumn(0)
-        pv2.hideColumn(1)
-
-    @classmethod
-    def create_header_views(
-        cls, project: SOMcreator.SOMProject, first_columns: list[str]
-    ):
-        header_model = ui.CustomHeaderModel(project, first_columns)
-        header_view_1 = ui.CustomHeaderView(first_columns)
-        header_view_2 = ui.CustomHeaderView(first_columns)
-        baseSectionSize = QSize()
-        baseSectionSize.setWidth(header_model.base_width)
-        baseSectionSize.setHeight(header_model.base_height)
-        for row in range(header_model.rowCount()):
-            for col in range(header_model.columnCount()):
-                index = header_model.index(row, col)
-                header_model.setData(
-                    index, baseSectionSize, Qt.ItemDataRole.SizeHintRole
-                )
-        filter_model = ui.ClassFilterModel(len(first_columns))
-        filter_model.setSourceModel(header_model)
-        header_view_1.setModel(filter_model)
-        header_view_2.setModel(header_model)
-        header_view_1.setStretchLastSection(True)
-        header_view_2.setStretchLastSection(True)
-        return header_view_1, header_view_2
-
-    @classmethod
-    def create_context_menu(cls, menu_list: list[tuple[str, Callable]], pos):
-        menu = QMenu()
-        actions = list()
-        for [action_name, action_func] in menu_list:
-            action = QAction(action_name)
-            actions.append(action)
-            action.triggered.connect(action_func)
-        menu.addActions(actions)
-        menu.exec(pos)
-
-    @classmethod
     def is_mouse_pressed(cls) -> bool:
         return cls.get_properties().mouse_is_pressed
 
@@ -350,30 +407,3 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def get_mouse_press_checkstate(cls) -> bool:
         return cls.get_properties().mouse_press_checkstate
-
-    @classmethod
-    def tree_move_click_drag(cls, index: QModelIndex):
-        active_checkstate = cls.get_mouse_press_checkstate()
-        if active_checkstate is None:
-            return
-        model = index.model()
-        if not index.isValid():
-            return
-
-        if isinstance(model, ui.ClassModel):
-            fixed_column_count = model.fixed_column_count
-        elif isinstance(model, ui.PropertyModel):
-            fixed_column_count = model.fixed_column_count
-        else:
-            fixed_column_count = 0
-
-        if index.column() < fixed_column_count:
-            return
-
-        if not Qt.ItemFlag.ItemIsEnabled in index.flags():
-            return
-        model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
-        model.dataChanged.emit(
-            model.createIndex(0, 0),
-            model.createIndex(model.rowCount(), model.columnCount()),
-        )

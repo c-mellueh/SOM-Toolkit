@@ -35,6 +35,10 @@ class ProjectView(QTableView):
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         self.mouse_released.emit(event,self)
+    
+    #for typing purposes
+    def model(self) -> ProjectModel:
+        return super().model()
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
     checkstate_changed = Signal()
