@@ -7,7 +7,8 @@ import SOMcreator
 
 
 def connect():
-    core.init(tool.MainWindow, tool.ClassTree)
+    core.init(tool.MainWindow, tool.ClassTree,tool.ClassInfo)
+    core.add_class_tree_columns(tool.MainWindow,tool.ClassTree)
     core.add_class_tree_shortcuts(
         tool.ClassTree,
         tool.Util,
@@ -19,7 +20,6 @@ def connect():
 
 def on_new_project():
     core.one_new_project(tool.MainWindow, tool.ClassTree)
-    core.connect_class_tree(tool.MainWindow, tool.ClassTree, tool.ClassInfo)
 
 
 def retranslate_ui():

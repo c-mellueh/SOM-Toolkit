@@ -40,7 +40,9 @@ class ClassView(QTreeView):
     update_requested = Signal()
     mouse_moved = Signal(QMouseEvent,QObject)
     mouse_released = Signal(QMouseEvent,QObject)
-    
+    selected_class_changed = Signal(SOMcreator.SOMClass)
+    class_double_clicked = Signal(SOMcreator.SOMClass)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -76,7 +78,7 @@ class ClassModel(QAbstractItemModel):
     resize_required = Signal(QModelIndex)
 
     def __init__(self,  *args, **kwargs):
-        self.root_classes = list(self.project.get_root_classes(filter=False))
+        self.root_classes = list()
         #(name getter, value_getter, value_setter,role)
         self.columns: list[tuple[callable,callable,callable,Qt.ItemDataRole]] = list()
 
@@ -84,13 +86,15 @@ class ClassModel(QAbstractItemModel):
         self.old_column_count = len(self.columns)
         self.row_count_dict: dict[QModelIndex, int] = {QModelIndex():len(self.root_classes)}
         super().__init__(*args, **kwargs)
-        self.update_data()
 
     @property
     def project(self):
         return tool.Project.get()
 
     def update_data(self):
+        if not self.project:
+            return
+
         self.root_classes = list(self.project.get_root_classes(filter=False))
 
 
@@ -116,7 +120,6 @@ class ClassModel(QAbstractItemModel):
     def columnCount(self, parent=QModelIndex()):
         column_count = len(self.columns)
         if column_count != self.old_column_count:
-            print(f"Column Count Mismatch {column_count}: {self.old_column_count}")
             self.resize_required.emit(QModelIndex())
             self.old_column_count = column_count
         return len(self.columns)
@@ -133,7 +136,6 @@ class ClassModel(QAbstractItemModel):
         result = self.get_row_count(parent)
         old_result = self.row_count_dict.get(parent)
         if old_result != result and old_result is not None:
-            print(f"Resize Row {old_result} to {result}")
             self.resize_required.emit(parent)
         if old_result is None:
             self.row_count_dict[parent] = result

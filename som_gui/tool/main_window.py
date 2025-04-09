@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 class Signaller(QObject):
     active_class_changed = Signal(SOMcreator.SOMClass)
     class_info_requested = Signal(SOMcreator.SOMClass)
+    
 class MainWindow(som_gui.core.tool.MainWindow):
     signaller = Signaller()
 

@@ -38,6 +38,7 @@ def modify_class(
     class_info: Type[tool.ClassInfo],
     property_set: Type[tool.PropertySet],
     predefined_psets: Type[tool.PredefinedPropertySet],
+    main_window:Type[tool.MainWindow],
 ):
 
     data_dict = class_info.generate_datadict()
@@ -85,7 +86,7 @@ def modify_class(
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
-    class_tool.fill_class_entry(som_class)
+    main_window.signaller.active_class_changed.emit(som_class)
 
 
 def copy_class(

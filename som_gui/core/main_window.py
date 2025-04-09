@@ -12,9 +12,15 @@ if TYPE_CHECKING:
 from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QItemSelection
 from PySide6.QtGui import QCloseEvent
 import SOMcreator
+
 initial_tree = True
 
-def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
+
+def init(
+    main_window: Type[tool.MainWindow],
+    class_tree: Type[tool.ClassTree],
+    class_info: Type[tool.ClassInfo],
+):
     """
     Create the actions used in the MainMenuBar. using add_action and set_action. Afterwards the Actions can be called by get_action. This is mostly used in retranslate_ui
     :param main_window:
@@ -31,8 +37,25 @@ def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
     main_window.get_ui().button_search.pressed.connect(
         lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
+    # init ClassTree
+    tree = main_window.get_class_tree()
+    from som_gui.module.class_tree.ui import ClassModel
 
+    tree.setModel(ClassModel())
+    class_tree.add_tree(tree)
+    class_tree.connect_tree(tree)
 
+    tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+    tree.customContextMenuRequested.connect(
+        lambda p: class_tree.context_menu_requested(tree, p)
+    )
+    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
+    main_window.get_ui().button_classes_add.clicked.connect(
+        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
+    )
+    tree.class_double_clicked.connect(main_window.signaller.class_info_requested.emit)
+    tree.selected_class_changed.connect(main_window.signaller.active_class_changed.emit)
+    
 def retranslate_ui(
     main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
 ):
@@ -133,58 +156,6 @@ def toggle_console_clicked(
     )  # Changes Text from Show to Hide / from Hide to Show
 
 
-def add_class_tree_shortcuts(
-    class_tree: Type[tool.ClassTree],
-    util: Type[tool.Util],
-    main_window: Type[tool.MainWindow],
-    class_info: Type[tool.ClassInfo],
-):
-    tree = main_window.get_class_tree()
-    util.add_shortcut(
-        "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
-    )
-    util.add_shortcut(
-        "Ctrl+G", main_window.get(), lambda: class_tree.group_selection(tree)
-    )
-    util.add_shortcut(
-        "Ctrl+F",
-        main_window.get(),
-        lambda: class_tree.signaller.search.emit(tree),
-    )
-    util.add_shortcut(
-        "Ctrl+C",
-        main_window.get(),
-        lambda: class_info.trigger_class_info_widget(2, main_window.get_active_class()),
-    )
-
-
-def connect_class_tree(
-    main_window: Type[tool.MainWindow],
-    class_tree: Type[tool.ClassTree],
-    class_info: Type[tool.ClassInfo],
-):
-    global initial_tree
-    if not initial_tree:
-        return
-    initial_tree = False
-    tree = main_window.get_class_tree()
-    class_tree.signaller.init_tree.emit(main_window.get_class_tree())
-
-    def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
-        for index in selected.indexes():
-            main_window.signaller.active_class_changed.emit(index.internalPointer())
-            return
-    def trigger_double(index):
-        main_window.signaller.class_info_requested.emit(index.internalPointer())
-    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-
-    tree.selectionModel().selectionChanged.connect(trigger_selection)
-    tree.doubleClicked.connect(trigger_double)
-    main_window.get_ui().button_classes_add.clicked.connect(
-        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
-    )
-
-
 def set_active_class(
     som_class: SOMcreator.SOMClass,
     main_window: Type[tool.MainWindow],
@@ -274,3 +245,58 @@ def one_new_project(
     class_tree: Type[tool.ClassTree],
 ):
     class_tree.reset_tree(main_window.get_class_tree())
+
+
+def add_class_tree_shortcuts(
+    class_tree: Type[tool.ClassTree],
+    util: Type[tool.Util],
+    main_window: Type[tool.MainWindow],
+    class_info: Type[tool.ClassInfo],
+):
+    tree = main_window.get_class_tree()
+    util.add_shortcut(
+        "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
+    )
+    util.add_shortcut(
+        "Ctrl+G", main_window.get(), lambda: class_tree.group_selection(tree)
+    )
+    util.add_shortcut(
+        "Ctrl+F",
+        main_window.get(),
+        lambda: class_tree.signaller.search.emit(tree),
+    )
+    util.add_shortcut(
+        "Ctrl+C",
+        main_window.get(),
+        lambda: class_info.trigger_class_info_widget(2, main_window.get_active_class()),
+    )
+
+
+def add_class_tree_columns(
+    main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
+):
+    tree = main_window.get_class_tree()
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Class"),
+        0,
+        lambda c: getattr(c, "name"),
+    )
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Identifier"),
+        1,
+        lambda o: (
+            getattr(o, "ident_value")
+            if isinstance(o.identifier_property, SOMcreator.SOMProperty)
+            else ""
+        ),
+    )
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Optional"),
+        2,
+        lambda o: o.is_optional(ignore_hirarchy=True),
+        lambda o, v: o.set_optional(v),
+        role=Qt.ItemDataRole.CheckStateRole,
+    )

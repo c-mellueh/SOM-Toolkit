@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QCoreApplication, QMimeData,Qt,QModelIndex
 from PySide6.QtGui import QDropEvent
+from PySide6.QtWidgets import QTreeView
 
 import SOMcreator
 from som_gui import tool
@@ -21,47 +22,8 @@ import uuid
 def connect_signals(class_tree: Type[tool.ClassTree]) -> None:
     class_tree.connect_trigger()
 
-def init_tree(
-    tree: ui.ClassView,
-    class_tree: Type[tool.ClassTree],
-    project:Type[tool.Project],
-) -> None:
-    tree.setModel(ui.ClassModel())
-    class_tree.add_tree(tree)
-    class_tree.connect_tree(tree)
-    class_tree.add_column_to_tree(
-        tree,
-        lambda: QCoreApplication.translate("Class", "Class"),
-        0,
-        lambda c: getattr(c, "name"),
-    )
-    class_tree.add_column_to_tree(
-        tree,
-        lambda: QCoreApplication.translate("Class", "Identifier"),
-        1,
-        lambda o: (
-            getattr(o, "ident_value")
-            if isinstance(o.identifier_property, SOMcreator.SOMProperty)
-            else ""
-        ),
-    )
-    class_tree.add_column_to_tree(
-        tree,
-        lambda: QCoreApplication.translate("Class", "Optional"),
-        2,
-        lambda o: o.is_optional(ignore_hirarchy=True),
-        lambda o,v: o.set_optional(v),
-        role = Qt.ItemDataRole.CheckStateRole
-    )
-
-    tree.customContextMenuRequested.connect(
-        lambda p: create_context_menu(tree, p, tool.ClassTree)
-    )
-
-
 def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
     return
-
 
 def create_mime_data(
     items: QTreeWidgetItem, mime_data: QMimeData, class_tree: Type[tool.ClassTree]

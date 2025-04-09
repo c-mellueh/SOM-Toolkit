@@ -14,6 +14,7 @@ from PySide6.QtCore import (
     QCoreApplication,
     Signal,
     QModelIndex,
+    QItemSelection,
 )
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -38,8 +39,8 @@ from som_gui.module.class_tree import ui
 
 
 class Signaller(QObject):
-    init_tree = Signal(ui.ClassView)
     search = Signal(ui.ClassView)
+    selected_class_changed= Signal(ui.ClassView,SOMcreator.SOMClass)
 
 
 class ClassTree(som_gui.core.tool.ClassTree):
@@ -51,7 +52,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def connect_trigger(cls):
-        cls.signaller.init_tree.connect(trigger.init_tree)
         cls.signaller.search.connect(trigger.search_class)
 
     @classmethod
@@ -75,6 +75,16 @@ class ClassTree(som_gui.core.tool.ClassTree):
         tree.update_requested.connect(tree.update_view)
         model.updated_required.connect(model.update_data)
         model.resize_required.connect(lambda index,t=tree:trigger.resize_tree(index,t))
+        
+        def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
+            for index in selected.indexes():
+                tree.selected_class_changed.emit(index.internalPointer())
+                return
+        def trigger_double(index):
+            tree.class_double_clicked.emit(index.internalPointer())
+    
+        tree.selectionModel().selectionChanged.connect(trigger_selection)
+        tree.doubleClicked.connect(trigger_double)
 
     @classmethod
     def remove_tree(cls, tree: ui.ClassView):
@@ -206,7 +216,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
     def add_context_menu_entry(
         cls,
-        tree: ui.ClassTreeWidget,
+        tree: ui.ClassView,
         name_getter: Callable,
         function: Callable,
         on_selection: bool,
@@ -360,3 +370,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if model is None:
             return None
         model.columns = value
+
+    @classmethod
+    def context_menu_requested(cls,tree,pos):
+        trigger.create_context_menu(tree,pos)

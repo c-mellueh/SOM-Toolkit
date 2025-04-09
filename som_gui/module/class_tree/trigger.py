@@ -20,10 +20,6 @@ def search_class(tree: ui.ClassTreeWidget):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
 
 
-def init_tree(tree: ui.ClassView):
-    core.init_tree(tree, tool.ClassTree,tool.Project)
-
-
 def repaint_event(tree: ui.ClassTreeWidget):
     core.refresh_class_tree(tree, tool.ClassTree, tool.Project)
 
@@ -49,3 +45,6 @@ def group_selection(tree: ui.ClassTreeWidget):
 
 def resize_tree(index:QModelIndex,tree:ui.ClassView):
     core.resize_tree(index,tree,tool.ClassTree)
+
+def create_context_menu(tree,pos):
+    core.create_context_menu(tree,pos,tool.ClassTree)
