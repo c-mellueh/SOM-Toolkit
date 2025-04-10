@@ -373,18 +373,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
             model.moveRow(
                 index.parent(), index.row(), dropped_on_index, model.rowCount(dropped_on_index)
             )
-        # for som_class,index in dropped_classes.items():
-        #     if dropped_on_class is None:
-        #         model.beginMoveRows(index.parent(),index.row(),index.row(),QModelIndex(),model.get_row_count()-1)
-        #         som_class.remove_parent()
-        #         model.row_count_dict[QModelIndex()]+=1
-        #         model.endMoveRows()
-        #     else:
-        #         new_parent = model.class_index_dict[dropped_on_class].siblingAtColumn(0)
-        #         model.beginMoveRows(index.parent(),index.row(),index.row(),new_parent,model.get_row_count(new_parent)-1)
-        #         som_class.parent = dropped_on_class
-        #         model.row_count_dict[new_parent]+=1
-        #         model.endMoveRows()
 
     @classmethod
     def trigger_search(cls, tree: ui.ClassTreeWidget):
