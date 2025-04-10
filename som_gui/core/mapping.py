@@ -37,7 +37,8 @@ def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
 
 
 def open_window(mapping: Type[tool.Mapping]):
-    if window := mapping.get_window() is None:
+    window = mapping.get_window()
+    if window is None:
         window = mapping.create_window()
     from som_gui.module.mapping import trigger
 
