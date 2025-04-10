@@ -4,16 +4,25 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import SOMcreator
 from SOMcreator.exporter import bsdd
-from SOMcreator.constants import value_constants
+from SOMcreator.constants import value_constants,ifc_datatypes
 import logging
 import datetime
 
+STRING = "String"
+INTEGER = "Integer"
+BOOL = "Boolean"
+REAL = "Real"
+TIME = "Time"
+
+
 DATATYPE_MAPPING = {
-    value_constants.LABEL: "String",
-    value_constants.INTEGER: "Integer",
-    value_constants.BOOLEAN: "Boolean",
-    value_constants.REAL: "Real",
-    value_constants.DATE: "Time",
+    value_constants.LABEL: STRING,
+    value_constants.INTEGER: INTEGER,
+    value_constants.BOOLEAN: BOOL,
+    value_constants.REAL: REAL,
+    value_constants.DATE: TIME,
+    ifc_datatypes.LENGTHMEASURE:REAL,
+
 }
 
 PROPERTY_KIND_MAPPING = {
@@ -115,8 +124,35 @@ def _create_class_property(
         class_property.MaxInclusive = som_property.allowed_values[0][1]
     elif som_property.value_type == value_constants.LIST:
         for val in som_property.allowed_values:
-            class_property.AllowedValues.append(bsdd.AllowedValue(str(val), str(val)))
+            class_property.AllowedValues.append(bsdd.AllowedValue(to_code(val), str(val)))
     return class_property
+
+
+def to_code(val:str):
+    mapping_dict = {
+        '"':'c00',
+        '#':'c01',
+        '%':'c02',
+        '/':'c03',
+        '\\':'c04',
+        ':':'c05',
+        '{':'c06',
+        '}':'c07',
+        '[':'c08',
+        ']':'c09',
+        '|':'c10',
+        ';':'c11',
+        '<':'c12',
+        '>':'c13',
+        '?':'c14',
+        '`':'c15',
+        '~':'c16',
+            }
+    result = []
+
+    for char in str(val):
+        result.append(mapping_dict.get(char) or char)
+    return "".join(result)     
 
 
 def _create_properties(
@@ -142,7 +178,7 @@ def _create_properties(
 
 def _create_class(som_class: SOMcreator.SOMClass, d: bsdd.Dictionary):
     c = bsdd.Class(d, str(som_class.ident_value), som_class.name, "Class")
-    c.Description = som_class.description
+    c.Definition = som_class.description
     c.RelatedIfcEntityNamesList = list(som_class.ifc_mapping)
     c.CountriesOfUse = ["DE"]
     c.CountryOfOrigin = "DE"
