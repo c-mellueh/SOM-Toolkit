@@ -114,8 +114,12 @@ class ClassModel(QAbstractItemModel):
     def update_data(self):
         if not self.project:
             return
-
-        self.root_classes = sorted(self.project.get_root_classes(filter=False),key=lambda c:c.name)
+        old_root_classes = set(self.root_classes)
+        new_root_classes = set(list(self.project.get_root_classes(filter=False)))
+        for som_class in old_root_classes.difference(new_root_classes):
+            self.root_classes.remove(som_class)
+        for som_class in new_root_classes.difference(old_root_classes):
+            self.root_classes.append(som_class)
 
     def headerData(self, section, orientation, /, role=...):
         if (
@@ -151,7 +155,7 @@ class ClassModel(QAbstractItemModel):
 
     def get_row_count(self, parent=QModelIndex()):
         if not parent.isValid():
-            result = len(self.root_classes)
+            result = len(list(self.root_classes))
         else:
             som_class: SOMcreator.SOMClass = parent.internalPointer()
             result = len(list(som_class.get_children(filter=True)))
@@ -207,7 +211,7 @@ class ClassModel(QAbstractItemModel):
 
     def index(self, row: int, column: int, parent: QModelIndex):
         if not parent.isValid():
-            if row >= len(self.root_classes):
+            if row >= len(list(self.root_classes)):
                 logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
                 return QModelIndex()
@@ -217,7 +221,7 @@ class ClassModel(QAbstractItemModel):
         else:
             parent = parent.siblingAtColumn(0)
             som_class: SOMcreator.SOMClass = parent.internalPointer()
-            children = sorted(som_class.get_children(filter=False),key = lambda c:c.name)
+            children = list(som_class.get_children(filter=False))
             if 0 <= row < len(children):
                 child_class = children[row]
                 index = self.createIndex(row, column, child_class)
@@ -251,19 +255,15 @@ class ClassModel(QAbstractItemModel):
         return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
 
     def removeRow(self, row, /, parent=...):
-        print("Remove Row Called")
         return super().removeRow(row, parent)
 
     def insertRow(self, row, /, parent=...):
-        print("Insert Row Called")
         return super().insertRow(row, parent)
 
     def removeColumn(self, column, /, parent=...):
-        print("Remove Column Called")
         return super().removeColumn(column, parent)
 
     def insertColumn(self, column, /, parent=...):
-        print("Insert Column Called")
         return super().insertColumn(column, parent)
     
     def moveColumn(self, sourceParent, sourceColumn, destinationParent, destinationChild):
@@ -277,16 +277,12 @@ class ClassModel(QAbstractItemModel):
         som_class:SOMcreator.SOMClass = start_index.internalPointer()
         if not destinationParent.isValid():
             som_class.remove_parent()
-
+            self.root_classes.append(som_class)
         else:
             new_parent:SOMcreator.SOMClass = destinationParent.internalPointer()
-            new_parent.insert_child(destinationChild,som_class)
-        
-        # if sourceParent.isValid():
-        #     self.update_data()
-        #     self.row_count_dict[sourceParent]= len(self.root_classes)
-        # else:
+            new_parent.add_child(som_class)
         self.row_count_dict[sourceParent]-=1
         if destinationParent in self.row_count_dict:
             self.row_count_dict[destinationParent]+=1
+        self.resize_required.emit(QModelIndex())
         self.endMoveRows()

@@ -279,10 +279,17 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def get_selected(cls, tree: ui.ClassView) -> list[QTreeWidgetItem]:
-        return [i for i in tree.selectionModel().selectedIndexes() if i.column() == 0]
+        indexes = [i for i in tree.selectionModel().selectedIndexes() if i.column() == 0]
+        if not indexes:
+            return indexes
+        model = indexes[0].model()
+        return [model.mapToSource(i)for i in indexes]    
 
     @classmethod
     def get_class_from_index(cls, index: QModelIndex) -> SOMcreator.SOMClass:
+        model = index.model()
+        if not isinstance(model,ui.ClassModel):
+            index = model.mapToSource(index)
         return index.internalPointer()
 
     @classmethod
@@ -353,25 +360,19 @@ class ClassTree(som_gui.core.tool.ClassTree):
             for o, index in dropped_classes.items()
             if o.parent not in dropped_classes or o.parent is None
         }
-
-  
-        indicator_pos = tree.dropIndicatorPosition()
-        if indicator_pos == QAbstractItemView.DropIndicatorPosition.OnItem:
-            drop_row = 0
-        elif indicator_pos == QAbstractItemView.DropIndicatorPosition.AboveItem:
-            drop_row = dropped_on_index.row()
-        elif indicator_pos == QAbstractItemView.DropIndicatorPosition.BelowItem:
-            drop_row = dropped_on_index.row()+1
-        else:
-            drop_row = len(model.root_classes)-1
+        
+        
 
         if not cls.is_drop_indication_pos_on_item(tree):
             dropped_on_index = dropped_on_index.parent()
+        
+        if sort_model:=tree.sort_model():
+            dropped_on_index = sort_model.mapToSource(dropped_on_index)
+        
         for som_class, index in dropped_classes.items():
             model.moveRow(
-                index.parent(), index.row(), dropped_on_index, drop_row
+                index.parent(), index.row(), dropped_on_index, model.rowCount(dropped_on_index)
             )
-
         # for som_class,index in dropped_classes.items():
         #     if dropped_on_class is None:
         #         model.beginMoveRows(index.parent(),index.row(),index.row(),QModelIndex(),model.get_row_count()-1)
