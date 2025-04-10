@@ -12,12 +12,13 @@ from PySide6.QtCore import (
     QModelIndex,
     Qt,
     Signal,
-    QObject
+    QObject,
 )
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 import SOMcreator
 from som_gui import tool
+
 
 class ClassTreeWidget(QTreeWidget):
 
@@ -29,17 +30,18 @@ class ClassTreeWidget(QTreeWidget):
         class_tree.trigger.repaint_event(self)
 
     def dropEvent(self, event):
-        class_tree.trigger.drop_event(event,self)
+        class_tree.trigger.drop_event(event, self)
         super().dropEvent(event)
 
     def mimeData(self, items):
         mime_data = super().mimeData(items)
         return class_tree.trigger.create_mime_data(list(items), mime_data)
 
+
 class ClassView(QTreeView):
     update_requested = Signal()
-    mouse_moved = Signal(QMouseEvent,QObject)
-    mouse_released = Signal(QMouseEvent,QObject)
+    mouse_moved = Signal(QMouseEvent, QObject)
+    mouse_released = Signal(QMouseEvent, QObject)
     selected_class_changed = Signal(SOMcreator.SOMClass)
     class_double_clicked = Signal(SOMcreator.SOMClass)
 
@@ -67,24 +69,32 @@ class ClassView(QTreeView):
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
-        self.mouse_moved.emit(event,self)
+        self.mouse_moved.emit(event, self)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        self.mouse_released.emit(event,self)
+        self.mouse_released.emit(event, self)
+
+    def dragMoveEvent(self, event):
+        return super().dragMoveEvent(event)
+
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
     resize_required = Signal(QModelIndex)
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.root_classes = list()
-        #(name getter, value_getter, value_setter,role)
-        self.columns: list[tuple[callable,callable,callable,Qt.ItemDataRole]] = list()
+        # (name getter, value_getter, value_setter,role)
+        self.columns: list[tuple[callable, callable, callable, Qt.ItemDataRole]] = (
+            list()
+        )
 
         self.class_index_dict: dict[SOMcreator.SOMClass, QModelIndex] = dict()
         self.old_column_count = len(self.columns)
-        self.row_count_dict: dict[QModelIndex, int] = {QModelIndex():len(self.root_classes)}
+        self.row_count_dict: dict[QModelIndex, int] = {
+            QModelIndex(): len(self.root_classes)
+        }
         super().__init__(*args, **kwargs)
 
     @property
@@ -97,9 +107,11 @@ class ClassModel(QAbstractItemModel):
 
         self.root_classes = list(self.project.get_root_classes(filter=False))
 
-
-    def headerData(self, section, orientation, /, role = ...):
-        if role in (Qt.ItemDataRole.DisplayRole,Qt.ItemDataRole.EditRole) and orientation == Qt.Orientation.Horizontal:
+    def headerData(self, section, orientation, /, role=...):
+        if (
+            role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole)
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.columns[section][0]()
         return super().headerData(section, orientation, role)
 
@@ -109,6 +121,9 @@ class ClassModel(QAbstractItemModel):
         Disable Item if Parent is not checked or parent is disabled
         """
         flags = super().flags(index)
+        flags |= Qt.ItemFlag.ItemIsDragEnabled
+        flags |= Qt.ItemFlag.ItemIsDropEnabled
+
         column = index.column()
         role = self.columns[column][3]
         if role == Qt.ItemDataRole.CheckStateRole:
@@ -152,7 +167,7 @@ class ClassModel(QAbstractItemModel):
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             result = self.get_text(column, som_class)
             return result
-        
+
         elif role == Qt.ItemDataRole.CheckStateRole:
             return self.get_checkstate(column, som_class)
         return None
@@ -171,13 +186,13 @@ class ClassModel(QAbstractItemModel):
         column = index.column()
         if role != self.columns[column][3]:
             return False
-        
+
         setter_func = self.columns[column][2]
         som_class: SOMcreator.SOMClass = index.internalPointer()
         if role == Qt.ItemDataRole.CheckStateRole:
-            setter_func(som_class,bool(value))
+            setter_func(som_class, bool(value))
         else:
-            setter_func(som_class,value)
+            setter_func(som_class, value)
         return True
 
     def index(self, row: int, column: int, parent: QModelIndex):
@@ -218,3 +233,25 @@ class ClassModel(QAbstractItemModel):
         if parent_index is None or not parent_index.isValid():
             return QModelIndex()
         return parent_index.siblingAtColumn(0)
+
+    def supportedDragActions(self):
+        return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
+
+    def supportedDropActions(self):
+        return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
+
+    def removeRow(self, row, /, parent=...):
+        print("Remove Row Called")
+        return super().removeRow(row, parent)
+
+    def insertRow(self, row, /, parent=...):
+        print("Insert Row Called")
+        return super().insertRow(row, parent)
+
+    def removeColumn(self, column, /, parent=...):
+        print("Remove Column Called")
+        return super().removeColumn(column, parent)
+
+    def insertColumn(self, column, /, parent=...):
+        print("Insert Column Called")
+        return super().insertColumn(column, parent)

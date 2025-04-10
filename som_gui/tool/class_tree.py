@@ -95,11 +95,13 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def add_column_to_tree(
-        cls, tree: ui.ClassView, name_getter, index, getter_func, setter_func=None,role = Qt.ItemDataRole.DisplayRole
+        cls, tree: ui.ClassView, name_getter, index, getter_func, setter_func = None,role = Qt.ItemDataRole.DisplayRole
     ):
         if tree not in cls.get_trees():
             return
         cl = cls.get_column_list(tree)
+        if setter_func is None:
+            setter_func = lambda *a:None
         cl.insert(index, (name_getter, getter_func, setter_func,role))
         cls.set_column_list(tree, cl)
         cls.reset_tree(tree)
