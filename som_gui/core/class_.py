@@ -24,6 +24,7 @@ def init(
         else:
             label.setText(som_class.name)
 
+    class_tool.connect_signals()
     main_window.signaller.change_active_class.connect(rewrite_label)
     # Add Creation Checks
     class_tool.add_class_creation_check(
@@ -102,7 +103,7 @@ def copy_class(
         group = cp.copy(som_class)
         group.identifier_property = uuid.uuid4()
         group.description = data_dict.get("description") or ""
-        class_tool.trigger_class_modification(group, data_dict)
+        class_tool.signaller.modify_class.emit(group, data_dict)
         return
     # handle Identifier Value
     ident_value = data_dict.get("ident_value")
@@ -117,7 +118,7 @@ def copy_class(
         return
 
     new_class = cp.copy(som_class)
-    class_tool.trigger_class_modification(new_class, data_dict)
+    class_tool.signaller.modify_class.emit(new_class, data_dict)
 
 
 def create_class(

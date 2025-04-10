@@ -200,15 +200,6 @@ class Class:
     def set_ident_value(self, som_class, value):
         pass
 
-    def trigger_class_copy(self, som_class, data_dict):
-        pass
-
-    def trigger_class_creation(self, data_dict):
-        pass
-
-    def trigger_class_modification(self, som_class, data_dict):
-        pass
-
 
 class ClassInfo:
     def add_classes_infos_add_function(self, key, getter_function):

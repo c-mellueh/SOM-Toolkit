@@ -50,11 +50,11 @@ def create_class_info_widget(
         if mode == 0:
             if som_class:
                 data_dict["parent_uuid"] =som_class.uuid
-            class_tool.trigger_class_creation(data_dict)
+            class_tool.signaller.create_class.emit(data_dict)
         elif mode == 1:
-            class_tool.trigger_class_modification(active_class, data_dict)
+            class_tool.signaller.modify_class.emit(active_class, data_dict)
         elif mode == 2:
-            class_tool.trigger_class_copy(active_class, data_dict)
+            class_tool.signaller.copy_class.emit(active_class, data_dict)
     class_info.reset()
 
 

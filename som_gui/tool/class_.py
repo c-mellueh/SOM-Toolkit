@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import logging
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication,QObject,Signal
 import som_gui.core.tool
 import som_gui
 from som_gui import tool
@@ -13,11 +13,23 @@ import uuid
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties
 
+class Signaller(QObject):
+    create_class = Signal(ClassDataDict)
+    copy_class = Signal(ClassDataDict)
+    modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
 
 class Class(som_gui.core.tool.Class):
+    signaller = Signaller()
     @classmethod
     def get_properties(cls) -> ClassProperties:
         return som_gui.ClassProperties
+
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.create_class.connect(trigger.create_class_called)
+        cls.signaller.copy_class.connect(trigger.copy_class_called)
+        cls.signaller.modify_class.connect(trigger.modify_class_called)
 
     @classmethod
     def group_classes(
@@ -132,25 +144,6 @@ class Class(som_gui.core.tool.Class):
         if pset is None:
             return None
         return pset.get_property_by_name(property_name)
-
-    @classmethod
-    def trigger_class_creation(
-        cls,
-        data_dict: ClassDataDict,
-    ):
-        trigger.create_class_called(data_dict)
-
-    @classmethod
-    def trigger_class_copy(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.copy_class_called(som_class, data_dict)
-
-    @classmethod
-    def trigger_class_modification(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.modify_class_called(som_class, data_dict)
 
     @classmethod
     def add_class_creation_check(cls, key, check_function):
