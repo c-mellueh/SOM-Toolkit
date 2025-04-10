@@ -14,6 +14,7 @@ BOOL = "Boolean"
 REAL = "Real"
 TIME = "Time"
 
+IFC_BSDD__PROPERTY_PATH = "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop"
 
 DATATYPE_MAPPING = {
     value_constants.LABEL: STRING,
@@ -95,14 +96,18 @@ def _find_differences(prop_0: bsdd.Property, prop_1: bsdd.Property) -> dict:
 def _create_class_property(
     som_property: SOMcreator.SOMProperty, existing_properties: list[bsdd.Property]
 ):
-    code = str(som_property.name)
-    if parent_property := _check_for_existance(som_property, existing_properties):
-        pass
+    code = to_code(som_property.name)
+    pset_name = som_property.property_set.name
+    if pset_name.startswith("Pset_"):
+        property_uri = f"{IFC_BSDD__PROPERTY_PATH}/{code}"
+        class_property = bsdd.ClassProperty(code, "", property_uri)
     else:
-        parent_property = _create_property(som_property)
-        existing_properties.append(parent_property)
-
-    class_property = bsdd.ClassProperty(code, parent_property.Code, "")
+        if parent_property := _check_for_existance(som_property, existing_properties):
+            pass
+        else:
+            parent_property = _create_property(som_property)
+            existing_properties.append(parent_property)
+        class_property = bsdd.ClassProperty(code, parent_property.Code, "")
     (
         class_property.property,
         class_property.Description,
@@ -161,6 +166,8 @@ def _create_properties(
 ):
     properties = list()
     for som_property in predefined_properties:
+        if som_property.property_set.name.startswith("Pset_"):
+            continue
         if old_property := _check_for_existance(som_property, properties):
             new_property = _create_property(som_property)
             if old_property != new_property:
