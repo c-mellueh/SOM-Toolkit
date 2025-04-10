@@ -45,6 +45,8 @@ def open_window(mapping: Type[tool.Mapping]):
     trigger.retranslate_ui()
     mapping.connect_window_triggers(window)
     window.show()
+    window.activateWindow()
+    
 
 
 def export_revit_ifc_mapping(
