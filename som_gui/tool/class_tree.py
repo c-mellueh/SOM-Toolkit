@@ -40,7 +40,7 @@ from som_gui.module.class_tree import ui
 
 class Signaller(QObject):
     search = Signal(ui.ClassView)
-    selected_class_changed= Signal(ui.ClassView,SOMcreator.SOMClass)
+    selected_class_changed = Signal(ui.ClassView, SOMcreator.SOMClass)
 
 
 class ClassTree(som_gui.core.tool.ClassTree):
@@ -74,17 +74,24 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         tree.update_requested.connect(tree.update_view)
         model.updated_required.connect(model.update_data)
-        model.resize_required.connect(lambda index,t=tree:trigger.resize_tree(index,t))
-        
+        model.resize_required.connect(
+            lambda index, t=tree: trigger.resize_tree(index, t)
+        )
+
         def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
             for index in selected.indexes():
                 tree.selected_class_changed.emit(index.internalPointer())
                 return
+
         def trigger_double(index):
             tree.class_double_clicked.emit(index.internalPointer())
-    
+
         tree.selectionModel().selectionChanged.connect(trigger_selection)
         tree.doubleClicked.connect(trigger_double)
+        tree.customContextMenuRequested.connect(
+            lambda p: trigger.create_context_menu(tree, p)
+        )
+        tree.expanded.connect(lambda: cls.resize_tree(tree))
 
     @classmethod
     def remove_tree(cls, tree: ui.ClassView):
@@ -95,14 +102,20 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def add_column_to_tree(
-        cls, tree: ui.ClassView, name_getter, index, getter_func, setter_func = None,role = Qt.ItemDataRole.DisplayRole
+        cls,
+        tree: ui.ClassView,
+        name_getter,
+        index,
+        getter_func,
+        setter_func=None,
+        role=Qt.ItemDataRole.DisplayRole,
     ):
         if tree not in cls.get_trees():
             return
         cl = cls.get_column_list(tree)
         if setter_func is None:
-            setter_func = lambda *a:None
-        cl.insert(index, (name_getter, getter_func, setter_func,role))
+            setter_func = lambda *a: None
+        cl.insert(index, (name_getter, getter_func, setter_func, role))
         cls.set_column_list(tree, cl)
         cls.reset_tree(tree)
 
@@ -247,7 +260,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return d
 
     @classmethod
-    def is_drop_indication_pos_on_item(cls, tree: ui.ClassTreeWidget):
+    def is_drop_indication_pos_on_item(cls, tree: ui.ClassView):
 
         if (
             tree.dropIndicatorPosition()
@@ -258,8 +271,8 @@ class ClassTree(som_gui.core.tool.ClassTree):
             return False
 
     @classmethod
-    def get_item_from_pos(cls, tree: ui.ClassTreeWidget, pos: QPoint):
-        return tree.itemFromIndex(tree.indexAt(pos))
+    def get_index_from_pos(cls, tree: ui.ClassView, pos: QPoint) -> QModelIndex:
+        return tree.indexAt(pos)
 
     @classmethod
     def get_selected(cls, tree: ui.ClassView) -> list[QTreeWidgetItem]:
@@ -326,30 +339,51 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return pickle.loads(serialized)
 
     @classmethod
-    def handle_class_move(
-        cls, tree: ui.ClassTreeWidget, dropped_on_item: QTreeWidgetItem
-    ):
+    def handle_class_move(cls, tree: ui.ClassView, dropped_on_index=QModelIndex()):
+        model = tree.model()
         selected_indexes = cls.get_selected(tree)
-        dropped_classes = [cls.get_class_from_index(index) for index in selected_indexes]
-        dropped_classes = [
-            o
-            for o in dropped_classes
+        dropped_classes = {
+            cls.get_class_from_index(index): index for index in selected_indexes
+        }
+        dropped_classes = {
+            o: index
+            for o, index in dropped_classes.items()
             if o.parent not in dropped_classes or o.parent is None
-        ]
-        if dropped_on_item is None:
-            for som_class in dropped_classes:
-                som_class.remove_parent()
-            return
-        dropped_on_class = cls.get_class_from_index(dropped_on_item)
+        }
+
+  
+        indicator_pos = tree.dropIndicatorPosition()
+        if indicator_pos == QAbstractItemView.DropIndicatorPosition.OnItem:
+            drop_row = 0
+        elif indicator_pos == QAbstractItemView.DropIndicatorPosition.AboveItem:
+            drop_row = dropped_on_index.row()
+        elif indicator_pos == QAbstractItemView.DropIndicatorPosition.BelowItem:
+            drop_row = dropped_on_index.row()+1
+        else:
+            drop_row = len(model.root_classes)-1
 
         if not cls.is_drop_indication_pos_on_item(tree):
-            dropped_on_class = dropped_on_class.parent
+            dropped_on_index = dropped_on_index.parent()
 
-        for som_class in dropped_classes:
-            if dropped_on_class is None:
-                som_class.remove_parent()
-            else:
-                som_class.parent = dropped_on_class
+        print(f"Drop Row: {drop_row}")
+
+        for som_class, index in dropped_classes.items():
+            model.moveRow(
+                index.parent(), index.row(), dropped_on_index, drop_row
+            )
+
+        # for som_class,index in dropped_classes.items():
+        #     if dropped_on_class is None:
+        #         model.beginMoveRows(index.parent(),index.row(),index.row(),QModelIndex(),model.get_row_count()-1)
+        #         som_class.remove_parent()
+        #         model.row_count_dict[QModelIndex()]+=1
+        #         model.endMoveRows()
+        #     else:
+        #         new_parent = model.class_index_dict[dropped_on_class].siblingAtColumn(0)
+        #         model.beginMoveRows(index.parent(),index.row(),index.row(),new_parent,model.get_row_count(new_parent)-1)
+        #         som_class.parent = dropped_on_class
+        #         model.row_count_dict[new_parent]+=1
+        #         model.endMoveRows()
 
     @classmethod
     def trigger_search(cls, tree: ui.ClassTreeWidget):
@@ -372,7 +406,3 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if model is None:
             return None
         model.columns = value
-
-    @classmethod
-    def context_menu_requested(cls,tree,pos):
-        trigger.create_context_menu(tree,pos)

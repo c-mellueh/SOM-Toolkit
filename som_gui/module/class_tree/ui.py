@@ -8,14 +8,12 @@ import logging
 from typing import TYPE_CHECKING
 from PySide6.QtCore import (
     QAbstractItemModel,
-    QSortFilterProxyModel,
     QModelIndex,
     Qt,
     Signal,
     QObject,
 )
-from PySide6.QtGui import QMouseEvent
-from PySide6.QtWidgets import QTreeView
+from PySide6.QtGui import QMouseEvent,QDropEvent
 import SOMcreator
 from som_gui import tool
 
@@ -44,6 +42,7 @@ class ClassView(QTreeView):
     mouse_released = Signal(QMouseEvent, QObject)
     selected_class_changed = Signal(SOMcreator.SOMClass)
     class_double_clicked = Signal(SOMcreator.SOMClass)
+    item_dropped = Signal(QDropEvent)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -78,6 +77,8 @@ class ClassView(QTreeView):
     def dragMoveEvent(self, event):
         return super().dragMoveEvent(event)
 
+    def dropEvent(self, event):
+        self.item_dropped.emit(event)
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
@@ -255,3 +256,26 @@ class ClassModel(QAbstractItemModel):
     def insertColumn(self, column, /, parent=...):
         print("Insert Column Called")
         return super().insertColumn(column, parent)
+    
+    def moveColumn(self, sourceParent, sourceColumn, destinationParent, destinationChild):
+        return super().moveColumn(sourceParent, sourceColumn, destinationParent, destinationChild)
+    
+    def moveRow(self, sourceParent:QModelIndex, sourceRow:int, destinationParent:QModelIndex, destinationChild:int):
+        self.beginMoveRows(sourceParent,sourceRow,sourceRow,destinationParent,destinationChild)
+        start_index = self.index(sourceRow,0,sourceParent)
+        som_class:SOMcreator.SOMClass = start_index.internalPointer()
+        if not destinationParent.isValid():
+            som_class.remove_parent()
+        else:
+            new_parent:SOMcreator.SOMClass = destinationParent.internalPointer()
+        
+            new_parent.add_child(som_class)
+        
+        # if sourceParent.isValid():
+        #     self.update_data()
+        #     self.row_count_dict[sourceParent]= len(self.root_classes)
+        # else:
+        self.row_count_dict[sourceParent]-=1
+        if destinationParent in self.row_count_dict:
+            self.row_count_dict[destinationParent]+=1
+        self.endMoveRows()

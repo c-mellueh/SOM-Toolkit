@@ -79,25 +79,7 @@ def refresh_class_tree(
     logging.debug(f"refresh ClassTree {tree}")
 
 
-def drop_event(
-    event: QDropEvent,
-    target: ui.ClassTreeWidget,
-    class_tree: Type[tool.ClassTree],
-    project: Type[tool.Project],
-):
-    pos = event.pos()
-    source_table = event.source()
-    return 
-    #TodO: Handle Drop Events
-    if source_table == target:
-        dropped_on_item = class_tree.get_item_from_pos(target, pos)
-        class_tree.handle_class_move(target, dropped_on_item)
-        return
-    classes = class_tree.get_classes_from_mimedata(event.mimeData())
-    if not classes:
-        return
-    for som_class in classes:
-        project.get().add_item(som_class)
+
 
 def resize_tree(index:QModelIndex,tree:ui.ClassView,class_tree:Type[tool.ClassTree]):
     """
@@ -122,21 +104,28 @@ def resize_tree(index:QModelIndex,tree:ui.ClassView,class_tree:Type[tool.ClassTr
 
     # Remove Rows (Phases)
     if old_row_count > new_row_count:
+        print(f"Remove Row {new_row_count}  | {old_row_count-1}")
         model.beginRemoveRows(index, new_row_count, old_row_count - 1)
         model.endRemoveRows()
 
     # Insert Rows (Phases)
     if old_row_count < new_row_count:
+        print(f"INsert Rows { old_row_count} | {new_row_count - 1}")
         model.beginInsertRows(index, old_row_count, new_row_count - 1)
         model.endInsertRows()
 
     # Remove Colums (UseCases)
     if old_column_count > new_column_count:
+        print(f"Remove Rows { new_column_count} | {old_column_count - 1}")
+
         model.beginRemoveColumns(index, new_column_count, old_column_count - 1)
         model.endRemoveColumns()
 
     # Insert Colums (UseCases)
     if old_column_count < new_column_count:
+        print(f"INsert Columns { old_column_count} | {new_column_count - 1}")
+
         model.beginInsertColumns(index, old_column_count, new_column_count - 1)
         model.endInsertColumns()
     #tree.update_requested.emit()
+    

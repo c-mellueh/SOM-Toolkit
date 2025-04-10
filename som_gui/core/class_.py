@@ -5,6 +5,7 @@ import SOMcreator
 from som_gui.module.class_ import constants
 import copy as cp
 import uuid
+
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.class_.prop import ClassDataDict
@@ -16,14 +17,14 @@ def init(
     main_window: Type[tool.MainWindow],
 ):
     # Add Class Activate Functions
-    def rewrite_label(som_class:SOMcreator.SOMClass|None):
+    def rewrite_label(som_class: SOMcreator.SOMClass | None):
         label = main_window.get_class_name_label()
         if som_class is None:
             label.setText("")
         else:
             label.setText(som_class.name)
-    
-    main_window.signaller.active_class_changed.connect(rewrite_label)
+
+    main_window.signaller.change_active_class.connect(rewrite_label)
     # Add Creation Checks
     class_tool.add_class_creation_check(
         "ident_property_name", class_info.is_ident_property_valid
@@ -38,7 +39,7 @@ def modify_class(
     class_info: Type[tool.ClassInfo],
     property_set: Type[tool.PropertySet],
     predefined_psets: Type[tool.PredefinedPropertySet],
-    main_window:Type[tool.MainWindow],
+    main_window: Type[tool.MainWindow],
 ):
 
     data_dict = class_info.generate_datadict()
@@ -86,7 +87,7 @@ def modify_class(
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
-    main_window.signaller.active_class_changed.emit(som_class)
+    main_window.signaller.change_active_class.emit(som_class)
 
 
 def copy_class(
@@ -171,7 +172,7 @@ def create_class(
     ident_property.project = proj
     class_info.add_plugin_infos_to_class(new_class, data_dict)
     class_tool.modify_class(new_class, data_dict)
-    parent_uuid= data_dict.get("parent_uuid")
+    parent_uuid = data_dict.get("parent_uuid")
     if parent_uuid:
         parent_class = proj.get_element_by_uuid(parent_uuid)
         parent_class.add_child(new_class)

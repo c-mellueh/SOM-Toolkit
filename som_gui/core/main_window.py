@@ -3,14 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtWidgets import QApplication
-
 import som_gui
 
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
+    from som_gui.module.class_tree import ui as class_tree_ui
 from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QItemSelection
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent, QDropEvent
 import SOMcreator
 
 initial_tree = True
@@ -38,24 +38,20 @@ def init(
         lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
     # init ClassTree
-    tree = main_window.get_class_tree()
     from som_gui.module.class_tree.ui import ClassModel
 
+    tree = main_window.get_class_tree()
     tree.setModel(ClassModel())
     class_tree.add_tree(tree)
     class_tree.connect_tree(tree)
-
     tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-    tree.customContextMenuRequested.connect(
-        lambda p: class_tree.context_menu_requested(tree, p)
-    )
-    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
+    main_window.connect_class_tree()
+
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
-    tree.class_double_clicked.connect(main_window.signaller.class_info_requested.emit)
-    tree.selected_class_changed.connect(main_window.signaller.active_class_changed.emit)
-    
+
+
 def retranslate_ui(
     main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
 ):
@@ -300,3 +296,24 @@ def add_class_tree_columns(
         lambda o, v: o.set_optional(v),
         role=Qt.ItemDataRole.CheckStateRole,
     )
+
+
+def drop_on_class_tree(
+    event: QDropEvent,
+    main_window: Type[tool.MainWindow],
+    class_tree: Type[tool.ClassTree],
+    project: Type[tool.Project],
+):
+    pos = event.pos()
+    source_table = event.source()
+    target = main_window.get_class_tree()
+    # TodO: Handle Drop Events
+    if source_table == target:
+        dropped_on_index = class_tree.get_index_from_pos(target, pos)
+        class_tree.handle_class_move(target, dropped_on_index)
+        return
+    classes = class_tree.get_classes_from_mimedata(event.mimeData())
+    if not classes:
+        return
+    for som_class in classes:
+        project.get().add_item(som_class)

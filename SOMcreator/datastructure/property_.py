@@ -117,7 +117,7 @@ class SOMProperty(BaseClass):
 
     @property
     def name(self) -> str:
-        return super(SOMProperty, self).name
+        return super(SOMProperty, self).name or ""
 
     @name.setter
     def name(self, value: str) -> None:

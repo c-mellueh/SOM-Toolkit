@@ -288,6 +288,7 @@ class BaseClass(ABC, metaclass=IterRegistry):
         self._children.add(child)
         child.parent = self  # type: ignore
 
+
     def remove_child(
         self: BASE_TYPE,
         child: BASE_TYPE,

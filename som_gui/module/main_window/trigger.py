@@ -1,14 +1,15 @@
 from som_gui import tool
 from som_gui.core import main_window as core
 from PySide6.QtCore import QModelIndex
+from PySide6.QtGui import QDropEvent
 
 TOOGLE_CONSOLE_ACTION = "toggle_console"
 import SOMcreator
 
 
 def connect():
-    core.init(tool.MainWindow, tool.ClassTree,tool.ClassInfo)
-    core.add_class_tree_columns(tool.MainWindow,tool.ClassTree)
+    core.init(tool.MainWindow, tool.ClassTree, tool.ClassInfo)
+    core.add_class_tree_columns(tool.MainWindow, tool.ClassTree)
     core.add_class_tree_shortcuts(
         tool.ClassTree,
         tool.Util,
@@ -40,3 +41,7 @@ def paint_event():
 
 def change_active_class(som_class: SOMcreator.SOMClass):
     core.set_active_class(som_class, tool.MainWindow, tool.PropertySet)
+
+
+def class_tree_item_dropped(event: QDropEvent):
+    core.drop_on_class_tree(event, tool.MainWindow, tool.ClassTree, tool.Project)
