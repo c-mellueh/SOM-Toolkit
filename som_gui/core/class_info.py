@@ -54,7 +54,7 @@ def create_class_info_widget(
         elif mode == 1:
             class_tool.signaller.modify_class.emit(active_class, data_dict)
         elif mode == 2:
-            class_tool.signaller.copy_class.emit(active_class, data_dict)
+            class_tool.signaller.copy_class.emit(active_class,data_dict)
     class_info.reset()
 
 

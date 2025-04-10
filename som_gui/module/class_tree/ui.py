@@ -254,11 +254,14 @@ class ClassModel(QAbstractItemModel):
     def supportedDropActions(self):
         return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
 
-    def removeRow(self, row, /, parent=...):
+    def removeRow(self, row, /, parent=QModelIndex()):
         return super().removeRow(row, parent)
 
-    def insertRow(self, row, /, parent=...):
-        return super().insertRow(row, parent)
+    def insertRow(self, row, /, parent=QModelIndex()):
+        self.beginInsertRows(parent,row,row)
+        self.row_count_dict[parent]+=1
+        super().insertRow(row, parent)
+        self.endInsertRows()
 
     def removeColumn(self, column, /, parent=...):
         return super().removeColumn(column, parent)
@@ -270,8 +273,6 @@ class ClassModel(QAbstractItemModel):
         return super().moveColumn(sourceParent, sourceColumn, destinationParent, destinationChild)
     
     def moveRow(self, sourceParent:QModelIndex, sourceRow:int, destinationParent:QModelIndex, destinationChild:int):
-        
-        
         self.beginMoveRows(sourceParent,sourceRow,sourceRow,destinationParent,destinationChild)
         start_index = self.index(sourceRow,0,sourceParent)
         som_class:SOMcreator.SOMClass = start_index.internalPointer()

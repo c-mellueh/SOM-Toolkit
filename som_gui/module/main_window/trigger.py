@@ -8,7 +8,7 @@ import SOMcreator
 
 
 def connect():
-    core.init(tool.MainWindow, tool.ClassTree, tool.ClassInfo)
+    core.init(tool.MainWindow, tool.ClassTree, tool.ClassInfo,tool.Class)
     core.add_class_tree_columns(tool.MainWindow, tool.ClassTree)
     core.add_class_tree_shortcuts(
         tool.ClassTree,

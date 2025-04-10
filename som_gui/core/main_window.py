@@ -20,6 +20,7 @@ def init(
     main_window: Type[tool.MainWindow],
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
+    class_tool:Type[tool.Class]
 ):
     """
     Create the actions used in the MainMenuBar. using add_action and set_action. Afterwards the Actions can be called by get_action. This is mostly used in retranslate_ui
@@ -55,8 +56,7 @@ def init(
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
-
-
+    class_tool.signaller.class_created.connect(lambda c:class_tree.insert_row_by_class(tree,c))
 def retranslate_ui(
     main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
 ):
@@ -322,3 +322,4 @@ def drop_on_class_tree(
         return
     for som_class in classes:
         project.get().add_item(som_class)
+

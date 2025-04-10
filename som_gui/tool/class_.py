@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class Signaller(QObject):
     create_class = Signal(ClassDataDict)
-    copy_class = Signal(ClassDataDict)
+    copy_class = Signal(ClassDataDict,ClassDataDict)
     modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
     class_created = Signal(SOMcreator.SOMClass)
     

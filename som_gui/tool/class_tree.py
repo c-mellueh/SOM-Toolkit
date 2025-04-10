@@ -395,3 +395,18 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if model is None:
             return None
         model.columns = value
+        
+    @classmethod
+    def insert_row_by_class(cls,tree:ui.ClassView,som_class:SOMcreator.SOMClass):
+        model = tree.model()
+        parent = som_class.parent
+        if not parent:
+            model.insertRow(model.rowCount(QModelIndex()))
+        else:
+            parent_index =  model.class_index_dict.get(parent)
+            if not parent_index:
+                return
+            row_count = model.get_row_count(parent_index)-1
+            model.insertRow(row_count,parent_index)
+        model.resize_required.emit(parent)
+       
