@@ -16,7 +16,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QMouseEvent,QDropEvent
 import SOMcreator
 from som_gui import tool
-
+from PySide6.QtCore import QSortFilterProxyModel
 
 class ClassTreeWidget(QTreeWidget):
 
@@ -55,12 +55,21 @@ class ClassView(QTreeView):
 
     # for Typehints
     def model(self) -> ClassModel:
-        return super().model()
+        model = super().model()
+        if not isinstance(model,ClassModel):
+            return model.sourceModel()
+        return model
 
+    def sort_model(self) -> QSortFilterProxyModel:
+        model = super().model()
+        if isinstance(model,ClassModel):
+            return None
+        return model
     def update_view(self):
         model = self.model()
         if model is None:
             return
+        model.update_data()
         model.dataChanged.emit(
             model.createIndex(0, 0),
             model.createIndex(model.rowCount(), model.columnCount()),
@@ -106,7 +115,7 @@ class ClassModel(QAbstractItemModel):
         if not self.project:
             return
 
-        self.root_classes = list(self.project.get_root_classes(filter=False))
+        self.root_classes = sorted(self.project.get_root_classes(filter=False),key=lambda c:c.name)
 
     def headerData(self, section, orientation, /, role=...):
         if (
@@ -208,7 +217,7 @@ class ClassModel(QAbstractItemModel):
         else:
             parent = parent.siblingAtColumn(0)
             som_class: SOMcreator.SOMClass = parent.internalPointer()
-            children = list(som_class.get_children(filter=False))
+            children = sorted(som_class.get_children(filter=False),key = lambda c:c.name)
             if 0 <= row < len(children):
                 child_class = children[row]
                 index = self.createIndex(row, column, child_class)
@@ -261,15 +270,17 @@ class ClassModel(QAbstractItemModel):
         return super().moveColumn(sourceParent, sourceColumn, destinationParent, destinationChild)
     
     def moveRow(self, sourceParent:QModelIndex, sourceRow:int, destinationParent:QModelIndex, destinationChild:int):
+        
+        
         self.beginMoveRows(sourceParent,sourceRow,sourceRow,destinationParent,destinationChild)
         start_index = self.index(sourceRow,0,sourceParent)
         som_class:SOMcreator.SOMClass = start_index.internalPointer()
         if not destinationParent.isValid():
             som_class.remove_parent()
+
         else:
             new_parent:SOMcreator.SOMClass = destinationParent.internalPointer()
-        
-            new_parent.add_child(som_class)
+            new_parent.insert_child(destinationChild,som_class)
         
         # if sourceParent.isValid():
         #     self.update_data()

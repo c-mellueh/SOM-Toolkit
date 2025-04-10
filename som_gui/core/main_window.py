@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
     from som_gui.module.class_tree import ui as class_tree_ui
-from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QItemSelection
+from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QSortFilterProxyModel
 from PySide6.QtGui import QCloseEvent, QDropEvent
 import SOMcreator
 
@@ -41,7 +41,12 @@ def init(
     from som_gui.module.class_tree.ui import ClassModel
 
     tree = main_window.get_class_tree()
-    tree.setModel(ClassModel())
+    filter_model = QSortFilterProxyModel()
+    filter_model.setSourceModel(ClassModel())
+    tree.setModel(filter_model)
+    filter_model.sourceModel().update_data()
+    # tree.setSortingEnabled(True)
+    # tree.sortByColumn(0,Qt.SortOrder.AscendingOrder)
     class_tree.add_tree(tree)
     class_tree.connect_tree(tree)
     tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)

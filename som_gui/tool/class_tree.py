@@ -72,6 +72,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
     def connect_tree(cls, tree: ui.ClassView):
         model = tree.model()
+        sort_model = tree.sort_model()
         tree.update_requested.connect(tree.update_view)
         model.updated_required.connect(model.update_data)
         model.resize_required.connect(
@@ -80,10 +81,12 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
         def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
             for index in selected.indexes():
+                index = sort_model.mapToSource(index) if sort_model else index
                 tree.selected_class_changed.emit(index.internalPointer())
                 return
 
-        def trigger_double(index):
+        def trigger_double(index:QModelIndex):
+            index = sort_model.mapToSource(index) if sort_model else index
             tree.class_double_clicked.emit(index.internalPointer())
 
         tree.selectionModel().selectionChanged.connect(trigger_selection)
@@ -364,9 +367,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
         if not cls.is_drop_indication_pos_on_item(tree):
             dropped_on_index = dropped_on_index.parent()
-
-        print(f"Drop Row: {drop_row}")
-
         for som_class, index in dropped_classes.items():
             model.moveRow(
                 index.parent(), index.row(), dropped_on_index, drop_row
