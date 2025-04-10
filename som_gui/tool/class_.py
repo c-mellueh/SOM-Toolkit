@@ -17,7 +17,8 @@ class Signaller(QObject):
     create_class = Signal(ClassDataDict)
     copy_class = Signal(ClassDataDict)
     modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
-
+    class_created = Signal(SOMcreator.SOMClass)
+    
 class Class(som_gui.core.tool.Class):
     signaller = Signaller()
     @classmethod

@@ -118,8 +118,9 @@ def copy_class(
         return
 
     new_class = cp.copy(som_class)
+    class_tool.signaller.class_created.emit(new_class)
     class_tool.signaller.modify_class.emit(new_class, data_dict)
-
+    
 
 def create_class(
     data_dict: ClassDataDict,
@@ -177,3 +178,4 @@ def create_class(
     if parent_uuid:
         parent_class = proj.get_element_by_uuid(parent_uuid)
         parent_class.add_child(new_class)
+    class_tool.signaller.class_created.emit(new_class)
