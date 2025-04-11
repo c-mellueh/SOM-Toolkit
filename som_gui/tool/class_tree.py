@@ -67,7 +67,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
     def add_tree(cls, tree: ui.ClassView):
         cls.get_properties().existing_trees.add(tree)
-        cls.get_properties().active_class[tree] = None
         cls.get_properties().context_menu_list[tree] = list()
         cls.set_column_list(tree, [])
 
@@ -97,9 +96,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
     def remove_tree(cls, tree: ui.ClassView):
         cls.get_properties().existing_trees.remove(tree)
-        cls.get_properties().active_class.pop(tree)
         cls.get_properties().context_menu_list.pop(tree)
-        cls.get_properties().first_paint.pop(tree)
 
     @classmethod
     def add_column_to_tree(
