@@ -116,6 +116,7 @@ class ClassModel(QAbstractItemModel):
         return tool.Project.get()
 
     def reset(self):
+        logging.info(f"Reset Class Model {self}")
         self.beginResetModel()
         self.root_classes = list(self.project.get_root_classes())
         self.class_index_dict = dict()
