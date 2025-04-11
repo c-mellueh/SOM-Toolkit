@@ -44,7 +44,7 @@ def create_mime_data(
 
 
 def search_class(
-    tree: ui.ClassTreeWidget,
+    tree: ui.ClassView,
     search_tool: Type[Search],
     class_tree: Type[tool.ClassTree],
     project: Type[tool.Project],
@@ -55,26 +55,30 @@ def search_class(
 
 
 def create_group(
-    tree: ui.ClassTreeWidget,
+    tree: ui.ClassView,
     class_tree: Type[tool.ClassTree],
+    class_tool:Type[tool.Class],
     project: Type[tool.Project],
 ):
+    
+    #TODO: aktualisieren
+    
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
         "ifc_mappings": ["IfcGroup"],
     }
-    is_allowed = class_tree.check_class_creation_input(d)
+    is_allowed = class_tool.check_class_creation_input(d)
     if not is_allowed:
         return
-    som_class = class_tree.create_class(d, None, None)
+    som_class = class_tool.create_class(d,None,None)
     som_class.project = project.get()
     selected_classes = set(class_tree.get_selected_classes(tree))
     class_tree.group_classes(som_class, selected_classes)
 
 
 def create_context_menu(
-    tree: ui.ClassTreeWidget, pos: QPoint, class_tree: Type[tool.ClassTree]
+    tree: ui.ClassView, pos: QPoint, class_tree: Type[tool.ClassTree]
 ):
     menu = class_tree.create_context_menu(tree)
     menu_pos = tree.viewport().mapToGlobal(pos)

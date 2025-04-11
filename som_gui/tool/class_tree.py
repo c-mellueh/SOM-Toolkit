@@ -42,6 +42,7 @@ class Signaller(QObject):
     search = Signal(ui.ClassView)
     selected_class_changed = Signal(ui.ClassView, SOMcreator.SOMClass)
     request_class_deletion = Signal(SOMcreator.SOMClass, bool)
+    request_group_selection = Signal(ui.ClassView)
 
 
 class ClassTree(som_gui.core.tool.ClassTree):
@@ -54,7 +55,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
     def connect_trigger(cls):
         cls.signaller.search.connect(trigger.search_class)
-
+        cls.signaller.request_group_selection.connect(trigger.group_selection)
     @classmethod
     def reset_tree(cls, tree: ui.ClassView):
         tree.model().reset()
@@ -129,7 +130,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         tree.model().removeColumn(column_index)
 
     @classmethod
-    def get_header_names(cls, tree: ui.ClassTreeWidget) -> list[str]:
+    def get_header_names(cls, tree: ui.ClassView) -> list[str]:
         return [x[0]() for x in cls.get_column_list(tree) or []]
 
     @classmethod
@@ -192,13 +193,13 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def get_selected_classes(
-        cls, tree: ui.ClassTreeWidget
+        cls, tree: ui.ClassView
     ) -> list[SOMcreator.SOMClass]:
         selected_indexes = cls.get_selected(tree)
         return [cls.get_class_from_index(index) for index in selected_indexes]
 
     @classmethod
-    def delete_selection(cls, tree: ui.ClassTreeWidget):
+    def delete_selection(cls, tree: ui.ClassView):
         som_classes = cls.get_selected_classes(tree)
         delete_request, recursive_deletion = tool.Popups.req_delete_items(
             [som_class.name for som_class in som_classes], item_type=1
@@ -209,21 +210,17 @@ class ClassTree(som_gui.core.tool.ClassTree):
             cls.signaller.request_class_deletion.emit(som_class, recursive_deletion)
 
     @classmethod
-    def expand_selection(cls, tree: ui.ClassTreeWidget):
+    def expand_selection(cls, tree: ui.ClassView):
         for index in tree.selectedIndexes():
             tree.expandRecursively(index)
 
     @classmethod
-    def collapse_selection(cls, tree: ui.ClassTreeWidget):
-        for item in cls.get_selected(tree):
-            tree.collapseItem(item)
+    def collapse_selection(cls, tree: ui.ClassView):
+        for index in cls.get_selected(tree):
+            tree.collapse(index)
 
     @classmethod
-    def group_selection(cls, tree: ui.ClassTreeWidget):
-        trigger.group_selection(tree)
-
-    @classmethod
-    def clear_context_menu_list(cls, tree: ui.ClassTreeWidget):
+    def clear_context_menu_list(cls, tree: ui.ClassView):
         prop = cls.get_properties()
         prop.context_menu_list[tree] = list()
 
@@ -274,7 +271,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return tree.indexAt(pos)
 
     @classmethod
-    def get_selected(cls, tree: ui.ClassView) -> list[QTreeWidgetItem]:
+    def get_selected(cls, tree: ui.ClassView) -> list[QModelIndex]:
         indexes = [
             i for i in tree.selectionModel().selectedIndexes() if i.column() == 0
         ]
@@ -289,46 +286,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if not isinstance(model, ui.ClassModel):
             index = model.mapToSource(index)
         return index.internalPointer()
-
-    @classmethod
-    def create_item(cls, tree: ui.ClassTreeWidget, som_class: SOMcreator.SOMClass):
-        item = QTreeWidgetItem()
-        item.setData(0, constants.CLASS_REFERENCE, som_class)
-        item.setText(0, som_class.name)
-        item.setFlags(
-            item.flags()
-            | Qt.ItemFlag.ItemIsUserCheckable
-            | Qt.ItemFlag.ItemIsSelectable
-        )
-        values = [
-            getter_func(som_class)
-            for n, getter_func, setter_func in cls.get_column_list(tree)
-        ]
-        for column, value in enumerate(values):
-            if isinstance(value, bool):
-                item.setCheckState(column, Qt.CheckState.Unchecked)
-        return item
-
-    @classmethod
-    def update_item(
-        cls,
-        tree: ui.ClassTreeWidget,
-        item: QTreeWidgetItem,
-        som_class: SOMcreator.SOMClass,
-    ):
-        values = [
-            getter_func(som_class)
-            for n, getter_func, setter_func in cls.get_column_list(tree)
-        ]
-
-        for column, value in enumerate(values):
-            if isinstance(value, bool):
-                cs = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
-                if item.checkState(column) != cs:
-                    item.setCheckState(column, cs)
-
-            elif item.text(column) != value:
-                item.setText(column, value)
 
     @classmethod
     def write_classes_to_mimedata(
@@ -372,10 +329,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
                 dropped_on_index,
                 model.rowCount(dropped_on_index),
             )
-
-    @classmethod
-    def trigger_search(cls, tree: ui.ClassTreeWidget):
-        trigger.search_class(tree)
 
     @classmethod
     def get_column_list(

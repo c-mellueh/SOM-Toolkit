@@ -112,7 +112,7 @@ class Class(som_gui.core.tool.Class):
         data_dict: ClassDataDict,
         property_set: SOMcreator.SOMPropertySet,
         identifier_property: SOMcreator.SOMProperty,
-    ):
+    ) -> SOMcreator.SOMClass:
         if data_dict.get("is_group", False):
             ident = str(uuid.uuid4())
             new_class = SOMcreator.SOMClass(data_dict["name"], ident, uuid=ident)

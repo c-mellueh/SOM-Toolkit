@@ -18,12 +18,8 @@ def connect():
 def connect_new_class_tree(tree:ui.ClassView):
     core.connect_new_class_tree(tree,tool.ClassTree,tool.Class)
 
-def search_class(tree: ui.ClassTreeWidget):
+def search_class(tree: ui.ClassView):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
-
-
-def drop_event(event, target: ui.ClassTreeWidget):
-    core.drop_event(event, target, tool.ClassTree, tool.Project)
 
 
 def on_new_project():
@@ -38,8 +34,8 @@ def create_mime_data(items: list[QTreeWidgetItem], mime_data):
     return core.create_mime_data(items, mime_data, tool.ClassTree)
 
 
-def group_selection(tree: ui.ClassTreeWidget):
-    core.create_group(tree, tool.ClassTree, tool.Project)
+def group_selection(tree: ui.ClassView):
+    core.create_group(tree, tool.ClassTree,tool.Class, tool.Project)
 
 def create_context_menu(tree,pos):
     core.create_context_menu(tree,pos,tool.ClassTree)

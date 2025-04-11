@@ -20,7 +20,7 @@ def init(
     main_window: Type[tool.MainWindow],
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
-    class_tool:Type[tool.Class]
+    class_tool: Type[tool.Class],
 ):
     """
     Create the actions used in the MainMenuBar. using add_action and set_action. Afterwards the Actions can be called by get_action. This is mostly used in retranslate_ui
@@ -47,7 +47,7 @@ def init(
     tree.setModel(filter_model)
     filter_model.sourceModel().update_root_classes()
     tree.setSortingEnabled(True)
-    tree.sortByColumn(0,Qt.SortOrder.AscendingOrder)
+    tree.sortByColumn(0, Qt.SortOrder.AscendingOrder)
     class_tree.add_tree(tree)
     class_tree.connect_tree(tree)
     tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -56,6 +56,7 @@ def init(
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
+
 
 def retranslate_ui(
     main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
@@ -226,7 +227,7 @@ def define_class_tree_context_menu(
     class_tree.add_context_menu_entry(
         tree,
         lambda: QCoreApplication.translate("Class", "Group"),
-        lambda: class_tree.group_selection(tree),
+        lambda: class_tree.signaller.request_group_selection(tree),
         True,
         True,
         True,
@@ -259,7 +260,9 @@ def add_class_tree_shortcuts(
         "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
     )
     util.add_shortcut(
-        "Ctrl+G", main_window.get(), lambda: class_tree.group_selection(tree)
+        "Ctrl+G",
+        main_window.get(),
+        lambda: class_tree.signaller.request_group_selection(tree),
     )
     util.add_shortcut(
         "Ctrl+F",
@@ -322,4 +325,3 @@ def drop_on_class_tree(
         return
     for som_class in classes:
         project.get().add_item(som_class)
-
