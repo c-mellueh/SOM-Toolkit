@@ -65,24 +65,6 @@ class SOMPropertySet(BaseClass):
     def is_predefined(self) -> bool:
         return self.som_class is None
 
-    @property
-    def parent(self) -> SOMPropertySet | None:
-        parent = super(SOMPropertySet, self).parent
-        return parent
-
-    @parent.setter
-    def parent(self, parent: SOMPropertySet) -> None:
-        """
-        Use parent.add_child if you want to set the parent
-
-        :param parent:
-        :return:
-        """
-        if parent is None:
-            self.remove_parent()
-            return
-        self._parent = parent  # type: ignore
-
     def remove_child(self, child: SOMPropertySet) -> None:
         super().remove_child(child)  # type: ignore
         child.remove_parent()
@@ -147,7 +129,7 @@ class SOMPropertySet(BaseClass):
         value.property_set = self
         value.project = self.project
         for child in self.get_children(filter=False):
-            child:SOMPropertySet
+            child: SOMPropertySet
             som_property: SOMcreator.SOMProperty = cp.copy(value)
             value.add_child(som_property)
             child.add_property(som_property)
@@ -157,7 +139,7 @@ class SOMPropertySet(BaseClass):
             self._properties.remove(value)
             if recursive:
                 for child in value.get_children(filter=False):
-                    child:SOMcreator.SOMProperty
+                    child: SOMcreator.SOMProperty
                     child.property_set.remove_property(child)
         else:
             logging.warning(f"{self.name} -> {value} not in SOMcreator.SOMPropertys")
@@ -177,13 +159,13 @@ class SOMPropertySet(BaseClass):
             new_property = som_property.create_child()
             child.add_property(new_property)
         return child
-    
+
     @property
     def project(self) -> SOMcreator.SOMProject | None:
         if self._project:
             return self._project
         if self.som_class:
-            return self.som_class.project  
+            return self.som_class.project
         return None
 
     @project.setter

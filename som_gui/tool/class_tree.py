@@ -85,7 +85,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
                 tree.selected_class_changed.emit(index.internalPointer())
                 return
 
-        def trigger_double(index:QModelIndex):
+        def trigger_double(index: QModelIndex):
             index = sort_model.mapToSource(index) if sort_model else index
             tree.class_double_clicked.emit(index.internalPointer())
 
@@ -151,6 +151,8 @@ class ClassTree(som_gui.core.tool.ClassTree):
         # You can't combine the parent search with expanding the Tree it needs to happen in two steps
         for item in reversed(parent_list):
             index: QModelIndex = model.class_index_dict.get(item)
+            if sort_model := tree.sort_model():
+                index = sort_model.mapFromSource(index)
             tree.expand(index)
         flags = (
             tree.selectionModel().SelectionFlag.ClearAndSelect
@@ -279,16 +281,18 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def get_selected(cls, tree: ui.ClassView) -> list[QTreeWidgetItem]:
-        indexes = [i for i in tree.selectionModel().selectedIndexes() if i.column() == 0]
+        indexes = [
+            i for i in tree.selectionModel().selectedIndexes() if i.column() == 0
+        ]
         if not indexes:
             return indexes
         model = indexes[0].model()
-        return [model.mapToSource(i)for i in indexes]    
+        return [model.mapToSource(i) for i in indexes]
 
     @classmethod
     def get_class_from_index(cls, index: QModelIndex) -> SOMcreator.SOMClass:
         model = index.model()
-        if not isinstance(model,ui.ClassModel):
+        if not isinstance(model, ui.ClassModel):
             index = model.mapToSource(index)
         return index.internalPointer()
 
@@ -360,18 +364,19 @@ class ClassTree(som_gui.core.tool.ClassTree):
             for o, index in dropped_classes.items()
             if o.parent not in dropped_classes or o.parent is None
         }
-        
-        
 
         if not cls.is_drop_indication_pos_on_item(tree):
             dropped_on_index = dropped_on_index.parent()
-        
-        if sort_model:=tree.sort_model():
+
+        if sort_model := tree.sort_model():
             dropped_on_index = sort_model.mapToSource(dropped_on_index)
-        
+
         for som_class, index in dropped_classes.items():
             model.moveRow(
-                index.parent(), index.row(), dropped_on_index, model.rowCount(dropped_on_index)
+                index.parent(),
+                index.row(),
+                dropped_on_index,
+                model.rowCount(dropped_on_index),
             )
 
     @classmethod
@@ -395,18 +400,17 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if model is None:
             return None
         model.columns = value
-        
+
     @classmethod
-    def insert_row_by_class(cls,tree:ui.ClassView,som_class:SOMcreator.SOMClass):
+    def insert_row_by_class(cls, tree: ui.ClassView, som_class: SOMcreator.SOMClass):
         model = tree.model()
         parent = som_class.parent
         if not parent:
             model.insertRow(model.rowCount(QModelIndex()))
         else:
-            parent_index =  model.class_index_dict.get(parent)
+            parent_index = model.class_index_dict.get(parent)
             if not parent_index:
                 return
-            row_count = model.get_row_count(parent_index)-1
-            model.insertRow(row_count,parent_index)
+            row_count = model.get_row_count(parent_index) - 1
+            model.insertRow(row_count, parent_index)
         model.resize_required.emit(parent)
-       

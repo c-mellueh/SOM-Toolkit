@@ -13,10 +13,11 @@ from PySide6.QtCore import (
     Signal,
     QObject,
 )
-from PySide6.QtGui import QMouseEvent,QDropEvent
+from PySide6.QtGui import QMouseEvent, QDropEvent
 import SOMcreator
 from som_gui import tool
 from PySide6.QtCore import QSortFilterProxyModel
+
 
 class ClassTreeWidget(QTreeWidget):
 
@@ -56,15 +57,16 @@ class ClassView(QTreeView):
     # for Typehints
     def model(self) -> ClassModel:
         model = super().model()
-        if not isinstance(model,ClassModel):
+        if not isinstance(model, ClassModel):
             return model.sourceModel()
         return model
 
     def sort_model(self) -> QSortFilterProxyModel:
         model = super().model()
-        if isinstance(model,ClassModel):
+        if isinstance(model, ClassModel):
             return None
         return model
+
     def update_view(self):
         model = self.model()
         if model is None:
@@ -88,6 +90,7 @@ class ClassView(QTreeView):
 
     def dropEvent(self, event):
         self.item_dropped.emit(event)
+
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
@@ -258,8 +261,8 @@ class ClassModel(QAbstractItemModel):
         return super().removeRow(row, parent)
 
     def insertRow(self, row, /, parent=QModelIndex()):
-        self.beginInsertRows(parent,row,row)
-        self.row_count_dict[parent]+=1
+        self.beginInsertRows(parent, row, row)
+        self.row_count_dict[parent] += 1
         super().insertRow(row, parent)
         self.endInsertRows()
 
@@ -268,22 +271,36 @@ class ClassModel(QAbstractItemModel):
 
     def insertColumn(self, column, /, parent=...):
         return super().insertColumn(column, parent)
-    
-    def moveColumn(self, sourceParent, sourceColumn, destinationParent, destinationChild):
-        return super().moveColumn(sourceParent, sourceColumn, destinationParent, destinationChild)
-    
-    def moveRow(self, sourceParent:QModelIndex, sourceRow:int, destinationParent:QModelIndex, destinationChild:int):
-        self.beginMoveRows(sourceParent,sourceRow,sourceRow,destinationParent,destinationChild)
-        start_index = self.index(sourceRow,0,sourceParent)
-        som_class:SOMcreator.SOMClass = start_index.internalPointer()
+
+    def moveColumn(
+        self, sourceParent, sourceColumn, destinationParent, destinationChild
+    ):
+        return super().moveColumn(
+            sourceParent, sourceColumn, destinationParent, destinationChild
+        )
+
+    def moveRow(
+        self,
+        sourceParent: QModelIndex,
+        sourceRow: int,
+        destinationParent: QModelIndex,
+        destinationChild: int,
+    ):
+        if sourceParent.siblingAtColumn(0) == destinationParent.siblingAtColumn(0):
+            return
+        self.beginMoveRows(
+            sourceParent, sourceRow, sourceRow, destinationParent, destinationChild
+        )
+        start_index = self.index(sourceRow, 0, sourceParent)
+        som_class: SOMcreator.SOMClass = start_index.internalPointer()
         if not destinationParent.isValid():
             som_class.remove_parent()
             self.root_classes.append(som_class)
         else:
-            new_parent:SOMcreator.SOMClass = destinationParent.internalPointer()
+            new_parent: SOMcreator.SOMClass = destinationParent.internalPointer()
             new_parent.add_child(som_class)
-        self.row_count_dict[sourceParent]-=1
+        self.row_count_dict[sourceParent] -= 1
         if destinationParent in self.row_count_dict:
-            self.row_count_dict[destinationParent]+=1
+            self.row_count_dict[destinationParent] += 1
         self.resize_required.emit(QModelIndex())
         self.endMoveRows()
