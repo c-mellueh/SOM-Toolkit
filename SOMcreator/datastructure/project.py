@@ -58,26 +58,36 @@ class SOMProject(object):
         self.active_usecases: list[int] = [0]
         self.change_log = list()
 
+    def is_in_project(self,item) ->bool:
+        return item in self._items
+
     def add_item(self, item: BaseClass, overwrite_filter_matrix=True):
+        added_items = list()
+        if item in self._items:
+            return added_items
         self._items.add(item)
+        added_items.append(item)
         item._project = self
         if overwrite_filter_matrix:
             item._filter_matrix = self.create_filter_matrix()
 
+        # if item.parent and item.parent not in self._items:
+        #     added_items+=self.add_item(item.parent)
+
         for child in item.get_children(filter = False):
-            self.add_item(child)
+            added_items+=self.add_item(child)
             
         if isinstance(item,SOMcreator.SOMClass):
             for property_set in item.get_property_sets(filter = False):
-                self.add_item(property_set)
+                added_items+=self.add_item(property_set)
 
         if isinstance(item,SOMcreator.SOMPropertySet):
             for som_property in item.get_properties(filter = False):
-                self.add_item(som_property)
+                added_items+=self.add_item(som_property)
 
         if not item._filter_matrix and self.get_filter_matrix():
             item._filter_matrix = self.create_filter_matrix(True)
-            return
+            return added_items
 
         phase_count = len(item._filter_matrix)
         usecase_count = len(item._filter_matrix[0])
@@ -86,7 +96,7 @@ class SOMProject(object):
             self.get_usecases()
         ):
             item._filter_matrix = self.create_filter_matrix(True)
-
+        return added_items
 
     def remove_item(self, item: BaseClass):
         if item in self._items:

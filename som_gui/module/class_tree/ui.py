@@ -93,7 +93,7 @@ class ClassView(QTreeView):
     def dropEvent(self, event):
         self.item_dropped.emit(event)
 
-
+   
 class ClassModel(QAbstractItemModel):
     
     def __init__(self, *args, **kwargs):
@@ -339,3 +339,6 @@ class ClassModel(QAbstractItemModel):
         if destinationParent in self.row_count_dict:
             self.row_count_dict[destinationParent] += 1
         self.endMoveRows()
+
+    def mimeData(self, indexes):
+         return trigger.create_mime_data(indexes,super().mimeData(indexes))

@@ -87,6 +87,9 @@ class BaseClass(ABC, metaclass=IterRegistry):
     ) -> None:
         self._children: set[BASE_TYPE] = set()
         self._project: None | SOMcreator.SOMProject = None
+        self._name = name
+        self._parent: BASE_TYPE | None = None  # type: ignore
+
         if project is not None:
             project.add_item(self)
 
@@ -97,8 +100,6 @@ class BaseClass(ABC, metaclass=IterRegistry):
                 filter_matrix = []
 
         self._filter_matrix: list[list[bool]] = copy.deepcopy(filter_matrix)
-        self._parent: BASE_TYPE | None = None  # type: ignore
-        self._name = name
         self._mapping_dict = {
             value_constants.SHARED_PARAMETERS: True,
             SOMcreator.datastructure.som_json.IFC_MAPPING: True,

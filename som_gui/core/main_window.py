@@ -315,13 +315,22 @@ def drop_on_class_tree(
     pos = event.pos()
     source_table = event.source()
     target = main_window.get_class_tree()
-    # TodO: Handle Drop Events
+
     if source_table == target:
         dropped_on_index = class_tree.get_index_from_pos(target, pos)
         class_tree.handle_class_move(target, dropped_on_index)
         return
+    
     classes = class_tree.get_classes_from_mimedata(event.mimeData())
     if not classes:
         return
+    addded_items = list()
+    proj = project.get()
     for som_class in classes:
-        project.get().add_item(som_class)
+        addded_items+= proj.add_item(som_class)
+
+    for item in set(addded_items):
+        if not isinstance(item,(SOMcreator.SOMClass,SOMcreator.SOMProperty,SOMcreator.SOMAggregation,SOMcreator.SOMPropertySet)):
+            continue
+        if not proj.is_in_project(item.parent):
+            item.remove_parent()

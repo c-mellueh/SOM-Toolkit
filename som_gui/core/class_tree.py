@@ -36,9 +36,9 @@ def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
     return
 
 def create_mime_data(
-    items: QTreeWidgetItem, mime_data: QMimeData, class_tree: Type[tool.ClassTree]
+    indexes: QModelIndex, mime_data: QMimeData, class_tree: Type[tool.ClassTree]
 ):
-    classes = {class_tree.get_class_from_index(i) for i in items}
+    classes = {class_tree.get_class_from_index(i) for i in indexes}
     class_tree.write_classes_to_mimedata(classes, mime_data)
     return mime_data
 
