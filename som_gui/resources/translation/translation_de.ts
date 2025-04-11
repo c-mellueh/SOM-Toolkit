@@ -1637,22 +1637,32 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Einheit</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="286"/>
+        <location filename="tool/property_table.py" line="169"/>
+        <source>Predefined PropertySet</source>
+        <translation>Vortefiniertem PropertySet</translation>
+    </message>
+    <message>
+        <location filename="tool/property_table.py" line="170"/>
+        <source>Inherits Settings from {}</source>
+        <translation>Erbt Einstellungen von {}</translation>
+    </message>
+    <message>
+        <location filename="tool/property_table.py" line="292"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="317"/>
+        <location filename="tool/property_table.py" line="323"/>
         <source>Delete (with subproperties)</source>
         <translation>Löschen (mit Kindmerkmalen)</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="318"/>
+        <location filename="tool/property_table.py" line="324"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="341"/>
+        <location filename="tool/property_table.py" line="347"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
     </message>
@@ -1996,7 +2006,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="368"/>
+        <location filename="tool/property_table.py" line="374"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>
