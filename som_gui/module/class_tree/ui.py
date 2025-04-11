@@ -270,9 +270,8 @@ class ClassModel(QAbstractItemModel):
         self.endRemoveRows()
 
     def insertRow(self, row, /, parent=QModelIndex()):
-        self.beginInsertRows(parent, row, row)
         self.row_count_dict[parent] += 1
-        super().insertRow(row, parent)
+        self.beginInsertRows(parent, row, row)
         self.endInsertRows()
 
     def removeColumn(self, column: int, parent=QModelIndex()):

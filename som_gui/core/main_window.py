@@ -56,7 +56,7 @@ def init(
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
-    class_tool.signaller.class_created.connect(lambda c:class_tree.insert_row_by_class(tree,c))
+
 def retranslate_ui(
     main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
 ):

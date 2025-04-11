@@ -142,6 +142,7 @@ def create_class(
     if is_group:
         new_class = SOMcreator.SOMClass(name, project=proj)
         new_class.description = description
+        class_tool.signaller.class_created.emit(new_class)
         return
 
     # handle identifier

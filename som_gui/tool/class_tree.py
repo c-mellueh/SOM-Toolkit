@@ -402,7 +402,8 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         parent = som_class.parent
         if not parent:
-            model.insertRow(model.rowCount(QModelIndex()))
+            model.root_classes.append(som_class)
+            model.insertRow(model.get_row_count(QModelIndex())-1)
         else:
             parent_index = model.class_index_dict.get(parent)
             if not parent_index:
