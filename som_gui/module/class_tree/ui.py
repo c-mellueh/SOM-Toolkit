@@ -258,7 +258,10 @@ class ClassModel(QAbstractItemModel):
         return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
 
     def removeRow(self, row, /, parent=QModelIndex()):
-        return super().removeRow(row, parent)
+        self.beginRemoveRows(parent,row,row)
+        if parent in self.row_count_dict:
+            self.row_count_dict[parent]-=1
+        self.endRemoveRows()        
 
     def insertRow(self, row, /, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
@@ -266,18 +269,23 @@ class ClassModel(QAbstractItemModel):
         super().insertRow(row, parent)
         self.endInsertRows()
 
-    def removeColumn(self, column, /, parent=...):
-        return super().removeColumn(column, parent)
+    def removeColumn(self, column:int, parent=QModelIndex()):
+        self.beginRemoveColumns(parent,column,column)
+        self.columns.pop(column)
+        self.endRemoveColumns()
 
-    def insertColumn(self, column, /, parent=...):
-        return super().insertColumn(column, parent)
+    def insertColumn(self, column_index:int,column_functions:tuple[callable,callable,callable,callable], parent=QModelIndex()):
+        self.beginInsertColumns(parent,column_index,column_index)
+        self.columns.insert(column_index,column_functions)
+        self.endInsertColumns()
 
     def moveColumn(
         self, sourceParent, sourceColumn, destinationParent, destinationChild
     ):
-        return super().moveColumn(
-            sourceParent, sourceColumn, destinationParent, destinationChild
-        )
+        self.beginMoveColumns(sourceParent,sourceColumn,sourceColumn,destinationParent,destinationChild)
+        column_funcs = self.columns.pop(sourceColumn)
+        self.columns.insert(destinationChild,column_funcs)
+        self.endMoveColumns()
 
     def moveRow(
         self,
