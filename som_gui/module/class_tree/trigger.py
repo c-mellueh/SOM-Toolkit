@@ -22,10 +22,6 @@ def search_class(tree: ui.ClassTreeWidget):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
 
 
-def repaint_event(tree: ui.ClassTreeWidget):
-    core.refresh_class_tree(tree, tool.ClassTree, tool.Project)
-
-
 def drop_event(event, target: ui.ClassTreeWidget):
     core.drop_event(event, target, tool.ClassTree, tool.Project)
 
@@ -44,9 +40,6 @@ def create_mime_data(items: list[QTreeWidgetItem], mime_data):
 
 def group_selection(tree: ui.ClassTreeWidget):
     core.create_group(tree, tool.ClassTree, tool.Project)
-
-def resize_tree(index:QModelIndex,tree:ui.ClassView):
-    core.resize_tree(index,tree,tool.ClassTree)
 
 def create_context_menu(tree,pos):
     core.create_context_menu(tree,pos,tool.ClassTree)

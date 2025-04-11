@@ -45,7 +45,7 @@ def init(
     filter_model = QSortFilterProxyModel()
     filter_model.setSourceModel(ClassModel())
     tree.setModel(filter_model)
-    filter_model.sourceModel().update_data()
+    filter_model.sourceModel().update_root_classes()
     tree.setSortingEnabled(True)
     tree.sortByColumn(0,Qt.SortOrder.AscendingOrder)
     class_tree.add_tree(tree)

@@ -73,7 +73,7 @@ class ClassView(QTreeView):
         model = self.model()
         if model is None:
             return
-        model.update_data()
+        model.update_root_classes()
         model.dataChanged.emit(
             model.createIndex(0, 0),
             model.createIndex(model.rowCount(), model.columnCount()),
@@ -95,9 +95,7 @@ class ClassView(QTreeView):
 
 
 class ClassModel(QAbstractItemModel):
-    updated_required = Signal()
-    resize_required = Signal(QModelIndex)
-
+    
     def __init__(self, *args, **kwargs):
         self.root_classes = list(self.project.get_root_classes()) if self.project else list()
         # We use this function because project.get_root_classes() takes too long to call every time
@@ -122,9 +120,10 @@ class ClassModel(QAbstractItemModel):
         self.root_classes = list(self.project.get_root_classes())
         self.class_index_dict = dict()
         self.row_count_dict = {QModelIndex(): len(self.root_classes)}
+        self.old_column_count = len(self.columns)
         self.endResetModel()
 
-    def update_data(self):
+    def update_root_classes(self):
         if not self.project:
             return
         old_root_classes = set(self.root_classes)
@@ -162,7 +161,7 @@ class ClassModel(QAbstractItemModel):
     def columnCount(self, parent=QModelIndex()):
         column_count = len(self.columns)
         if column_count != self.old_column_count:
-            self.resize_required.emit(QModelIndex())
+            self.reset()
             self.old_column_count = column_count
         return len(self.columns)
 
@@ -178,7 +177,7 @@ class ClassModel(QAbstractItemModel):
         new_result = self.get_row_count(parent)
         old_result = self.row_count_dict.get(parent)
         if old_result != new_result and old_result is not None:
-            self.resize_required.emit(parent)
+            self.reset()
         if old_result is None:
             self.row_count_dict[parent] = new_result
         return new_result
@@ -228,7 +227,7 @@ class ClassModel(QAbstractItemModel):
                 if not self.root_classes:
                     return QModelIndex()
                 logging.debug("Index Exmits resize Required")
-                self.resize_required.emit(parent)
+                self.reset()
                 return QModelIndex()
             som_class = self.root_classes[row]
             index = self.createIndex(row, column, som_class)
@@ -242,7 +241,7 @@ class ClassModel(QAbstractItemModel):
                 index = self.createIndex(row, column, child_class)
                 return index
             else:
-                self.resize_required.emit(parent)
+                self.reset()
         return QModelIndex()
 
     def createIndex(self, row, column, pointer=None):

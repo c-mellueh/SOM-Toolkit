@@ -75,10 +75,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         sort_model = tree.sort_model()
         tree.update_requested.connect(tree.update_view)
-        model.updated_required.connect(model.update_data)
-        model.resize_required.connect(
-            lambda index, t=tree: trigger.resize_tree(index, t)
-        )
 
         def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
             for index in selected.indexes():
