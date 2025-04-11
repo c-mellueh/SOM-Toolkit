@@ -41,7 +41,8 @@ from som_gui.module.class_tree import ui
 class Signaller(QObject):
     search = Signal(ui.ClassView)
     selected_class_changed = Signal(ui.ClassView, SOMcreator.SOMClass)
-    request_class_deletion = Signal(SOMcreator.SOMClass,bool)
+    request_class_deletion = Signal(SOMcreator.SOMClass, bool)
+
 
 class ClassTree(som_gui.core.tool.ClassTree):
     signaller = Signaller()
@@ -56,7 +57,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def reset_tree(cls, tree: ui.ClassView):
-        tree.update_requested.emit()
+        tree.model().reset()
 
     @classmethod
     def get_trees(cls) -> set[ui.ClassView]:
@@ -119,10 +120,11 @@ class ClassTree(som_gui.core.tool.ClassTree):
             setter_func = lambda *a: None
         model = tree.model()
         if logical_index < 0:
-            logical_index = model.old_column_count+logical_index
+            logical_index = model.old_column_count + logical_index
             print(f"New INdex: {logical_index}")
-        model.insertColumn(logical_index,QModelIndex(),(name_getter, getter_func, setter_func, role))
-
+        model.insertColumn(
+            logical_index, QModelIndex(), (name_getter, getter_func, setter_func, role)
+        )
 
     @classmethod
     def remove_column_from_tree(cls, tree: ui.ClassView, column_name: str):
@@ -403,7 +405,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         parent = som_class.parent
         if not parent:
             model.root_classes.append(som_class)
-            model.insertRow(model.get_row_count(QModelIndex())-1)
+            model.insertRow(model.get_row_count(QModelIndex()) - 1)
         else:
             parent_index = model.class_index_dict.get(parent)
             if not parent_index:
@@ -427,8 +429,13 @@ class ClassTree(som_gui.core.tool.ClassTree):
             if not parent_index:
                 return
         for child_logical_index in reversed(range(model.get_row_count(class_index))):
-            model.moveRow(class_index,child_logical_index,parent_index,model.get_row_count(parent_index))
+            model.moveRow(
+                class_index,
+                child_logical_index,
+                parent_index,
+                model.get_row_count(parent_index),
+            )
 
         model.class_index_dict.pop(som_class)
         model.row_count_dict[class_index] = 0
-        model.removeRow(class_index.row(),parent_index)
+        model.removeRow(class_index.row(), parent_index)

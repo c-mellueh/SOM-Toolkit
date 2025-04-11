@@ -19,6 +19,11 @@ if TYPE_CHECKING:
 from som_gui.module.class_tree import ui
 
 import uuid
+
+def update_class_trees(class_tree:Type[tool.ClassTree],project:Type[tool.Project]):
+    for tree in class_tree.get_trees():
+        class_tree.reset_tree(tree)
+
 def connect_signals(class_tree: Type[tool.ClassTree],class_tool:Type[tool.Class]) -> None:
     class_tree.connect_trigger()
     class_tree.signaller.request_class_deletion.connect(class_tool.delete_class)

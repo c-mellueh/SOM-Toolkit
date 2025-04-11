@@ -99,9 +99,8 @@ class ClassModel(QAbstractItemModel):
     resize_required = Signal(QModelIndex)
 
     def __init__(self, *args, **kwargs):
-        self.root_classes = (
-            list()
-        )  # We use this function because project.get_root_classes() takes too long to call every time
+        self.root_classes = list(self.project.get_root_classes()) if self.project else list()
+        # We use this function because project.get_root_classes() takes too long to call every time
         # (name getter, value_getter, value_setter,role)
         self.columns: list[tuple[callable, callable, callable, Qt.ItemDataRole]] = (
             list()
@@ -117,6 +116,13 @@ class ClassModel(QAbstractItemModel):
     @property
     def project(self):
         return tool.Project.get()
+
+    def reset(self):
+        self.beginResetModel()
+        self.root_classes = list(self.project.get_root_classes())
+        self.class_index_dict = dict()
+        self.row_count_dict = {QModelIndex(): len(self.root_classes)}
+        self.endResetModel()
 
     def update_data(self):
         if not self.project:
@@ -219,7 +225,7 @@ class ClassModel(QAbstractItemModel):
     def index(self, row: int, column: int, parent: QModelIndex):
         if not parent.isValid():
             if row >= len(list(self.root_classes)):
-                if  not self.root_classes:
+                if not self.root_classes:
                     return QModelIndex()
                 logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
@@ -279,7 +285,7 @@ class ClassModel(QAbstractItemModel):
     def removeColumn(self, column: int, parent=QModelIndex()):
         self.beginRemoveColumns(parent, column, column)
         self.columns.pop(column)
-        self.old_column_count-=1
+        self.old_column_count -= 1
         self.endRemoveColumns()
 
     def insertColumn(
@@ -289,7 +295,7 @@ class ClassModel(QAbstractItemModel):
         column_functions: tuple[callable, callable, callable, callable] = tuple(),
     ):
         self.beginInsertColumns(parent, column_index, column_index)
-        self.old_column_count+=1
+        self.old_column_count += 1
         self.columns.insert(column_index, column_functions)
         self.endInsertColumns()
 

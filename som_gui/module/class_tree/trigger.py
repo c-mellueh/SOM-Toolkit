@@ -31,7 +31,7 @@ def drop_event(event, target: ui.ClassTreeWidget):
 
 
 def on_new_project():
-    return
+    core.update_class_trees(tool.ClassTree,tool.Project)
 
 
 def retranslate_ui():

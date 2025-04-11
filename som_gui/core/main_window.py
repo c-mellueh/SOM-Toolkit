@@ -245,7 +245,7 @@ def one_new_project(
     main_window: Type[tool.MainWindow],
     class_tree: Type[tool.ClassTree],
 ):
-    class_tree.reset_tree(main_window.get_class_tree())
+    return
 
 
 def add_class_tree_shortcuts(
