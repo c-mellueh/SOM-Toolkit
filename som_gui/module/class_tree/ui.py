@@ -219,6 +219,8 @@ class ClassModel(QAbstractItemModel):
     def index(self, row: int, column: int, parent: QModelIndex):
         if not parent.isValid():
             if row >= len(list(self.root_classes)):
+                if  not self.root_classes:
+                    return QModelIndex()
                 logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
                 return QModelIndex()
@@ -277,15 +279,17 @@ class ClassModel(QAbstractItemModel):
     def removeColumn(self, column: int, parent=QModelIndex()):
         self.beginRemoveColumns(parent, column, column)
         self.columns.pop(column)
+        self.old_column_count-=1
         self.endRemoveColumns()
 
     def insertColumn(
         self,
         column_index: int,
-        column_functions: tuple[callable, callable, callable, callable],
         parent=QModelIndex(),
+        column_functions: tuple[callable, callable, callable, callable] = tuple(),
     ):
         self.beginInsertColumns(parent, column_index, column_index)
+        self.old_column_count+=1
         self.columns.insert(column_index, column_functions)
         self.endInsertColumns()
 

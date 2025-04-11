@@ -108,27 +108,27 @@ class ClassTree(som_gui.core.tool.ClassTree):
         cls,
         tree: ui.ClassView,
         name_getter,
-        index,
+        logical_index,
         getter_func,
         setter_func=None,
         role=Qt.ItemDataRole.DisplayRole,
     ):
         if tree not in cls.get_trees():
             return
-        cl = cls.get_column_list(tree)
         if setter_func is None:
             setter_func = lambda *a: None
-        cl.insert(index, (name_getter, getter_func, setter_func, role))
-        cls.set_column_list(tree, cl)
-        cls.reset_tree(tree)
+        model = tree.model()
+        if logical_index < 0:
+            logical_index = model.old_column_count+logical_index
+            print(f"New INdex: {logical_index}")
+        model.insertColumn(logical_index,QModelIndex(),(name_getter, getter_func, setter_func, role))
+
 
     @classmethod
     def remove_column_from_tree(cls, tree: ui.ClassView, column_name: str):
         header_texts = cls.get_header_names(tree)
         column_index = header_texts.index(column_name)
-        cls.get_column_list(tree).pop(column_index)
-        cls.reset_tree(tree)
-        tree.model().resize_required.emit(QModelIndex())
+        tree.model().removeColumn(column_index)
 
     @classmethod
     def get_header_names(cls, tree: ui.ClassTreeWidget) -> list[str]:
