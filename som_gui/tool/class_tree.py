@@ -409,4 +409,25 @@ class ClassTree(som_gui.core.tool.ClassTree):
                 return
             row_count = model.get_row_count(parent_index) - 1
             model.insertRow(row_count, parent_index)
-        model.resize_required.emit(parent)
+
+    @classmethod
+    def remove_row_by_class(cls, tree: ui.ClassView, som_class: SOMcreator.SOMClass):
+        model = tree.model()
+        parent = som_class.parent
+        class_index = model.class_index_dict.get(som_class)
+        if not class_index:
+            return
+        if not parent:
+            if not som_class in model.root_classes:
+                return
+            parent_index = QModelIndex()
+        else:
+            parent_index = model.class_index_dict.get(parent)
+            if not parent_index:
+                return
+        for child_logical_index in reversed(range(model.get_row_count(class_index))):
+            model.moveRow(class_index,child_logical_index,parent_index,model.get_row_count(parent_index))
+
+        model.class_index_dict.pop(som_class)
+        model.row_count_dict[class_index] = 0
+        model.removeRow(class_index.row(),parent_index)

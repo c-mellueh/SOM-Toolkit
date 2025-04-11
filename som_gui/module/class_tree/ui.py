@@ -19,6 +19,7 @@ from som_gui import tool
 from PySide6.QtCore import QSortFilterProxyModel
 from . import trigger
 
+
 class ClassTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):
@@ -50,7 +51,7 @@ class ClassView(QTreeView):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTreeView.SelectionMode.SingleSelection)
         trigger.connect_new_class_tree(self)
-        
+
     def enterEvent(self, event):
         self.update_requested.emit()
         return super().enterEvent(event)
@@ -98,7 +99,9 @@ class ClassModel(QAbstractItemModel):
     resize_required = Signal(QModelIndex)
 
     def __init__(self, *args, **kwargs):
-        self.root_classes = list()
+        self.root_classes = (
+            list()
+        )  # We use this function because project.get_root_classes() takes too long to call every time
         # (name getter, value_getter, value_setter,role)
         self.columns: list[tuple[callable, callable, callable, Qt.ItemDataRole]] = (
             list()
@@ -166,13 +169,13 @@ class ClassModel(QAbstractItemModel):
         return result
 
     def rowCount(self, parent=QModelIndex()):
-        result = self.get_row_count(parent)
+        new_result = self.get_row_count(parent)
         old_result = self.row_count_dict.get(parent)
-        if old_result != result and old_result is not None:
+        if old_result != new_result and old_result is not None:
             self.resize_required.emit(parent)
         if old_result is None:
-            self.row_count_dict[parent] = result
-        return result
+            self.row_count_dict[parent] = new_result
+        return new_result
 
     def data(self, index: QModelIndex, role: Qt.ItemDataRole):
         if not index.isValid():
@@ -259,10 +262,12 @@ class ClassModel(QAbstractItemModel):
         return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
 
     def removeRow(self, row, /, parent=QModelIndex()):
-        self.beginRemoveRows(parent,row,row)
+        self.beginRemoveRows(parent, row, row)
         if parent in self.row_count_dict:
-            self.row_count_dict[parent]-=1
-        self.endRemoveRows()        
+            self.row_count_dict[parent] -= 1
+        if not parent.isValid():
+            self.root_classes.pop(row)
+        self.endRemoveRows()
 
     def insertRow(self, row, /, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
@@ -270,22 +275,33 @@ class ClassModel(QAbstractItemModel):
         super().insertRow(row, parent)
         self.endInsertRows()
 
-    def removeColumn(self, column:int, parent=QModelIndex()):
-        self.beginRemoveColumns(parent,column,column)
+    def removeColumn(self, column: int, parent=QModelIndex()):
+        self.beginRemoveColumns(parent, column, column)
         self.columns.pop(column)
         self.endRemoveColumns()
 
-    def insertColumn(self, column_index:int,column_functions:tuple[callable,callable,callable,callable], parent=QModelIndex()):
-        self.beginInsertColumns(parent,column_index,column_index)
-        self.columns.insert(column_index,column_functions)
+    def insertColumn(
+        self,
+        column_index: int,
+        column_functions: tuple[callable, callable, callable, callable],
+        parent=QModelIndex(),
+    ):
+        self.beginInsertColumns(parent, column_index, column_index)
+        self.columns.insert(column_index, column_functions)
         self.endInsertColumns()
 
     def moveColumn(
         self, sourceParent, sourceColumn, destinationParent, destinationChild
     ):
-        self.beginMoveColumns(sourceParent,sourceColumn,sourceColumn,destinationParent,destinationChild)
+        self.beginMoveColumns(
+            sourceParent,
+            sourceColumn,
+            sourceColumn,
+            destinationParent,
+            destinationChild,
+        )
         column_funcs = self.columns.pop(sourceColumn)
-        self.columns.insert(destinationChild,column_funcs)
+        self.columns.insert(destinationChild, column_funcs)
         self.endMoveColumns()
 
     def moveRow(
@@ -309,7 +325,8 @@ class ClassModel(QAbstractItemModel):
             new_parent: SOMcreator.SOMClass = destinationParent.internalPointer()
             new_parent.add_child(som_class)
         self.row_count_dict[sourceParent] -= 1
+        if not sourceParent.isValid():
+            self.root_classes.pop(sourceRow)
         if destinationParent in self.row_count_dict:
             self.row_count_dict[destinationParent] += 1
-        self.resize_required.emit(QModelIndex())
         self.endMoveRows()

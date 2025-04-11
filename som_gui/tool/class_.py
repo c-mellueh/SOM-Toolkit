@@ -165,6 +165,6 @@ class Class(som_gui.core.tool.Class):
             if recursive:
                 for child in list(c.get_children(filter=False)):
                     iterate_deletion(child)
-            c.delete()
             cls.signaller.class_deleted.emit(c)
+            c.delete()
         iterate_deletion(som_class)

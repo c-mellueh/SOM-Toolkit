@@ -24,7 +24,7 @@ def connect_signals(class_tree: Type[tool.ClassTree],class_tool:Type[tool.Class]
     class_tree.signaller.request_class_deletion.connect(class_tool.delete_class)
 
 def connect_new_class_tree(tree:ui.ClassView,class_tree:Type[tool.ClassTree],class_tool:Type[tool.Class]):
-    pass
+    class_tool.signaller.class_deleted.connect(lambda c:class_tree.remove_row_by_class(tree,c))
 
 def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
     return
