@@ -163,9 +163,15 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         if (
             not row_items[0].data(LINKSTATE) == som_property.is_child
         ):  # only update if data changes else infinite update loop
-            row_items[0].setIcon(
-                get_link_icon() if som_property.is_child else QIcon()
-            )  # update Icon
+            if som_property.is_child:
+                row_items[0].setIcon(get_link_icon())
+                parent = som_property.parent.property_set
+                class_name = QCoreApplication.translate("PropertyTable", "Predefined PropertySet") if parent.is_predefined else parent.som_class.name
+                text = QCoreApplication.translate("PropertyTable", "Inherits Settings from {}").format(class_name)
+                row_items[0].setToolTip(QCoreApplication.translate("PropertyTable", text))
+            else:
+             row_items[0].setIcon(QIcon())
+             row_items[0].setToolTip("")
             row_items[0].setData(LINKSTATE, som_property.is_child)
 
     @classmethod
