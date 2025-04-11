@@ -17,7 +17,7 @@ from PySide6.QtGui import QMouseEvent, QDropEvent
 import SOMcreator
 from som_gui import tool
 from PySide6.QtCore import QSortFilterProxyModel
-
+from . import trigger
 
 class ClassTreeWidget(QTreeWidget):
 
@@ -49,7 +49,8 @@ class ClassView(QTreeView):
         super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTreeView.SelectionMode.SingleSelection)
-
+        trigger.connect_new_class_tree(self)
+        
     def enterEvent(self, event):
         self.update_requested.emit()
         return super().enterEvent(event)

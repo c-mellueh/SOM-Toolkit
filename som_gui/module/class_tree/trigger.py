@@ -15,6 +15,8 @@ def connect():
     core.connect_signals(tool.ClassTree,tool.Class)
     pass
 
+def connect_new_class_tree(tree:ui.ClassView):
+    core.connect_new_class_tree(tree,tool.ClassTree,tool.Class)
 
 def search_class(tree: ui.ClassTreeWidget):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
