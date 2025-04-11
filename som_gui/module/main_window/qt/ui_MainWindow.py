@@ -19,10 +19,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QSplitter,
-    QStatusBar, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
-    QWidget)
+    QStatusBar, QTableWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.class_tree.ui import ClassTreeWidget
+from som_gui.module.class_tree.ui import ClassView
 from som_gui.module.property_set.ui import PsetTableWidget
 from som_gui.module.property_table.ui import PropertyTable
 
@@ -30,7 +29,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1512, 740)
+        MainWindow.resize(1510, 754)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.actiondqwd = QAction(MainWindow)
         self.actiondqwd.setObjectName(u"actiondqwd")
@@ -94,10 +93,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_classes.addLayout(self.gridLayout_classes)
 
-        self.tree_class = ClassTreeWidget(self.layoutWidget)
-        __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1");
-        self.tree_class.setHeaderItem(__qtreewidgetitem)
+        self.tree_class = ClassView(self.layoutWidget)
         self.tree_class.setObjectName(u"tree_class")
         self.tree_class.setEnabled(True)
         self.tree_class.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -110,7 +106,6 @@ class Ui_MainWindow(object):
         self.tree_class.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.tree_class.setSortingEnabled(True)
         self.tree_class.setExpandsOnDoubleClick(False)
-        self.tree_class.header().setProperty(u"showSortIndicator", True)
 
         self.verticalLayout_classes.addWidget(self.tree_class)
 
@@ -186,7 +181,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1512, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1510, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuExport = QMenu(self.menuFile)

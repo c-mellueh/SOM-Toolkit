@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Callable
 from som_gui.module.class_info.prop import PluginProperty
 from som_gui.module.class_.prop import ClassDataDict
 from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication,QObject,Slot
 import copy as cp
 import uuid
 import logging

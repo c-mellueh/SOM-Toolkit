@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import logging
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication,QObject,Signal
 import som_gui.core.tool
 import som_gui
 from som_gui import tool
@@ -13,11 +13,24 @@ import uuid
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties
 
-
+class Signaller(QObject):
+    create_class = Signal(ClassDataDict)
+    copy_class = Signal(ClassDataDict,ClassDataDict)
+    modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
+    class_created = Signal(SOMcreator.SOMClass)
+    class_deleted = Signal(SOMcreator.SOMClass)
 class Class(som_gui.core.tool.Class):
+    signaller = Signaller()
     @classmethod
     def get_properties(cls) -> ClassProperties:
         return som_gui.ClassProperties
+
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.create_class.connect(trigger.create_class_called)
+        cls.signaller.copy_class.connect(trigger.copy_class_called)
+        cls.signaller.modify_class.connect(trigger.modify_class_called)
 
     @classmethod
     def group_classes(
@@ -99,7 +112,7 @@ class Class(som_gui.core.tool.Class):
         data_dict: ClassDataDict,
         property_set: SOMcreator.SOMPropertySet,
         identifier_property: SOMcreator.SOMProperty,
-    ):
+    ) -> SOMcreator.SOMClass:
         if data_dict.get("is_group", False):
             ident = str(uuid.uuid4())
             new_class = SOMcreator.SOMClass(data_dict["name"], ident, uuid=ident)
@@ -134,34 +147,6 @@ class Class(som_gui.core.tool.Class):
         return pset.get_property_by_name(property_name)
 
     @classmethod
-    def trigger_class_creation(
-        cls,
-        data_dict: ClassDataDict,
-    ):
-        trigger.create_class_called(data_dict)
-
-    @classmethod
-    def trigger_class_copy(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.copy_class_called(som_class, data_dict)
-
-    @classmethod
-    def trigger_class_modification(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.modify_class_called(som_class, data_dict)
-
-    @classmethod
-    def add_class_activate_function(cls, func: Callable):
-        cls.get_properties().class_activate_functions.append(func)
-
-    @classmethod
-    def fill_class_entry(cls, som_class: SOMcreator.SOMClass):
-        for func in cls.get_properties().class_activate_functions:
-            func(som_class)
-
-    @classmethod
     def add_class_creation_check(cls, key, check_function):
         cls.get_properties().class_add_checks.append((key, check_function))
 
@@ -173,3 +158,13 @@ class Class(som_gui.core.tool.Class):
             if som_class.ident_value:
                 ident_values.add(som_class.ident_value)
         return ident_values
+    
+    @classmethod
+    def delete_class(cls,som_class:SOMcreator.SOMClass,recursive:bool):
+        def iterate_deletion(c:SOMcreator.SOMClass):
+            if recursive:
+                for child in list(c.get_children(filter=False)):
+                    iterate_deletion(child)
+            cls.signaller.class_deleted.emit(c)
+            c.delete()
+        iterate_deletion(som_class)

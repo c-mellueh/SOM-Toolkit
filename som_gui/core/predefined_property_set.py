@@ -109,17 +109,15 @@ def class_double_clicked(
     predefined_pset: Type[tool.PredefinedPropertySet],
     property_set: Type[tool.PropertySet],
     class_tree: Type[tool.ClassTree],
-    main_window:Type[tool.MainWindow]
+    main_window: Type[tool.MainWindow],
 ):
     item = predefined_pset.get_class_table_widget().selectedItems()[0]
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
     som_class = pset.som_class
-    tree = main_window.get_class_tree_widget()
-    class_item = class_tree.get_item_from_class(tree,som_class)
-    class_tree.select_class(tree,som_class)
-    class_tree.expand_to_item(class_item)
+    tree = main_window.get_class_tree()
+    class_tree.expand_to_class(tree, som_class)
     property_set.select_property_set(pset)
 
 

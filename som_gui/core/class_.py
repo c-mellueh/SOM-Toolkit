@@ -5,6 +5,8 @@ import SOMcreator
 from som_gui.module.class_ import constants
 import copy as cp
 import uuid
+import logging
+
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.class_.prop import ClassDataDict
@@ -16,15 +18,21 @@ def init(
     main_window: Type[tool.MainWindow],
 ):
     # Add Class Activate Functions
-    class_tool.add_class_activate_function(
-        lambda o: main_window.get_class_name_label().setText(o.name)
-    )
+    def rewrite_label(som_class: SOMcreator.SOMClass | None):
+        label = main_window.get_class_name_label()
+        if som_class is None:
+            label.setText("")
+        else:
+            label.setText(som_class.name)
+
+    class_tool.connect_signals()
+    main_window.signaller.change_active_class.connect(rewrite_label)
     # Add Creation Checks
     class_tool.add_class_creation_check(
         "ident_property_name", class_info.is_ident_property_valid
     )
     class_tool.add_class_creation_check("ident_value", class_info.is_identifier_unique)
-
+    class_tool.signaller.class_deleted.connect(lambda c: logging.debug(f"Class Deleted: {c}") )
 
 def modify_class(
     som_class: SOMcreator.SOMClass,
@@ -33,6 +41,7 @@ def modify_class(
     class_info: Type[tool.ClassInfo],
     property_set: Type[tool.PropertySet],
     predefined_psets: Type[tool.PredefinedPropertySet],
+    main_window: Type[tool.MainWindow],
 ):
 
     data_dict = class_info.generate_datadict()
@@ -80,7 +89,7 @@ def modify_class(
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
-    class_tool.fill_class_entry(som_class)
+    main_window.signaller.change_active_class.emit(som_class)
 
 
 def copy_class(
@@ -95,7 +104,7 @@ def copy_class(
         group = cp.copy(som_class)
         group.identifier_property = uuid.uuid4()
         group.description = data_dict.get("description") or ""
-        class_tool.trigger_class_modification(group, data_dict)
+        class_tool.signaller.modify_class.emit(group, data_dict)
         return
     # handle Identifier Value
     ident_value = data_dict.get("ident_value")
@@ -110,8 +119,9 @@ def copy_class(
         return
 
     new_class = cp.copy(som_class)
-    class_tool.trigger_class_modification(new_class, data_dict)
-
+    class_tool.signaller.class_created.emit(new_class)
+    class_tool.signaller.modify_class.emit(new_class, data_dict)
+    
 
 def create_class(
     data_dict: ClassDataDict,
@@ -132,6 +142,7 @@ def create_class(
     if is_group:
         new_class = SOMcreator.SOMClass(name, project=proj)
         new_class.description = description
+        class_tool.signaller.class_created.emit(new_class)
         return
 
     # handle identifier
@@ -165,7 +176,8 @@ def create_class(
     ident_property.project = proj
     class_info.add_plugin_infos_to_class(new_class, data_dict)
     class_tool.modify_class(new_class, data_dict)
-    parent_uuid= data_dict.get("parent_uuid")
+    parent_uuid = data_dict.get("parent_uuid")
     if parent_uuid:
         parent_class = proj.get_element_by_uuid(parent_uuid)
         parent_class.add_child(new_class)
+    class_tool.signaller.class_created.emit(new_class)

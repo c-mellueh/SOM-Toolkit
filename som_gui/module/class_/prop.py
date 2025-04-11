@@ -12,5 +12,4 @@ class ClassDataDict(TypedDict):
     parent_uuid:str
 
 class ClassProperties:
-    class_activate_functions = list()
     class_add_checks = list()

@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.module.class_tree.ui import ClassTreeWidget
     import SOMcreator
     from PySide6.QtWidgets import QTreeWidgetItem
 from som_gui import tool
@@ -14,7 +13,7 @@ def on_new_project():
 
 
 def connect():
-    pass
+    core.init(tool.ClassInfo,tool.MainWindow)
 
 def class_info_paint_event():
     core.class_info_refresh(tool.Class, tool.ClassInfo)

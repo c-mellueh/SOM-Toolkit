@@ -46,10 +46,11 @@ def deactivate(
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
-    main_window:Type[tool.MainWindow],
+    main_window: Type[tool.MainWindow],
 ):
-    class_tool.remove_column_from_tree(main_window.get_class_tree_widget(),
-        QCoreApplication.translate("Aggregation", "Abbreviation")
+    class_tool.remove_column_from_tree(
+        main_window.get_class_tree(),
+        QCoreApplication.translate("Aggregation", "Abbreviation"),
     )
     class_info_tool.remove_plugin_entry(LABEL_KEY)
     class_info_tool.remove_plugin_entry(LINE_EDIT_KEY)
@@ -61,9 +62,10 @@ def activate(
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
-    main_window:Type[tool.MainWindow]
+    main_window: Type[tool.MainWindow],
 ):
-    class_tool.add_column_to_tree(main_window.get_class_tree_widget(),
+    class_tool.add_column_to_tree(
+        main_window.get_class_tree(),
         lambda: QCoreApplication.translate("Aggregation", "Abbreviation"),
         -1,
         lambda o: getattr(o, "abbreviation"),

@@ -3,17 +3,25 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtWidgets import QApplication
-
 import som_gui
 
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
-from PySide6.QtCore import QCoreApplication, Qt
-from PySide6.QtGui import QCloseEvent
+    from som_gui.module.class_tree import ui as class_tree_ui
+from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QSortFilterProxyModel
+from PySide6.QtGui import QCloseEvent, QDropEvent
+import SOMcreator
+
+initial_tree = True
 
 
-def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
+def init(
+    main_window: Type[tool.MainWindow],
+    class_tree: Type[tool.ClassTree],
+    class_info: Type[tool.ClassInfo],
+    class_tool: Type[tool.Class],
+):
     """
     Create the actions used in the MainMenuBar. using add_action and set_action. Afterwards the Actions can be called by get_action. This is mostly used in retranslate_ui
     :param main_window:
@@ -21,13 +29,32 @@ def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
     """
     from som_gui.module.main_window import trigger
 
+    main_window.connect_signals()
     open_window_action = main_window.add_action(
         "menuEdit", "ToggleConsole", trigger.toggle_console
     )
     main_window.set_action(trigger.TOOGLE_CONSOLE_ACTION, open_window_action)
-    class_tree.trigger_tree_init(main_window.get_class_tree_widget())
+
     main_window.get_ui().button_search.pressed.connect(
-        lambda: class_tree.trigger_search(main_window.get_class_tree_widget())
+        lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
+    )
+    # init ClassTree
+    from som_gui.module.class_tree.ui import ClassModel
+
+    tree = main_window.get_class_tree()
+    filter_model = QSortFilterProxyModel()
+    filter_model.setSourceModel(ClassModel())
+    tree.setModel(filter_model)
+    filter_model.sourceModel().update_root_classes()
+    tree.setSortingEnabled(True)
+    tree.sortByColumn(0, Qt.SortOrder.AscendingOrder)
+    class_tree.add_tree(tree)
+    class_tree.connect_tree(tree)
+    tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+    main_window.connect_class_tree()
+
+    main_window.get_ui().button_classes_add.clicked.connect(
+        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
 
 
@@ -48,10 +75,8 @@ def retranslate_ui(
         action.setText(QCoreApplication.translate("MainWindow", "Show Console"))
     main_window.get().ui.retranslateUi(main_window.get())
 
-    tree = main_window.get_class_tree_widget()
-    header = tree.headerItem()
-    for column, name in enumerate(class_tree.get_header_names(tree)):
-        header.setText(column, name)
+    tree = main_window.get_class_tree()
+    # ToDo: rewrite header retranslation
 
 
 def create_main_window(
@@ -119,88 +144,45 @@ def refresh_main_window(
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 
 
-def toggle_console_clicked(main_window: Type[tool.MainWindow],class_tree:Type[tool.ClassTree]):
+def toggle_console_clicked(
+    main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
+):
     """
     TOggles if Console is Shown
     :param main_window:
     :return:
     """
     main_window.toggle_console()
-    retranslate_ui(main_window,class_tree)  # Changes Text from Show to Hide / from Hide to Show
+    retranslate_ui(
+        main_window, class_tree
+    )  # Changes Text from Show to Hide / from Hide to Show
 
 
-def add_class_tree_shortcuts(
-    class_tree: Type[tool.ClassTree],
-    util: Type[tool.Util],
+def set_active_class(
+    som_class: SOMcreator.SOMClass,
     main_window: Type[tool.MainWindow],
-    class_info: Type[tool.ClassInfo],
-):
-    tree = main_window.get_class_tree_widget()
-    util.add_shortcut(
-        "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
-    )
-    util.add_shortcut(
-        "Ctrl+G", main_window.get(), lambda: class_tree.group_selection(tree)
-    )
-    util.add_shortcut(
-        "Ctrl+F",
-        main_window.get(),
-        lambda: class_tree.trigger_search(tree),
-    )
-    util.add_shortcut(
-        "Ctrl+C",
-        main_window.get(),
-        lambda: class_info.trigger_class_info_widget(2, main_window.get_active_class()),
-    )
-
-
-def connect_class_tree(
-    main_window: Type[tool.MainWindow],
-    class_tree: Type[tool.ClassTree],
-    class_info: Type[tool.ClassInfo],
-):
-    tree = main_window.get_class_tree_widget()
-    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-    tree.itemChanged.connect(lambda item: class_tree.update_check_state(tree, item))
-    tree.itemSelectionChanged.connect(main_window.trigger_class_changed)
-
-    tree.itemDoubleClicked.connect(
-        lambda item: class_info.trigger_class_info_widget(
-            1, class_tree.get_class_from_item(item)
-        )
-    )
-    main_window.get_ui().button_classes_add.clicked.connect(
-        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
-    )
-
-
-def class_selection_changed(
-    main_window: Type[tool.MainWindow],
-    class_tree: Type[tool.ClassTree],
     property_set_tool: Type[tool.PropertySet],
 ):
-    tree = main_window.get_class_tree_widget()
-    selected_items = class_tree.get_selected(tree)
-    if len(selected_items) == 1:
-        selected_pset = property_set_tool.get_active_property_set()
-        som_class = class_tree.get_class_from_item(selected_items[0])
-        main_window.set_active_class(som_class)
-        property_set_tool.update_completer(som_class)
-        property_set_tool.set_enabled(True)
-        property_set_tool.trigger_table_repaint()
-
-        # reselect the same pset that is allready selected
-        if not selected_pset:
-            return
-        pset = {
-            p.name: p
-            for p in property_set_tool.get_property_sets(main_window.get_active_class())
-        }.get(selected_pset.name)
-        if pset:
-            property_set_tool.select_property_set(pset)
-    else:
+    if som_class is None:
         property_set_tool.clear_table()
         property_set_tool.set_enabled(False)
+        return
+
+    selected_pset = property_set_tool.get_active_property_set()
+    main_window.set_active_class(som_class)
+    property_set_tool.update_completer(som_class)
+    property_set_tool.set_enabled(True)
+    property_set_tool.trigger_table_repaint()
+
+    # reselect the same pset that is allready selected
+    if not selected_pset:
+        return
+    pset = {
+        p.name: p
+        for p in property_set_tool.get_property_sets(main_window.get_active_class())
+    }.get(selected_pset.name)
+    if pset:
+        property_set_tool.select_property_set(pset)
 
 
 def define_class_tree_context_menu(
@@ -208,7 +190,7 @@ def define_class_tree_context_menu(
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
 ):
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     class_tree.clear_context_menu_list(tree)
     class_tree.add_context_menu_entry(
         tree,
@@ -245,7 +227,7 @@ def define_class_tree_context_menu(
     class_tree.add_context_menu_entry(
         tree,
         lambda: QCoreApplication.translate("Class", "Group"),
-        lambda: class_tree.group_selection(tree),
+        lambda: class_tree.signaller.request_group_selection(tree),
         True,
         True,
         True,
@@ -259,9 +241,108 @@ def define_class_tree_context_menu(
         False,
     )
 
+    def reset_tree():
+        tree = main_window.get_class_tree()
+        tree.model().reset()
+        
+    class_tree.add_context_menu_entry(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Reset View"),
+        reset_tree,
+        False,
+        True,
+        True,
+    )
 
 def one_new_project(
     main_window: Type[tool.MainWindow],
     class_tree: Type[tool.ClassTree],
 ):
-    class_tree.reset_tree(main_window.get_class_tree_widget())
+    return
+
+
+def add_class_tree_shortcuts(
+    class_tree: Type[tool.ClassTree],
+    util: Type[tool.Util],
+    main_window: Type[tool.MainWindow],
+    class_info: Type[tool.ClassInfo],
+):
+    tree = main_window.get_class_tree()
+    util.add_shortcut(
+        "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
+    )
+    util.add_shortcut(
+        "Ctrl+G",
+        main_window.get(),
+        lambda: class_tree.signaller.request_group_selection(tree),
+    )
+    util.add_shortcut(
+        "Ctrl+F",
+        main_window.get(),
+        lambda: class_tree.signaller.search.emit(tree),
+    )
+    util.add_shortcut(
+        "Ctrl+C",
+        main_window.get(),
+        lambda: class_info.trigger_class_info_widget(2, main_window.get_active_class()),
+    )
+
+
+def add_class_tree_columns(
+    main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
+):
+    tree = main_window.get_class_tree()
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Class"),
+        0,
+        lambda c: getattr(c, "name"),
+    )
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Identifier"),
+        1,
+        lambda o: (
+            getattr(o, "ident_value")
+            if isinstance(o.identifier_property, SOMcreator.SOMProperty)
+            else ""
+        ),
+    )
+    class_tree.add_column_to_tree(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Optional"),
+        2,
+        lambda o: o.is_optional(ignore_hirarchy=True),
+        lambda o, v: o.set_optional(v),
+        role=Qt.ItemDataRole.CheckStateRole,
+    )
+
+
+def drop_on_class_tree(
+    event: QDropEvent,
+    main_window: Type[tool.MainWindow],
+    class_tree: Type[tool.ClassTree],
+    project: Type[tool.Project],
+):
+    pos = event.pos()
+    source_table = event.source()
+    target = main_window.get_class_tree()
+
+    if source_table == target:
+        dropped_on_index = class_tree.get_index_from_pos(target, pos)
+        class_tree.handle_class_move(target, dropped_on_index)
+        return
+    
+    classes = class_tree.get_classes_from_mimedata(event.mimeData())
+    if not classes:
+        return
+    addded_items = list()
+    proj = project.get()
+    for som_class in classes:
+        addded_items+= proj.add_item(som_class)
+
+    for item in set(addded_items):
+        if not isinstance(item,(SOMcreator.SOMClass,SOMcreator.SOMProperty,SOMcreator.SOMAggregation,SOMcreator.SOMPropertySet)):
+            continue
+        if not proj.is_in_project(item.parent):
+            item.remove_parent()

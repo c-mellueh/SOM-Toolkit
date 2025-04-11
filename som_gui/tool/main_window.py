@@ -19,16 +19,28 @@ import som_gui
 import som_gui.core.tool
 from som_gui.module.main_window import ui as ui_main_window
 from som_gui.module.main_window import trigger
+from PySide6.QtCore import Signal, QObject, QModelIndex
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties
     from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
 
 
+class Signaller(QObject):
+    change_active_class = Signal(SOMcreator.SOMClass)
+    class_info_requested = Signal(SOMcreator.SOMClass)
+
+
 class MainWindow(som_gui.core.tool.MainWindow):
+    signaller = Signaller()
+
     @classmethod
     def get_properties(cls) -> MainWindowProperties:
         return som_gui.MainWindowProperties
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.change_active_class.connect(trigger.change_active_class)
 
     @classmethod
     def set_action(cls, name: str, action: QAction):
@@ -165,7 +177,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().table_property
 
     @classmethod
-    def get_class_tree_widget(cls):
+    def get_class_tree(cls):
         return cls.get_ui().tree_class
 
     @classmethod
@@ -181,15 +193,16 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().label_pset_name
 
     @classmethod
-    def trigger_class_changed(cls):
-        trigger.class_item_selection_changed()
-
-    @classmethod
     def get_active_class(cls) -> SOMcreator.SOMClass | None:
         return cls.get_properties().active_class
 
-    
     @classmethod
     def set_active_class(cls, som_class: SOMcreator.SOMClass):
         cls.get_properties().active_class = som_class
-        tool.Class.fill_class_entry(som_class)
+
+    @classmethod
+    def connect_class_tree(cls):
+        tree = cls.get_class_tree()
+        tree.class_double_clicked.connect(cls.signaller.class_info_requested.emit)
+        tree.selected_class_changed.connect(cls.signaller.change_active_class.emit)
+        tree.item_dropped.connect(trigger.class_tree_item_dropped)

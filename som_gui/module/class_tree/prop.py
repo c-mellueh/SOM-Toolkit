@@ -16,8 +16,5 @@ class ContextMenuDict(TypedDict):
 
 class ClassTreeProperties:
     existing_trees = set()
-    active_class: dict[ui.ClassTreeWidget,SOMcreator.SOMClass] = dict()
-    context_menu_list:  dict[ui.ClassTreeWidget,list[ContextMenuDict]] = dict()
-    first_paint:  dict[ui.ClassTreeWidget,True] = dict()
-    column_List: dict[ui.ClassTreeWidget,list[tuple[Callable, Callable, Callable]]] = dict()
+    context_menu_list:  dict[ui.ClassView,list[ContextMenuDict]] = dict()
 

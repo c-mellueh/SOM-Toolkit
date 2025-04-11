@@ -9,7 +9,9 @@ if TYPE_CHECKING:
     from som_gui import tool
     import SOMcreator
 
-
+def init(class_info:Type[tool.ClassInfo],main_window:Type[tool.MainWindow]):
+    main_window.signaller.class_info_requested.connect(lambda som_class:class_info.trigger_class_info_widget(1,som_class))
+    
 def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
     pass
 
@@ -48,11 +50,11 @@ def create_class_info_widget(
         if mode == 0:
             if som_class:
                 data_dict["parent_uuid"] =som_class.uuid
-            class_tool.trigger_class_creation(data_dict)
+            class_tool.signaller.create_class.emit(data_dict)
         elif mode == 1:
-            class_tool.trigger_class_modification(active_class, data_dict)
+            class_tool.signaller.modify_class.emit(active_class, data_dict)
         elif mode == 2:
-            class_tool.trigger_class_copy(active_class, data_dict)
+            class_tool.signaller.copy_class.emit(active_class,data_dict)
     class_info.reset()
 
 
