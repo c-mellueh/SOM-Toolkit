@@ -241,6 +241,18 @@ def define_class_tree_context_menu(
         False,
     )
 
+    def reset_tree():
+        tree = main_window.get_class_tree()
+        tree.model().reset()
+        
+    class_tree.add_context_menu_entry(
+        tree,
+        lambda: QCoreApplication.translate("Class", "Reset View"),
+        reset_tree,
+        False,
+        True,
+        True,
+    )
 
 def one_new_project(
     main_window: Type[tool.MainWindow],
