@@ -314,7 +314,8 @@ class ClassModel(QAbstractItemModel):
         else:
             new_parent: SOMcreator.SOMClass = destinationParent.internalPointer()
             new_parent.add_child(som_class)
-        self.row_count_dict[sourceParent] -= 1
+        if sourceParent in self.row_count_dict:
+            self.row_count_dict[sourceParent] -= 1
         if not sourceParent.isValid():
             self.root_classes.pop(sourceRow)
         if destinationParent in self.row_count_dict:
