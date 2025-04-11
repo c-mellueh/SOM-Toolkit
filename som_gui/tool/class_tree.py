@@ -41,7 +41,7 @@ from som_gui.module.class_tree import ui
 class Signaller(QObject):
     search = Signal(ui.ClassView)
     selected_class_changed = Signal(ui.ClassView, SOMcreator.SOMClass)
-
+    request_class_deletion = Signal(SOMcreator.SOMClass,bool)
 
 class ClassTree(som_gui.core.tool.ClassTree):
     signaller = Signaller()
@@ -200,10 +200,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return [cls.get_class_from_index(index) for index in selected_indexes]
 
     @classmethod
-    def delete_class(cls, som_class: SOMcreator.SOMClass, recursive: bool = False):
-        som_class.delete(recursive)
-
-    @classmethod
     def delete_selection(cls, tree: ui.ClassTreeWidget):
         som_classes = cls.get_selected_classes(tree)
         delete_request, recursive_deletion = tool.Popups.req_delete_items(
@@ -212,7 +208,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         if not delete_request:
             return
         for som_class in som_classes:
-            cls.delete_class(som_class, recursive_deletion)
+            cls.signaller.request_class_deletion.emit(som_class, recursive_deletion)
 
     @classmethod
     def expand_selection(cls, tree: ui.ClassTreeWidget):

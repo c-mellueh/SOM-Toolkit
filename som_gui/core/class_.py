@@ -5,6 +5,7 @@ import SOMcreator
 from som_gui.module.class_ import constants
 import copy as cp
 import uuid
+import logging
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -31,7 +32,7 @@ def init(
         "ident_property_name", class_info.is_ident_property_valid
     )
     class_tool.add_class_creation_check("ident_value", class_info.is_identifier_unique)
-
+    class_tool.signaller.class_deleted.connect(lambda c: logging.debug(f"Class Deleted: {c}") )
 
 def modify_class(
     som_class: SOMcreator.SOMClass,

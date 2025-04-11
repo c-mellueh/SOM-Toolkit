@@ -18,7 +18,7 @@ class Signaller(QObject):
     copy_class = Signal(ClassDataDict,ClassDataDict)
     modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
     class_created = Signal(SOMcreator.SOMClass)
-    
+    class_deleted = Signal(SOMcreator.SOMClass)
 class Class(som_gui.core.tool.Class):
     signaller = Signaller()
     @classmethod
@@ -158,3 +158,13 @@ class Class(som_gui.core.tool.Class):
             if som_class.ident_value:
                 ident_values.add(som_class.ident_value)
         return ident_values
+    
+    @classmethod
+    def delete_class(cls,som_class:SOMcreator.SOMClass,recursive:bool):
+        def iterate_deletion(c:SOMcreator.SOMClass):
+            if recursive:
+                for child in list(c.get_children(filter=False)):
+                    iterate_deletion(child)
+            c.delete()
+            cls.signaller.class_deleted.emit(c)
+        iterate_deletion(som_class)

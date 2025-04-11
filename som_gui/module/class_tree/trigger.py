@@ -12,7 +12,7 @@ import SOMcreator
 
 
 def connect():
-    core.connect_signals(tool.ClassTree)
+    core.connect_signals(tool.ClassTree,tool.Class)
     pass
 
 
