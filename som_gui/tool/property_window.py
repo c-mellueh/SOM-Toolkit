@@ -13,7 +13,7 @@ from som_gui.module.property_window import ui,trigger
 from som_gui.module.property_window.prop import PropertyWindowProperties,PluginProperty
 
 class Signaller(QObject):
-    pass
+    name_changed = Signal(SOMcreator.SOMProperty)
 
 class PropertyWindow(som_gui.core.tool.PropertyWindow):
     signaller = Signaller()
@@ -73,12 +73,11 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
     @classmethod
     def create_window(cls, som_property:SOMcreator.SOMProperty) -> ui.PropertyWindow:
         prop = cls.get_properties()
-        prop.windows[som_property] =  ui.PropertyWindow()
+        prop.windows[som_property] =  ui.PropertyWindow(som_property)
         for plugin in prop.plugin_widget_list:
             layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
             layout.insertWidget(plugin.index, plugin.widget())
-            setattr(prop, plugin.key, plugin.init_value_getter)
-        
+            setattr(prop, plugin.key, plugin.value_getter)
         title = cls.create_window_title(som_property)
         cls.get_window(som_property).setWindowTitle(title) #TODO: Update Name Getter
         return cls.get_window(som_property)
@@ -103,4 +102,12 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
             if not som_class:
                 return text
             return som_class.name+SEPERATOR+text
-        
+    
+    @classmethod
+    def get_property_from_window(cls,window:ui.PropertyWindow):
+        return window.som_property
+    
+    @classmethod
+    def rename_property(cls,som_property:SOMcreator.SOMProperty,value:str):
+        som_property.name = value
+        cls.signaller.name_changed.emit(som_property)
