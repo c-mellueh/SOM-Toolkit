@@ -51,6 +51,8 @@ def search_class(
 ):
     """Open Search Window and select Class afterwards"""
     som_class = search_tool.search_class(list(project.get().get_classes(filter=True)))
+    if som_class is None:
+        return
     class_tree.expand_to_class(tree, som_class)
 
 
