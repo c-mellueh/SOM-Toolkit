@@ -26,6 +26,7 @@ def retranslate_ui(table=None):
 
 
 def connect_table(table: PropertyTable):
+    core.connect_table(table,tool.PropertyTable)
     table.customContextMenuRequested.connect(
         lambda pos: core.create_context_menu(table, pos, tool.PropertyTable, tool.Util)
     )

@@ -1,4 +1,4 @@
-
+from PySide6.QtCore import QObject
 class Appdata:
     def _get_config(self, ): pass
 
@@ -1649,7 +1649,7 @@ class PropertySetWindow:
     def value_to_string(self, value): pass
 
 
-class PropertyTable:
+class PropertyTable(QObject):
     def add_column_to_table(self, name, get_function): pass
 
     def add_context_menu_builder(self, context_menu_builder): pass

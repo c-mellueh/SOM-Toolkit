@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, QPoint, Qt,QMimeData,QByteArray
+from PySide6.QtCore import QCoreApplication, QPoint, Qt,QMimeData,QByteArray,Signal,QObject
 from PySide6.QtGui import QIcon, QPalette, QDropEvent
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
@@ -24,12 +24,19 @@ from som_gui.module.property_table import ui
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
 import pickle
 
-
-class PropertyTable(som_gui.core.tool.PropertyTable):
+class Signaller(QObject):
+    property_info_requested = Signal(SOMcreator.SOMProperty)
+class PropertyTable(QObject):
+    signaller = Signaller()
 
     @classmethod
     def get_properties(cls) -> PropertyTableProperties:
         return som_gui.PropertyTableProperties
+
+    @classmethod
+    def connect_table(cls,table:ui.PropertyTable):
+        table.doubleClicked.connect(lambda i: cls.signaller.property_info_requested.emit(cls.get_property_from_item(i)))
+
 
     @classmethod
     def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
