@@ -21,13 +21,48 @@ def init_window(window: ui.PropertyWindow, property_window: Type[tool.PropertyWi
     property_window.prefill_comboboxes(window)
     property_window.update_unit_completer(window)
 
+
 def connect_window(
-    window: ui.PropertyWindow, property_window: Type[tool.PropertyWindow]
+    window: ui.PropertyWindow,
+    property_window: Type[tool.PropertyWindow],
+    util: Type[tool.Util],
 ):
     som_property = property_window.get_property_from_window(window)
-    ui = window.ui
-    ui.lineEdit_name.textEdited.connect(
+    widget_ui = window.ui
+    widget_ui.lineEdit_name.textEdited.connect(
         lambda t: property_window.rename_property(som_property, t)
+    )
+
+    def get_datatype_text():
+        return property_window.get_datatype_combobox(widget_ui).currentText()
+
+    def get_valuetype_text():
+        return property_window.get_valuetype_combobox(widget_ui).currentText()
+
+    def get_unit_text():
+        return property_window.get_unit_combobox(widget_ui).currentText()
+
+    def get_description_text():
+        return property_window.get_description_textedit(widget_ui).toPlainText()
+
+    widget_ui.combo_data_type.currentIndexChanged.connect(
+        lambda i: property_window.set_datatype(som_property, get_datatype_text())
+    )
+    widget_ui.combo_value_type.currentIndexChanged.connect(
+        lambda i: property_window.set_valuetype(som_property, get_valuetype_text())
+    )
+    widget_ui.combo_unit.currentIndexChanged.connect(
+        lambda i: property_window.set_unit(som_property, get_unit_text())
+    )
+
+    widget_ui.description.textChanged.connect(
+        lambda: property_window.set_description(som_property, get_description_text())
+    )
+
+    widget_ui.check_box_inherit.checkStateChanged.connect(
+        lambda cs: property_window.set_value_inherit_state(
+            som_property, util.checkstate_to_bool(cs)
+        )
     )
 
 
@@ -43,7 +78,7 @@ def update_window(
     ui.combo_value_type.setCurrentText(som_property.value_type)
     ui.combo_unit.setCurrentText(som_property.unit or "")
     ui.description.setText(som_property.description)
-    property_window.set_comboboxes_enabled(som_property.is_child, window)
+    property_window.set_comboboxes_enabled(not som_property.is_child, window)
     inherits_values_checkstate = util.bool_to_checkstate(
         som_property.child_inherits_values
     )

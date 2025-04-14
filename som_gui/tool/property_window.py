@@ -6,7 +6,7 @@ import som_gui.core.tool
 import som_gui
 
 from PySide6.QtCore import Slot, Signal, QObject, QCoreApplication, Qt
-from PySide6.QtWidgets import QLayout,QCompleter
+from PySide6.QtWidgets import QLayout, QCompleter, QComboBox
 import SOMcreator
 from som_gui.module.property_window import ui, trigger
 from som_gui.module.property_window.prop import PropertyWindowProperties, PluginProperty
@@ -16,6 +16,10 @@ from SOMcreator.constants import value_constants
 
 class Signaller(QObject):
     name_changed = Signal(SOMcreator.SOMProperty)
+    datatype_changed = Signal(SOMcreator.SOMProperty)
+    valuetype_changed = Signal(SOMcreator.SOMProperty)
+    unit_changed = Signal(SOMcreator.SOMProperty)
+    description_changed = Signal(SOMcreator.SOMProperty)
 
 
 class PropertyWindow(som_gui.core.tool.PropertyWindow):
@@ -117,6 +121,46 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
     def rename_property(cls, som_property: SOMcreator.SOMProperty, value: str):
         som_property.name = value
         cls.signaller.name_changed.emit(som_property)
+
+    @classmethod
+    def set_datatype(cls, som_property: SOMcreator.SOMProperty, value: str):
+        som_property.data_type = value
+        cls.signaller.datatype_changed.emit(som_property)
+
+    @classmethod
+    def set_valuetype(cls, som_property: SOMcreator.SOMProperty, value: str):
+        som_property.value_type = value
+        cls.signaller.valuetype_changed.emit(som_property)
+
+    @classmethod
+    def set_unit(cls, som_property: SOMcreator.SOMProperty, value: str):
+        som_property.unit = value
+        cls.signaller.unit_changed.emit(som_property)
+
+    @classmethod
+    def set_description(cls, som_property:SOMcreator.SOMProperty, value: str):
+        som_property.description = value
+        cls.signaller.description_changed.emit(som_property)
+
+    @classmethod
+    def set_value_inherit_state(cls,som_property:SOMcreator.SOMProperty,value:bool):
+        som_property.child_inherits_values = value
+
+    @classmethod
+    def get_datatype_combobox(cls, widget_ui: ui.Ui_PropertyWindow) -> QComboBox:
+        return widget_ui.combo_data_type
+
+    @classmethod
+    def get_valuetype_combobox(cls, widget_ui: ui.Ui_PropertyWindow) -> QComboBox:
+        return widget_ui.combo_value_type
+
+    @classmethod
+    def get_unit_combobox(cls, widget_ui: ui.Ui_PropertyWindow):
+        return widget_ui.combo_unit
+
+    @classmethod
+    def get_description_textedit(cls,widget_ui: ui.Ui_PropertyWindow):
+        return widget_ui.description
 
     @classmethod
     def set_comboboxes_enabled(cls, enabled_state: bool, window: ui.PropertyWindow):

@@ -15,3 +15,7 @@ class PropertyWindow(QWidget):
         self.som_property = som_property
         self.initial_fill = True
         trigger.window_created(self)
+
+    def enterEvent(self, event):
+        trigger.update_window(self)
+        return super().enterEvent(event)
