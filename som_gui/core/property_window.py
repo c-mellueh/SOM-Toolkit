@@ -10,4 +10,7 @@ def connect_signals(property_window:Type[tool.PropertyWindow],property_table:Typ
     property_table.signaller.property_info_requested.connect(property_window.property_info_requested)
 
 def open_property_info(som_property:SOMcreator.SOMProperty,property_window:Type[tool.PropertyWindow]):
-    print(som_property)
+    if not (window:=property_window.get_window(som_property)):
+        window  = property_window.create_window(som_property)
+    window.show()
+    window.activateWindow()
