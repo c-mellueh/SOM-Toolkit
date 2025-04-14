@@ -13,6 +13,8 @@ from som_gui.module.property_window.prop import PropertyWindowProperties, Plugin
 from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPES
 from SOMcreator.constants import value_constants
 
+test_index = None
+
 
 class Signaller(QObject):
     name_changed = Signal(SOMcreator.SOMProperty)
@@ -138,12 +140,12 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         cls.signaller.unit_changed.emit(som_property)
 
     @classmethod
-    def set_description(cls, som_property:SOMcreator.SOMProperty, value: str):
+    def set_description(cls, som_property: SOMcreator.SOMProperty, value: str):
         som_property.description = value
         cls.signaller.description_changed.emit(som_property)
 
     @classmethod
-    def set_value_inherit_state(cls,som_property:SOMcreator.SOMProperty,value:bool):
+    def set_value_inherit_state(cls, som_property: SOMcreator.SOMProperty, value: bool):
         som_property.child_inherits_values = value
 
     @classmethod
@@ -159,7 +161,7 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         return widget_ui.combo_unit
 
     @classmethod
-    def get_description_textedit(cls,widget_ui: ui.Ui_PropertyWindow):
+    def get_description_textedit(cls, widget_ui: ui.Ui_PropertyWindow):
         return widget_ui.description
 
     @classmethod
@@ -207,3 +209,13 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
     def update_unit_completer(cls, window: ui.PropertyWindow):
         cb = window.ui.combo_unit
         cb.setCompleter(QCompleter([cb.itemText(i) for i in range(cb.count())]))
+
+    @classmethod
+    def connect_value_view(cls, window: ui.PropertyWindow):
+        som_property = cls.get_property_from_window(window)
+        table_view = window.ui.table_view_value
+        table_view.som_property = som_property
+        model = ui.ValueModel(som_property)
+        sort_model = ui.SortModel(som_property)
+        sort_model.setSourceModel(model)
+        table_view.setModel(sort_model)

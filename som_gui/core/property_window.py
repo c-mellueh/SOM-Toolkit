@@ -20,7 +20,7 @@ def connect_signals(
 def init_window(window: ui.PropertyWindow, property_window: Type[tool.PropertyWindow]):
     property_window.prefill_comboboxes(window)
     property_window.update_unit_completer(window)
-
+    property_window.connect_value_view(window)
 
 def connect_window(
     window: ui.PropertyWindow,
@@ -64,6 +64,8 @@ def connect_window(
             som_property, util.checkstate_to_bool(cs)
         )
     )
+    table_model:ui.ValueModel = widget_ui.table_view_value.model().sourceModel()
+    widget_ui.button_add_line.clicked.connect(table_model.append_row)
 
 
 def update_window(
@@ -92,3 +94,4 @@ def open_property_info(
         window = property_window.create_window(som_property)
     window.show()
     window.activateWindow()
+
