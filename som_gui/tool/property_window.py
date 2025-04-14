@@ -6,7 +6,7 @@ import logging
 import som_gui.core.tool
 import som_gui
 
-from PySide6.QtCore import Slot,Signal,QObject
+from PySide6.QtCore import Slot,Signal,QObject,QCoreApplication,Qt
 from PySide6.QtWidgets import QLayout
 import SOMcreator
 from som_gui.module.property_window import ui,trigger
@@ -111,3 +111,27 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
     def rename_property(cls,som_property:SOMcreator.SOMProperty,value:str):
         som_property.name = value
         cls.signaller.name_changed.emit(som_property)
+    
+    @classmethod
+    def set_comboboxes_enabled(cls, enabled_state: bool, window: ui.PropertyWindow):
+        window.ui.combo_value_type.setEnabled(enabled_state)
+        window.ui.combo_data_type.setEnabled(enabled_state)
+        window.ui.combo_unit.setEnabled(enabled_state)
+        if enabled_state:
+            t1 = QCoreApplication.translate(
+                "PropertyWindow",
+                "Property was inherited -> Type change not possible",
+            )
+            t2 = QCoreApplication.translate(
+                "PropertyWindow",
+                "Property was inherited -> DataType change not possible",
+            )
+            t3 = QCoreApplication.translate(
+                "PropertyWindow",
+                "Property was inherited -> Unit change not possible",
+            )
+        else:
+            t1 = t2 = t3 = ""
+        window.ui.combo_value_type.setToolTip(t1)
+        window.ui.combo_data_type.setToolTip(t2)
+        window.ui.combo_unit.setToolTip(t3)

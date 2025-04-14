@@ -26,7 +26,7 @@ class Ui_PropertyWindow(object):
     def setupUi(self, PropertyWindow):
         if not PropertyWindow.objectName():
             PropertyWindow.setObjectName(u"PropertyWindow")
-        PropertyWindow.resize(808, 536)
+        PropertyWindow.resize(648, 586)
         self.verticalLayout = QVBoxLayout(PropertyWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.gridLayout = QGridLayout()
@@ -83,7 +83,7 @@ class Ui_PropertyWindow(object):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area_content = QWidget()
         self.scroll_area_content.setObjectName(u"scroll_area_content")
-        self.scroll_area_content.setGeometry(QRect(0, 0, 786, 203))
+        self.scroll_area_content.setGeometry(QRect(0, 0, 626, 255))
         self.verticalLayout_2 = QVBoxLayout(self.scroll_area_content)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scroll_area.setWidget(self.scroll_area_content)
@@ -117,22 +117,6 @@ class Ui_PropertyWindow(object):
 
         self.gridLayout.addWidget(self.check_box_inherit, 4, 5, 1, 1)
 
-        self.button_add = QPushButton(PropertyWindow)
-        self.button_add.setObjectName(u"button_add")
-
-        self.gridLayout.addWidget(self.button_add, 0, 5, 1, 1)
-
-        self.lineEdit_name = QLineEdit(PropertyWindow)
-        self.lineEdit_name.setObjectName(u"lineEdit_name")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
-        self.lineEdit_name.setSizePolicy(sizePolicy3)
-        self.lineEdit_name.setMinimumSize(QSize(350, 0))
-
-        self.gridLayout.addWidget(self.lineEdit_name, 0, 2, 1, 3)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
 
@@ -153,6 +137,17 @@ class Ui_PropertyWindow(object):
 
         self.gridLayout.addWidget(self.label_values, 4, 2, 1, 1)
 
+        self.lineEdit_name = QLineEdit(PropertyWindow)
+        self.lineEdit_name.setObjectName(u"lineEdit_name")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
+        self.lineEdit_name.setSizePolicy(sizePolicy3)
+        self.lineEdit_name.setMinimumSize(QSize(350, 0))
+
+        self.gridLayout.addWidget(self.lineEdit_name, 0, 2, 1, 4)
+
 
         self.verticalLayout.addLayout(self.gridLayout)
 
@@ -170,9 +165,8 @@ class Ui_PropertyWindow(object):
         self.description.setPlaceholderText(QCoreApplication.translate("PropertyWindow", u"Description", None))
         self.label_name.setText(QCoreApplication.translate("PropertyWindow", u"Name:", None))
         self.check_box_inherit.setText(QCoreApplication.translate("PropertyWindow", u"Inherit Values", None))
-        self.button_add.setText(QCoreApplication.translate("PropertyWindow", u"Add", None))
-        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertyWindow", u"Name", None))
         self.button_add_line.setText(QCoreApplication.translate("PropertyWindow", u"+", None))
         self.label_values.setText(QCoreApplication.translate("PropertyWindow", u"Allowed Values:", None))
+        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertyWindow", u"Name", None))
     # retranslateUi
 

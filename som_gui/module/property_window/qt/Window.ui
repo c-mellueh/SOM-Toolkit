@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
-    <height>536</height>
+    <width>648</width>
+    <height>586</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,8 +88,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>786</width>
-           <height>203</height>
+           <width>626</width>
+           <height>255</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -140,32 +140,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="5">
-      <widget class="QPushButton" name="button_add">
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2" colspan="3">
-      <widget class="QLineEdit" name="lineEdit_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>350</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="placeholderText">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="3">
       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
      </item>
@@ -204,6 +178,25 @@
        </property>
        <property name="text">
         <string>Allowed Values:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" colspan="4">
+      <widget class="QLineEdit" name="lineEdit_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Name</string>
        </property>
       </widget>
      </item>

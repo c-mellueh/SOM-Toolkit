@@ -20,4 +20,4 @@ def property_info_requested(som_property:SOMcreator.SOMProperty):
 
 def window_created(window:ui.PropertyWindow):
     core.connect_window(window,tool.PropertyWindow)
-    core.update_window(window,tool.PropertyWindow)
+    core.update_window(window,tool.PropertyWindow,tool.Util)

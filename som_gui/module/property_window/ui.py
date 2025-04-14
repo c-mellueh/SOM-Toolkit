@@ -10,4 +10,5 @@ class PropertyWindow(QWidget):
         self.ui = Ui_PropertyWindow()
         self.ui.setupUi(self)
         self.som_property = som_property
+        self.initial_fill = True
         trigger.window_created(self)
