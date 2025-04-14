@@ -133,6 +133,9 @@ class ClassModel(QAbstractItemModel):
         flags |= Qt.ItemFlag.ItemIsDropEnabled
 
         column = index.column()
+        if column >= len(self.columns):
+            return flags
+        
         role = self.columns[column][3]
         if role == Qt.ItemDataRole.CheckStateRole:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
