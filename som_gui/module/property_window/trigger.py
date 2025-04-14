@@ -19,5 +19,6 @@ def property_info_requested(som_property:SOMcreator.SOMProperty):
     core.open_property_info(som_property,tool.PropertyWindow)
 
 def window_created(window:ui.PropertyWindow):
+    core.init_window(window,tool.PropertyWindow)
     core.connect_window(window,tool.PropertyWindow)
     core.update_window(window,tool.PropertyWindow,tool.Util)

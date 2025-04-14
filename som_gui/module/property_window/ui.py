@@ -1,8 +1,11 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget,QWidget, QComboBox, QTreeView
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+
 from som_gui.resources.icons import get_icon
 from .qt.ui_Window import Ui_PropertyWindow
 import SOMcreator
 from . import trigger
+
 class PropertyWindow(QWidget):
     def __init__(self,som_property:SOMcreator.SOMProperty, *args, **kwargs):
         super().__init__(*args, **kwargs)

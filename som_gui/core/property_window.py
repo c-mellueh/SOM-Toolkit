@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_window import ui
 import SOMcreator
+from som_gui.module.property_.ui import UnitComboBox
 
 
 def connect_signals(
@@ -15,6 +16,10 @@ def connect_signals(
         property_window.property_info_requested
     )
 
+
+def init_window(window: ui.PropertyWindow, property_window: Type[tool.PropertyWindow]):
+    property_window.prefill_comboboxes(window)
+    property_window.update_unit_completer(window)
 
 def connect_window(
     window: ui.PropertyWindow, property_window: Type[tool.PropertyWindow]
