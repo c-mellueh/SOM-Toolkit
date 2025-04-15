@@ -27,7 +27,7 @@ def property_info_requested(som_property: SOMcreator.SOMProperty):
 
 
 def window_created(window: ui.PropertyWindow):
-    core.init_window(window, tool.PropertyWindow)
+    core.init_window(window, tool.PropertyWindow,tool.Util)
     core.connect_window(window, tool.PropertyWindow, tool.Util)
     core.update_window(window, tool.PropertyWindow, tool.Util)
 
@@ -38,3 +38,6 @@ def update_window(window: ui.PropertyWindow):
 
 def value_context_menu_request(pos, table_view: ui.ValueView):
     core.value_context_menu_request(pos, table_view, tool.PropertyWindow, tool.Util)
+
+def paste_clipboard(table_view:ui.ValueView):
+    core.handle_paste_event(table_view,tool.PropertyWindow,tool.Appdata)

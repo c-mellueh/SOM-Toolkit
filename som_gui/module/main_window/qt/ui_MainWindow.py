@@ -172,6 +172,8 @@ class Ui_MainWindow(object):
         self.table_property.setObjectName(u"table_property")
         self.table_property.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_property.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table_property.setDragEnabled(True)
+        self.table_property.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
         self.table_property.setSortingEnabled(True)
         self.splitter.addWidget(self.table_property)
         self.table_property.horizontalHeader().setStretchLastSection(True)

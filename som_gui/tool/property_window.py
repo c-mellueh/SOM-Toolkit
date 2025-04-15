@@ -5,7 +5,7 @@ import logging
 import som_gui.core.tool
 import som_gui
 
-from PySide6.QtCore import Slot, Signal, QObject, QCoreApplication, Qt
+from PySide6.QtCore import Slot, Signal, QObject, QCoreApplication, Qt, QModelIndex
 from PySide6.QtWidgets import QLayout, QCompleter, QComboBox
 import SOMcreator
 from som_gui.module.property_window import ui, trigger
@@ -25,6 +25,7 @@ class Signaller(QObject):
     unit_changed = Signal(SOMcreator.SOMProperty)
     description_changed = Signal(SOMcreator.SOMProperty)
     values_changed = Signal(SOMcreator.SOMClass)
+    paste_clipboard = Signal(ui.PropertyWindow)
 
 
 class PropertyWindow(som_gui.core.tool.PropertyWindow):
@@ -33,6 +34,10 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
     @classmethod
     def get_properties(cls) -> PropertyWindowProperties:
         return som_gui.PropertyWindowProperties
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.paste_clipboard.connect(trigger.paste_clipboard)
 
     @classmethod
     def property_info_requested(cls, som_property: SOMcreator.SOMProperty):
@@ -164,6 +169,25 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         som_property.set_optional(value)
 
     @classmethod
+    def set_value(cls, table_view: ui.ValueView, row: int, value):
+        model = table_view.model().sourceModel()
+        index = model.index(row, 0, QModelIndex())
+        model.setData(index, value, Qt.ItemDataRole.EditRole)
+
+    @classmethod
+    def set_values(cls, table_view: ui.ValueView, start_row: int, values: list):
+        model = table_view.model().sourceModel()
+        parent_index = QModelIndex()
+        for row, value in enumerate(values, start=start_row):
+            value = str(value).strip()
+            if not value:
+                continue
+            if model.rowCount(parent_index) <= row:
+                model.append_row()
+            index = model.index(row, 0, parent_index)
+            model.setData(index, value, Qt.ItemDataRole.EditRole)
+
+    @classmethod
     def get_datatype_combobox(cls, widget_ui: Ui_PropertyWindow) -> QComboBox:
         return widget_ui.combo_data_type
 
@@ -249,11 +273,15 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         cls.get_properties().context_menu_builders.append(context_menu_builder)
 
     @classmethod
-    def get_selected_values(cls, table_view: ui.ValueView):
+    def get_selected_rows(cls, table_view: ui.ValueView):
         model = table_view.model()
-        av = table_view.som_property.all_values
         selected_indexes = [model.mapToSource(i) for i in table_view.selectedIndexes()]
-        return [av[i.row()] for i in selected_indexes]
+        return [i.row() for i in selected_indexes]
+
+    @classmethod
+    def get_selected_values(cls, table_view: ui.ValueView):
+        av = table_view.som_property.all_values
+        return [av[r] for r in cls.get_selected_rows(table_view)]
 
     @classmethod
     def remove_builder(cls, table_view: ui.ValueView):
@@ -341,3 +369,17 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
             Qt.ItemDataRole.EditRole,
         )
         cls.signaller.values_changed.emit(table_view.som_property)
+
+    @classmethod
+    def get_paste_text_list(cls, text, seperator):
+        seperator = tool.Appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+        seperator_status = tool.Appdata.get_bool_setting(
+            SEPERATOR_SECTION, SEPERATOR_STATUS
+        )
+        text = QGuiApplication.clipboard().text()
+
+        if not seperator_status:
+            return [text]
+
+        text_list = text.split(seperator)
+        return text_list

@@ -3,7 +3,15 @@ from __future__ import annotations
 import logging
 from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, QPoint, Qt,QMimeData,QByteArray,Signal,QObject
+from PySide6.QtCore import (
+    QCoreApplication,
+    QPoint,
+    Qt,
+    QMimeData,
+    QByteArray,
+    Signal,
+    QObject,
+)
 from PySide6.QtGui import QIcon, QPalette, QDropEvent
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
@@ -24,9 +32,12 @@ from som_gui.module.property_table import ui
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
 import pickle
 
+
 class Signaller(QObject):
     property_info_requested = Signal(SOMcreator.SOMProperty)
-class PropertyTable(QObject):
+
+
+class PropertyTable(som_gui.core.tool.PropertyTable):
     signaller = Signaller()
 
     @classmethod
@@ -34,9 +45,12 @@ class PropertyTable(QObject):
         return som_gui.PropertyTableProperties
 
     @classmethod
-    def connect_table(cls,table:ui.PropertyTable):
-        table.doubleClicked.connect(lambda i: cls.signaller.property_info_requested.emit(cls.get_property_from_item(i)))
-
+    def connect_table(cls, table: ui.PropertyTable):
+        table.doubleClicked.connect(
+            lambda i: cls.signaller.property_info_requested.emit(
+                cls.get_property_from_item(i)
+            )
+        )
 
     @classmethod
     def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
@@ -173,12 +187,22 @@ class PropertyTable(QObject):
             if som_property.is_child:
                 row_items[0].setIcon(get_link_icon())
                 parent = som_property.parent.property_set
-                class_name = QCoreApplication.translate("PropertyTable", "Predefined PropertySet") if parent.is_predefined else parent.som_class.name
-                text = QCoreApplication.translate("PropertyTable", "Inherits Settings from {}").format(class_name)
-                row_items[0].setToolTip(QCoreApplication.translate("PropertyTable", text))
+                class_name = (
+                    QCoreApplication.translate(
+                        "PropertyTable", "Predefined PropertySet"
+                    )
+                    if parent.is_predefined
+                    else parent.som_class.name
+                )
+                text = QCoreApplication.translate(
+                    "PropertyTable", "Inherits Settings from {}"
+                ).format(class_name)
+                row_items[0].setToolTip(
+                    QCoreApplication.translate("PropertyTable", text)
+                )
             else:
-             row_items[0].setIcon(QIcon())
-             row_items[0].setToolTip("")
+                row_items[0].setIcon(QIcon())
+                row_items[0].setToolTip("")
             row_items[0].setData(LINKSTATE, som_property.is_child)
 
     @classmethod
@@ -296,7 +320,9 @@ class PropertyTable(QObject):
         :return:
         """
         if len(cls.get_selected_properties(table)) == 1:
-            return  QCoreApplication.translate("PropertyTable", "Rename"), lambda: cls.edit_selected_property_name(table)
+            return QCoreApplication.translate(
+                "PropertyTable", "Rename"
+            ), lambda: cls.edit_selected_property_name(table)
         else:
             return None
 
@@ -327,7 +353,11 @@ class PropertyTable(QObject):
             and with_child
         ):
             return None
-        text = QCoreApplication.translate("PropertyTable", "Delete (with subproperties)") if with_child else QCoreApplication.translate("PropertyTable", "Delete")
+        text = (
+            QCoreApplication.translate("PropertyTable", "Delete (with subproperties)")
+            if with_child
+            else QCoreApplication.translate("PropertyTable", "Delete")
+        )
         return text, lambda: cls.delete_selected_properties(
             table, with_child=with_child
         )
@@ -351,8 +381,7 @@ class PropertyTable(QObject):
         if not any(a.is_child for a in selected_properties):
             return None
         text = QCoreApplication.translate("PropertyTable", "Remove Connection")
-        return text,lambda: cls.remove_parent_of_selected_properties(table) 
-
+        return text, lambda: cls.remove_parent_of_selected_properties(table)
 
     @classmethod
     def context_menu_builder_add_connection(
@@ -462,12 +491,14 @@ class PropertyTable(QObject):
         if source_table == target_table:
             event.accept()
             return False
-        if not isinstance(source_table, ui.PropertyTable|None):
+        if not isinstance(source_table, ui.PropertyTable | None):
             return False
         return True
 
     @classmethod
-    def write_property_dicts_to_mime_data(cls,property_dicts:list[dict],mime_data:QMimeData):
+    def write_property_dicts_to_mime_data(
+        cls, property_dicts: list[dict], mime_data: QMimeData
+    ):
         """
         write properties to MimeData
         :param properties:
@@ -481,7 +512,7 @@ class PropertyTable(QObject):
     @classmethod
     def get_property_dict_from_mime_data(
         cls,
-        mime_data:QMimeData,
+        mime_data: QMimeData,
     ) -> list[dict]:
         """
         get PropertyDict from MimeData

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtCore import QModelIndex
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -10,6 +12,11 @@ if TYPE_CHECKING:
 import SOMcreator
 
 from som_gui.module.property_.ui import UnitComboBox
+from som_gui.module.property_window.constants import (
+    SEPERATOR_SECTION,
+    SEPERATOR_STATUS,
+    SEPERATOR,
+)
 
 
 def open_property_info(
@@ -39,9 +46,14 @@ def connect_signals(
     property_table.signaller.property_info_requested.connect(
         property_window.property_info_requested
     )
+    property_window.connect_signals()
 
 
-def init_window(window: ui.PropertyWindow, property_window: Type[tool.PropertyWindow]):
+def init_window(
+    window: ui.PropertyWindow,
+    property_window: Type[tool.PropertyWindow],
+    util: Type[tool.Util],
+):
     property_window.prefill_comboboxes(window)
     property_window.update_unit_completer(window)
     property_window.connect_value_view(window)
@@ -141,3 +153,20 @@ def value_context_menu_request(
             menu_list.append(result)
     menu = util.create_context_menu(menu_list)
     menu.exec(table_view.mapToGlobal(pos))
+
+
+def handle_paste_event(
+    table_view: ui.ValueView,
+    property_window: Type[tool.PropertyWindow],
+    appdata: Type[tool.Appdata],
+) -> bool:
+    start_row = min(property_window.get_selected_rows(table_view), default=0)
+    sep_bool = appdata.get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
+    text = QGuiApplication.clipboard().text()
+    if not sep_bool:
+        property_window.set_value(table_view, start_row, text)
+        return
+
+    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+    text_list = text.split(seperator)
+    property_window.set_values(table_view, start_row, text_list)

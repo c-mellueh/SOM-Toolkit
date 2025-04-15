@@ -218,9 +218,13 @@ def splitter_settings_accepted(
         widget
     )
     text = property_set_window.get_splitter_settings_text(widget)
+    text = text.replace("\\n","\n")
+    text = text.replace("\\t","\t")
+
     appdata.set_setting(SEPERATOR_SECTION, SEPERATOR, text)
     appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, is_seperator_activated)
-
+    if not text:
+        appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, False)
 
 def update_splitter_enabled_state(
     widget: ui.SplitterSettings,

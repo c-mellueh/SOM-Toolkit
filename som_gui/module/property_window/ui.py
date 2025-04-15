@@ -37,6 +37,7 @@ class PropertyWindow(QWidget):
         self.closed.emit()
         return super().closeEvent(event)
 
+
 class ValueView(QTableView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,6 +46,12 @@ class ValueView(QTableView):
     def model(self) -> SortModel:
         return super().model()
 
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_V and (event.modifiers() & Qt.ControlModifier):
+            trigger.paste_clipboard(self)
+        else:
+            return super().keyPressEvent(event)
 
 class ValueModel(QAbstractTableModel):
 
