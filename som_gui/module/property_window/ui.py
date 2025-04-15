@@ -43,9 +43,13 @@ class ValueModel(QAbstractTableModel):
         super().__init__(*args, **kwargs)
         self.som_property: SOMcreator.SOMProperty = som_property
         self.column_count = 1
+        self.row_count = len(self.som_property.all_values)
+    
+    def update_values(self):
+        self.row_count = len(self.som_property.all_values)
 
     def rowCount(self, parent=QModelIndex()):
-        return len(self.som_property.all_values)
+        return self.row_count
 
     def columnCount(self, parent=QModelIndex()):
         return self.column_count
@@ -104,6 +108,7 @@ class ValueModel(QAbstractTableModel):
     def insertRow(self, row, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
         self.som_property._allowed_values.append("")
+        self.update_values()
         self.endInsertRows()
 
     def append_row(self):
