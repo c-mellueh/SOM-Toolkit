@@ -28,9 +28,9 @@ class PropertyWindow(QWidget):
         self.initial_fill = True
         trigger.window_created(self)
 
-    # def enterEvent(self, event):
-    #     trigger.update_window(self)
-    #     return super().enterEvent(event)
+    def enterEvent(self, event):
+        trigger.update_window(self)
+        return super().enterEvent(event)
 
 
 class ValueView(QTableView):
@@ -55,8 +55,8 @@ class ValueModel(QAbstractTableModel):
         self._values = list()
         self.link_item = get_link_icon()
         self.update_values()
-        self.dataChanged.connect(lambda x,y,z:self.update_values())
-    
+        self.dataChanged.connect(lambda x, y, z: self.update_values())
+
     def update_values(self):
         self._values = list(self.som_property.all_values)
         self.row_count = len(self.values)
@@ -64,7 +64,9 @@ class ValueModel(QAbstractTableModel):
             v for v in self.values if self.som_property.is_value_ignored(v)
         }
         self.is_identifier = self.som_property.is_identifier()
-        self.inherited_values = {v for v in self.values if self.som_property.is_value_inherited(v)}
+        self.inherited_values = {
+            v for v in self.values if self.som_property.is_value_inherited(v)
+        }
 
     def rowCount(self, parent=QModelIndex()):
         return self.row_count
@@ -102,12 +104,12 @@ class ValueModel(QAbstractTableModel):
             return palette.mid() if self.is_identifier else palette.base()
         return None
 
-    def get_own_value_index(self,row:int):
+    def get_own_value_index(self, row: int):
         all_values = self.som_property.all_values
         inherit_row_count = len([v for v in all_values if self.is_value_inherited(v)])
-        if 0<=row<inherit_row_count:
+        if 0 <= row < inherit_row_count:
             return None
-        return row-inherit_row_count
+        return row - inherit_row_count
 
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         if role != Qt.ItemDataRole.EditRole:
@@ -149,7 +151,7 @@ class ValueModel(QAbstractTableModel):
     def append_row(self):
         self.insertRow(self.rowCount())
 
-    def is_value_inherited(self,value):
+    def is_value_inherited(self, value):
         return value in self.inherited_values
 
 

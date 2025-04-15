@@ -176,16 +176,18 @@ class SOMProperty(BaseClass):
 
     @property
     def allowed_values(self) -> list:
+        values = list()
         if self.is_inheriting_values:
             if self.parent is not None:
-                return [
+                values += [
                     v
                     for v in self.parent.allowed_values
                     if v not in self._ignored_values
                 ]
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._own_values
+        values += self._own_values
+        return values
 
     @property
     def own_values(self) -> list:

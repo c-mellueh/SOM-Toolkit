@@ -16,9 +16,11 @@ if TYPE_CHECKING:
     from som_gui.module.property_table import ui
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
-def connect_table(table:ui.PropertyTable,property_table:Type[tool.PropertyTable]):
+
+def connect_table(table: ui.PropertyTable, property_table: Type[tool.PropertyTable]):
     property_table.connect_table(table)
-    
+
+
 def init_context_menu(property_table: Type[tool.PropertyTable]):
     """
     Defines all standard context menu actions associated with an property table.
