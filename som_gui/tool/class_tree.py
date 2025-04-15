@@ -56,9 +56,10 @@ class ClassTree(som_gui.core.tool.ClassTree):
     def connect_trigger(cls):
         cls.signaller.search.connect(trigger.search_class)
         cls.signaller.request_group_selection.connect(trigger.group_selection)
+
     @classmethod
     def reset_tree(cls, tree: ui.ClassView):
-        tree.model().reset()
+        tree.model().reset_required.emit("tool.class_tree.reset_tree")
 
     @classmethod
     def get_trees(cls) -> set[ui.ClassView]:
@@ -189,9 +190,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return menu
 
     @classmethod
-    def get_selected_classes(
-        cls, tree: ui.ClassView
-    ) -> list[SOMcreator.SOMClass]:
+    def get_selected_classes(cls, tree: ui.ClassView) -> list[SOMcreator.SOMClass]:
         selected_indexes = cls.get_selected(tree)
         return [cls.get_class_from_index(index) for index in selected_indexes]
 
@@ -350,14 +349,18 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         parent = som_class.parent
         if not parent:
+            parent_index = QModelIndex()
+            insert_row_index = model.get_row_count(QModelIndex())
             model.root_classes.append(som_class)
-            model.insertRow(model.get_row_count(QModelIndex()) - 1)
+            logging.info(f"INsert at {insert_row_index}")
+            model.insertRow(insert_row_index)
         else:
             parent_index = model.class_index_dict.get(parent)
             if not parent_index:
                 return
-            row_count = model.get_row_count(parent_index) - 1
-            model.insertRow(row_count, parent_index)
+            insert_row_index = model.get_row_count(parent_index) - 1
+            model.insertRow(insert_row_index, parent_index)
+        tree.update_requested.emit()
 
     @classmethod
     def remove_row_by_class(cls, tree: ui.ClassView, som_class: SOMcreator.SOMClass):

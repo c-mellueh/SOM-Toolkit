@@ -76,6 +76,7 @@ class ClassView(QTreeView):
 
    
 class ClassModel(QAbstractItemModel):
+    reset_required = Signal(str)
     
     def __init__(self, *args, **kwargs):
         self.root_classes = list(self.project.get_root_classes()) if self.project else list()
@@ -91,13 +92,15 @@ class ClassModel(QAbstractItemModel):
             QModelIndex(): len(self.root_classes)
         }
         super().__init__(*args, **kwargs)
+        self.reset_required.connect(self.reset)
+
 
     @property
     def project(self):
         return tool.Project.get()
 
-    def reset(self):
-        logging.info(f"Reset Class Model {self}")
+    def reset(self,source:str):
+        logging.info(f"{source} -> Reset Class Model {self}")
         self.beginResetModel()
         self.root_classes = list(self.project.get_root_classes())
         self.class_index_dict = dict()
@@ -146,7 +149,7 @@ class ClassModel(QAbstractItemModel):
     def columnCount(self, parent=QModelIndex()):
         column_count = len(self.columns)
         if column_count != self.old_column_count:
-            self.reset()
+            self.reset_required.emit("columnCount")
             self.old_column_count = column_count
         return len(self.columns)
 
@@ -159,13 +162,9 @@ class ClassModel(QAbstractItemModel):
         return result
 
     def rowCount(self, parent=QModelIndex()):
-        new_result = self.get_row_count(parent)
-        old_result = self.row_count_dict.get(parent)
-        if old_result != new_result and old_result is not None:
-            self.reset()
-        if old_result is None:
-            self.row_count_dict[parent] = new_result
-        return new_result
+        if parent not in self.row_count_dict:
+            self.row_count_dict[parent] = self.get_row_count(parent)
+        return self.row_count_dict[parent]
 
     def data(self, index: QModelIndex, role: Qt.ItemDataRole):
         if not index.isValid():
@@ -206,13 +205,14 @@ class ClassModel(QAbstractItemModel):
             setter_func(som_class, value)
         return True
 
-    def index(self, row: int, column: int, parent: QModelIndex):
+    def index(self, row: int, column: int, parent= QModelIndex()):
+        #logging.debug(f"request Index {row}:{column} {parent}")
         if not parent.isValid():
             if row >= len(list(self.root_classes)):
                 if not self.root_classes:
                     return QModelIndex()
                 logging.debug("Index Exmits resize Required")
-                self.reset()
+                self.reset_required.emit("index")
                 return QModelIndex()
             som_class = self.root_classes[row]
             index = self.createIndex(row, column, som_class)
@@ -226,7 +226,7 @@ class ClassModel(QAbstractItemModel):
                 index = self.createIndex(row, column, child_class)
                 return index
             else:
-                self.reset()
+                return QModelIndex()
         return QModelIndex()
 
     def createIndex(self, row, column, pointer=None):
@@ -261,11 +261,15 @@ class ClassModel(QAbstractItemModel):
             self.root_classes.pop(row)
         self.endRemoveRows()
 
-    def insertRow(self, row, /, parent=QModelIndex()):
-        self.row_count_dict[parent] += 1
+    def insertRow(self, row, parent=QModelIndex()):
+        if not parent in self.row_count_dict:
+            self.row_count_dict[parent] = 0
         self.beginInsertRows(parent, row, row)
+        self.row_count_dict[parent] += 1
+        logging.debug(f"Insert Row {parent} {row}")
         self.endInsertRows()
-
+        return True
+    
     def removeColumn(self, column: int, parent=QModelIndex()):
         self.beginRemoveColumns(parent, column, column)
         self.columns.pop(column)

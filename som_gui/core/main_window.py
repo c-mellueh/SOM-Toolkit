@@ -243,7 +243,7 @@ def define_class_tree_context_menu(
 
     def reset_tree():
         tree = main_window.get_class_tree()
-        tree.model().reset()
+        tree.model().reset("core.main_window.reset_tree")
         
     class_tree.add_context_menu_entry(
         tree,
@@ -274,7 +274,7 @@ def add_class_tree_shortcuts(
     util.add_shortcut(
         "Ctrl+G",
         main_window.get(),
-        lambda: class_tree.signaller.request_group_selection(tree),
+        lambda: class_tree.signaller.request_group_selection.emit(tree),
     )
     util.add_shortcut(
         "Ctrl+F",
