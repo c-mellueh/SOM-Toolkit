@@ -139,6 +139,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="check_box_optional">
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>Optional</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="check_box_inherit">
          <property name="layoutDirection">
           <enum>Qt::LayoutDirection::RightToLeft</enum>

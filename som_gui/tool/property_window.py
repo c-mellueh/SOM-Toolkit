@@ -160,6 +160,10 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         som_property.child_inherits_values = value
 
     @classmethod
+    def set_optional(cls, som_property: SOMcreator.SOMProperty, value: bool):
+        som_property.set_optional(value)
+
+    @classmethod
     def get_datatype_combobox(cls, widget_ui: Ui_PropertyWindow) -> QComboBox:
         return widget_ui.combo_data_type
 

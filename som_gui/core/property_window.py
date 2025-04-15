@@ -15,7 +15,7 @@ from som_gui.module.property_.ui import UnitComboBox
 def open_property_info(
     som_property: SOMcreator.SOMProperty, property_window: Type[tool.PropertyWindow]
 ):
-    if  (window := property_window.get_window(som_property)):
+    if window := property_window.get_window(som_property):
         if window.isHidden():
             window.close()
             window = property_window.create_window(som_property)
@@ -25,8 +25,9 @@ def open_property_info(
     window.activateWindow()
     window.showNormal()
 
+
 def retranslate_ui(property_window: Type[tool.PropertyWindow]):
-    for (window) in property_window.get_windows():
+    for window in property_window.get_windows():
         window.ui.retranslateUi(window)
         title = property_window.create_window_title(window.som_property)
         window.setWindowTitle(title)
@@ -82,16 +83,23 @@ def connect_window(
     widget_ui.description.textChanged.connect(
         lambda: property_window.set_description(som_property, get_description_text())
     )
-
+    widget_ui.check_box_optional.checkStateChanged.connect(
+        lambda cs: property_window.set_optional(
+            som_property, util.checkstate_to_bool(cs)
+        )
+    )
     widget_ui.check_box_inherit.checkStateChanged.connect(
         lambda cs: property_window.set_value_inherit_state(
             som_property, util.checkstate_to_bool(cs)
         )
     )
     widget_ui.button_add_line.clicked.connect(
-        lambda: property_window.add_value(widget_ui.table_view_value,)
+        lambda: property_window.add_value(
+            widget_ui.table_view_value,
+        )
     )
-    window.closed.connect(lambda:property_window.remove_window(window))
+    window.closed.connect(lambda: property_window.remove_window(window))
+
 
 def update_window(
     window: ui.PropertyWindow,
@@ -111,8 +119,6 @@ def update_window(
     )
     ui.check_box_inherit.setCheckState(inherits_values_checkstate)
     ui.table_view_value.model().sourceModel().update_values()
-
-
 
 
 def create_context_menu_builders(property_window: Type[tool.PropertyWindow]):

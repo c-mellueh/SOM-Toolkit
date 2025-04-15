@@ -113,6 +113,12 @@ class Ui_PropertyWindow(object):
 
         self.horizontalLayout_2.addWidget(self.label_values)
 
+        self.check_box_optional = QCheckBox(PropertyWindow)
+        self.check_box_optional.setObjectName(u"check_box_optional")
+        self.check_box_optional.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+
+        self.horizontalLayout_2.addWidget(self.check_box_optional)
+
         self.check_box_inherit = QCheckBox(PropertyWindow)
         self.check_box_inherit.setObjectName(u"check_box_inherit")
         self.check_box_inherit.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
@@ -175,6 +181,7 @@ class Ui_PropertyWindow(object):
         self.label_3.setText(QCoreApplication.translate("PropertyWindow", u"Unit:", None))
         self.button_add_line.setText(QCoreApplication.translate("PropertyWindow", u"+", None))
         self.label_values.setText(QCoreApplication.translate("PropertyWindow", u"Allowed Values:", None))
+        self.check_box_optional.setText(QCoreApplication.translate("PropertyWindow", u"Optional", None))
         self.check_box_inherit.setText(QCoreApplication.translate("PropertyWindow", u"Inherit Values", None))
         self.description.setPlaceholderText(QCoreApplication.translate("PropertyWindow", u"Description", None))
     # retranslateUi
