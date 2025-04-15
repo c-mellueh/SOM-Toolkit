@@ -16,11 +16,6 @@ def connect():
             tool.PropertySet, tool.PropertyTable, tool.MainWindow
         )
     )
-    table.itemDoubleClicked.connect(
-        lambda: core.table_double_clicked(
-            tool.PropertySet, tool.PropertyTable, tool.PropertySetWindow
-        )
-    )
     table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
