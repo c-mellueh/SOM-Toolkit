@@ -137,6 +137,13 @@ class SOMProperty(BaseClass):
             return True
         return False
 
+    def is_value_inherited(self, value) -> bool:
+        if value not in self.all_values:
+            return False
+        if value in self._own_values:
+            return False
+        return True
+
     def is_value_ignored(self, value) -> bool:
         return value in self._ignored_values
 
@@ -163,7 +170,7 @@ class SOMProperty(BaseClass):
                 return self.parent.allowed_values
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._allowed_values
+        return self._own_values
 
     @property
     def allowed_values(self) -> list:
@@ -176,7 +183,7 @@ class SOMProperty(BaseClass):
                 ]
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._allowed_values
+        return self._own_values
 
     @allowed_values.setter
     def allowed_values(self, values: list) -> None:
@@ -193,7 +200,7 @@ class SOMProperty(BaseClass):
             if own_values:
                 raise ValueError("Value input doesn't match Parent Values")
         else:
-            self._allowed_values = values
+            self._own_values = values
 
     @property
     def value_type(self) -> str:
@@ -322,3 +329,12 @@ class SOMProperty(BaseClass):
         if self.property_set.som_class.identifier_property != self:
             return False
         return True
+
+    def add_value(self, value):
+        self._own_values.append(value)
+
+    def remove_value(self, value):
+        if value not in self.all_values:
+            pass
+        elif value in self._own_values:
+            self._own_values.remove(value)

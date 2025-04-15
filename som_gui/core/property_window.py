@@ -68,7 +68,7 @@ def connect_window(
         )
     )
     table_model:ui.ValueModel = widget_ui.table_view_value.model().sourceModel()
-    widget_ui.button_add_line.clicked.connect(table_model.append_row)
+    widget_ui.button_add_line.clicked.connect(lambda:property_window.add_value(widget_ui.table_view_value,"XXX"))
 
 
 def update_window(
@@ -102,6 +102,8 @@ def open_property_info(
 def create_context_menu_builders(property_window:Type[tool.PropertyWindow]):
     property_window.add_context_menu_builder(property_window.ignore_builder)
     property_window.add_context_menu_builder(property_window.unignore_builder)
+    property_window.add_context_menu_builder(property_window.remove_builder)
+
 
 def value_context_menu_request(pos:QPoint,table_view:ui.ValueView,property_window: Type[tool.PropertyWindow],util:Type[tool.Util]):
     menu_builders = property_window.get_context_menu_builders()

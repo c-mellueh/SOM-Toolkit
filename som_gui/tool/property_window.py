@@ -13,7 +13,8 @@ from som_gui.module.property_window.prop import PropertyWindowProperties, Plugin
 from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPES
 from SOMcreator.constants import value_constants
 
-
+if TYPE_CHECKING:
+    from som_gui.module.property_window.qt.ui_Window import Ui_PropertyWindow
 test_index = None
 
 
@@ -23,6 +24,7 @@ class Signaller(QObject):
     valuetype_changed = Signal(SOMcreator.SOMProperty)
     unit_changed = Signal(SOMcreator.SOMProperty)
     description_changed = Signal(SOMcreator.SOMProperty)
+    values_changed = Signal(SOMcreator.SOMClass)
 
 
 class PropertyWindow(som_gui.core.tool.PropertyWindow):
@@ -150,19 +152,19 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         som_property.child_inherits_values = value
 
     @classmethod
-    def get_datatype_combobox(cls, widget_ui: ui.Ui_PropertyWindow) -> QComboBox:
+    def get_datatype_combobox(cls, widget_ui: Ui_PropertyWindow) -> QComboBox:
         return widget_ui.combo_data_type
 
     @classmethod
-    def get_valuetype_combobox(cls, widget_ui: ui.Ui_PropertyWindow) -> QComboBox:
+    def get_valuetype_combobox(cls, widget_ui: Ui_PropertyWindow) -> QComboBox:
         return widget_ui.combo_value_type
 
     @classmethod
-    def get_unit_combobox(cls, widget_ui: ui.Ui_PropertyWindow):
+    def get_unit_combobox(cls, widget_ui: Ui_PropertyWindow):
         return widget_ui.combo_unit
 
     @classmethod
-    def get_description_textedit(cls, widget_ui: ui.Ui_PropertyWindow):
+    def get_description_textedit(cls, widget_ui: Ui_PropertyWindow):
         return widget_ui.description
 
     @classmethod
@@ -220,7 +222,9 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         sort_model = ui.SortModel(som_property)
         sort_model.setSourceModel(model)
         table_view.setModel(sort_model)
-        table_view.customContextMenuRequested.connect(lambda pos:trigger.value_context_menu_request(pos,table_view))
+        table_view.customContextMenuRequested.connect(
+            lambda pos: trigger.value_context_menu_request(pos, table_view)
+        )
 
     @classmethod
     def add_context_menu_builder(cls, context_menu_builder: Callable):
@@ -233,34 +237,57 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         cls.get_properties().context_menu_builders.append(context_menu_builder)
 
     @classmethod
-    def ignore_builder(cls, tree_view: ui.ValueView):
-        som_property = tree_view.som_property
-        av = som_property.all_values
-        values = [av[i.row()] for i in tree_view.selectedIndexes()]
-        are_values_ignored = [som_property.is_value_ignored(v)  for v in values if v not in som_property._allowed_values]
+    def get_selected_values(cls, table_view: ui.ValueView):
+        model = table_view.model()
+        av = table_view.som_property.all_values
+        selected_indexes = [model.mapToSource(i) for i in table_view.selectedIndexes()]
+        return [av[i.row()] for i in selected_indexes]
+
+    @classmethod
+    def remove_builder(cls, table_view: ui.ValueView):
+        values = cls.get_selected_values(table_view)
+        if not values:
+            return None
+        name = QCoreApplication.translate("PropertySetWindow", "Remove")
+        action = lambda: cls.remove_selected_values(table_view)
+        return name, action
+
+    @classmethod
+    def ignore_builder(cls, table_view: ui.ValueView):
+        som_property = table_view.som_property
+        values = cls.get_selected_values(table_view)
+        are_values_ignored = [
+            som_property.is_value_ignored(v)
+            for v in values
+            if som_property.is_value_inherited(v)
+        ]
         if all(are_values_ignored):
             return
         name = QCoreApplication.translate("PropertySetWindow", "Ignore")
-        action = lambda: cls.set_selecteded_values_ignored(tree_view, True)
+        action = lambda: cls.set_selecteded_values_ignored(table_view, True)
         return name, action
 
     @classmethod
-    def unignore_builder(cls, tree_view: ui.ValueView):
-        som_property = tree_view.som_property
-        av = som_property.all_values
-        values = [av[i.row()] for i in tree_view.selectedIndexes()]
-        are_values_ignored = [som_property.is_value_ignored(v) for v in values if v not in som_property._allowed_values]
+    def unignore_builder(cls, table_view: ui.ValueView):
+        som_property = table_view.som_property
+        values = cls.get_selected_values(table_view)
+        are_values_ignored = [
+            som_property.is_value_ignored(v)
+            for v in values
+            if som_property.is_value_inherited(v)
+        ]
         if not any(are_values_ignored):
             return
         name = QCoreApplication.translate("PropertySetWindow", "Unignore")
-        action = lambda: cls.set_selecteded_values_ignored(tree_view, False)
+        action = lambda: cls.set_selecteded_values_ignored(table_view, False)
         return name, action
 
     @classmethod
-    def set_selecteded_values_ignored(cls,tree_view: ui.ValueView, state: bool):
-        som_property = tree_view.som_property
+    def set_selecteded_values_ignored(cls, table_view: ui.ValueView, state: bool):
+        som_property = table_view.som_property
         av = som_property.all_values
-        for index in tree_view.selectedIndexes():
+        for index in table_view.selectedIndexes():
+            index = table_view.model().mapToSource(index)
             value = av[index.row()]
             if state:
                 som_property.ignore_parent_value(value)
@@ -268,8 +295,31 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
                 som_property.unignore_parent_value(value)
 
     @classmethod
+    def remove_selected_values(cls, table_view: ui.ValueView):
+        som_property = table_view.som_property
+        av = som_property.all_values
+        for index in reversed(
+            sorted(table_view.selectedIndexes(), key=lambda i: i.row())
+        ):
+            index = table_view.model().mapToSource(index)
+            value = av[index.row()]
+            if som_property.is_value_inherited(value):
+                som_property.ignore_parent_value(value)
+            elif value not in som_property.allowed_values:
+                return
+            else:
+                table_view.model().sourceModel().removeRow(index.row())
+                cls.signaller.values_changed.emit(som_property)
+    @classmethod
     def get_context_menu_builders(cls) -> list:
         """
         Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
         """
         return cls.get_properties().context_menu_builders
+
+    @classmethod
+    def add_value(cls,table_view:ui.ValueView,value=""):
+        model = table_view.model().sourceModel()
+        model.append_row()
+        model.setData(model.index(model.rowCount(),0),value,Qt.ItemDataRole.EditRole)
+        cls.signaller.values_changed.emit()

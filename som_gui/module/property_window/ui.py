@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from PySide6.QtCore import (
     QAbstractTableModel,
     QSortFilterProxyModel,
@@ -6,12 +8,13 @@ from PySide6.QtCore import (
     Signal,
 )
 from PySide6.QtWidgets import QWidget, QWidget, QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem,QPalette,QIcon
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QPalette, QIcon
 
-from som_gui.resources.icons import get_icon,get_link_icon
+from som_gui.resources.icons import get_icon, get_link_icon
 import SOMcreator
 from . import trigger
 from som_gui import tool
+
 
 class PropertyWindow(QWidget):
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
@@ -35,6 +38,9 @@ class ValueView(QTableView):
         super().__init__(*args, **kwargs)
         self.som_property: SOMcreator.SOMProperty = None
 
+    def model(self) -> SortModel:
+        return super().model()
+
 
 class ValueModel(QAbstractTableModel):
     values_changed = Signal()
@@ -44,7 +50,7 @@ class ValueModel(QAbstractTableModel):
         self.som_property: SOMcreator.SOMProperty = som_property
         self.column_count = 1
         self.row_count = len(self.som_property.all_values)
-    
+
     def update_values(self):
         self.row_count = len(self.som_property.all_values)
 
@@ -58,7 +64,6 @@ class ValueModel(QAbstractTableModel):
     def values(self) -> list:
         return self.som_property.all_values
 
-
     def data(self, index: QModelIndex, role):
         som_property = self.som_property
         row = index.row()
@@ -68,17 +73,17 @@ class ValueModel(QAbstractTableModel):
             return str(value)
         if role == Qt.ItemDataRole.ForegroundRole:
             if self.som_property.is_value_ignored(value):
-             
+
                 return tool.Util.get_greyed_out_brush()
             else:
                 return tool.Util.get_standard_text_brush()
         if role == Qt.ItemDataRole.DecorationRole:
 
-            if value in som_property._allowed_values:
+            if value in som_property._own_values:
                 return QIcon()
             else:
                 return get_link_icon()
-        
+
         if role == Qt.ItemDataRole.BackgroundRole:
 
             return palette.mid() if som_property.is_identifier() else palette.base()
@@ -102,14 +107,20 @@ class ValueModel(QAbstractTableModel):
         else:
             flags |= Qt.ItemFlag.ItemIsEditable
 
-        flags |=Qt.ItemFlag.ItemIsSelectable
+        flags |= Qt.ItemFlag.ItemIsSelectable
         return flags
 
     def insertRow(self, row, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
-        self.som_property._allowed_values.append("")
+        self.som_property.add_value("")
         self.update_values()
         self.endInsertRows()
+
+    def removeRow(self, row, parent=QModelIndex()):
+        self.beginRemoveRows(parent, row, row)
+        value = self.som_property.all_values[row]
+        self.som_property.remove_value(value)
+        self.endRemoveRows()
 
     def append_row(self):
         self.insertRow(self.rowCount())
@@ -119,3 +130,6 @@ class SortModel(QSortFilterProxyModel):
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
         self.som_property = som_property
         super().__init__(*args, **kwargs)
+
+    def sourceModel(self) -> ValueModel:
+        return super().sourceModel()
