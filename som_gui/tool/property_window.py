@@ -83,6 +83,10 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
                 break
 
     @classmethod
+    def remove_window(cls, window: ui.PropertyWindow):
+        cls.get_properties().windows.pop(window.som_property)
+
+    @classmethod
     def create_window(cls, som_property: SOMcreator.SOMProperty) -> ui.PropertyWindow:
         prop = cls.get_properties()
         prop.windows[som_property] = ui.PropertyWindow(som_property)
@@ -99,6 +103,10 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         cls, som_property: SOMcreator.SOMProperty
     ) -> ui.PropertyWindow | None:
         return cls.get_properties().windows.get(som_property)
+
+    @classmethod
+    def get_windows(cls) -> set[ui.PropertyWindow]:
+        return set(cls.get_properties().windows.values())
 
     @classmethod
     def get_ui(cls, som_property: SOMcreator.SOMProperty):

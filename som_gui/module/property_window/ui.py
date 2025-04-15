@@ -17,6 +17,7 @@ from som_gui import tool
 
 
 class PropertyWindow(QWidget):
+    closed = Signal()
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
         from .qt.ui_Window import Ui_PropertyWindow
 
@@ -32,6 +33,9 @@ class PropertyWindow(QWidget):
         trigger.update_window(self)
         return super().enterEvent(event)
 
+    def closeEvent(self, event):
+        self.closed.emit()
+        return super().closeEvent(event)
 
 class ValueView(QTableView):
     def __init__(self, *args, **kwargs):
@@ -43,7 +47,6 @@ class ValueView(QTableView):
 
 
 class ValueModel(QAbstractTableModel):
-    values_changed = Signal()
 
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,12 +85,13 @@ class ValueModel(QAbstractTableModel):
         return v in self.ignored_values
 
     def data(self, index: QModelIndex, role):
-        som_property = self.som_property
         row = index.row()
         value = self.values[row]
         palette = QPalette()
+
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return str(value)
+
         if role == Qt.ItemDataRole.ForegroundRole:
             if self.is_value_ignored(value):
                 return tool.Util.get_greyed_out_brush()
@@ -118,7 +122,6 @@ class ValueModel(QAbstractTableModel):
         old_value_row = self.get_own_value_index(index.row())
         self.som_property._own_values[old_value_row] = value
         self.dataChanged.emit(index, index, [role])
-        self.values_changed.emit()
         return True
 
     def flags(self, index: QModelIndex):

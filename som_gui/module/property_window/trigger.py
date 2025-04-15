@@ -15,7 +15,7 @@ def connect():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.PropertyWindow)
 
 
 def on_new_project():

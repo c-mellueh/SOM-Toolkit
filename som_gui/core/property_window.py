@@ -12,6 +12,26 @@ import SOMcreator
 from som_gui.module.property_.ui import UnitComboBox
 
 
+def open_property_info(
+    som_property: SOMcreator.SOMProperty, property_window: Type[tool.PropertyWindow]
+):
+    if  (window := property_window.get_window(som_property)):
+        if window.isHidden():
+            window.close()
+            window = property_window.create_window(som_property)
+    else:
+        window = property_window.create_window(som_property)
+    window.show()
+    window.activateWindow()
+    window.showNormal()
+
+def retranslate_ui(property_window: Type[tool.PropertyWindow]):
+    for (window) in property_window.get_windows():
+        window.ui.retranslateUi(window)
+        title = property_window.create_window_title(window.som_property)
+        window.setWindowTitle(title)
+
+
 def connect_signals(
     property_window: Type[tool.PropertyWindow], property_table: Type[tool.PropertyTable]
 ):
@@ -69,9 +89,9 @@ def connect_window(
         )
     )
     widget_ui.button_add_line.clicked.connect(
-        lambda: property_window.add_value(widget_ui.table_view_value, "XXX")
+        lambda: property_window.add_value(widget_ui.table_view_value,)
     )
-
+    window.closed.connect(lambda:property_window.remove_window(window))
 
 def update_window(
     window: ui.PropertyWindow,
@@ -93,13 +113,6 @@ def update_window(
     ui.table_view_value.model().sourceModel().update_values()
 
 
-def open_property_info(
-    som_property: SOMcreator.SOMProperty, property_window: Type[tool.PropertyWindow]
-):
-    if not (window := property_window.get_window(som_property)):
-        window = property_window.create_window(som_property)
-    window.show()
-    window.activateWindow()
 
 
 def create_context_menu_builders(property_window: Type[tool.PropertyWindow]):
