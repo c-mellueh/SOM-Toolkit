@@ -5,7 +5,10 @@ from typing import TYPE_CHECKING, Type
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_window import ui
+    from PySide6.QtCore import QPoint
+    from PySide6.QtWidgets import QTreeView
 import SOMcreator
+
 from som_gui.module.property_.ui import UnitComboBox
 
 
@@ -95,3 +98,17 @@ def open_property_info(
     window.show()
     window.activateWindow()
 
+
+def create_context_menu_builders(property_window:Type[tool.PropertyWindow]):
+    property_window.add_context_menu_builder(property_window.ignore_builder)
+    property_window.add_context_menu_builder(property_window.unignore_builder)
+
+def value_context_menu_request(pos:QPoint,table_view:ui.ValueView,property_window: Type[tool.PropertyWindow],util:Type[tool.Util]):
+    menu_builders = property_window.get_context_menu_builders()
+    menu_list = []
+    for builder in menu_builders:
+        result = builder(table_view)
+        if result is not None:
+            menu_list.append(result)
+    menu = util.create_context_menu(menu_list)
+    menu.exec(table_view.mapToGlobal(pos))

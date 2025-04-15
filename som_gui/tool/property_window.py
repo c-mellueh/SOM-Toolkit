@@ -13,6 +13,7 @@ from som_gui.module.property_window.prop import PropertyWindowProperties, Plugin
 from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPES
 from SOMcreator.constants import value_constants
 
+
 test_index = None
 
 
@@ -219,3 +220,56 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         sort_model = ui.SortModel(som_property)
         sort_model.setSourceModel(model)
         table_view.setModel(sort_model)
+        table_view.customContextMenuRequested.connect(lambda pos:trigger.value_context_menu_request(pos,table_view))
+
+    @classmethod
+    def add_context_menu_builder(cls, context_menu_builder: Callable):
+        """
+        :param context_menu_builder: Function which gets called on context menu creation.
+        should return tuple[name, function] of context should be shown or None if not shown.
+        The function gets passed the current table as a variable
+        :return:
+        """
+        cls.get_properties().context_menu_builders.append(context_menu_builder)
+
+    @classmethod
+    def ignore_builder(cls, tree_view: ui.ValueView):
+        som_property = tree_view.som_property
+        av = som_property.all_values
+        values = [av[i.row()] for i in tree_view.selectedIndexes()]
+        are_values_ignored = [som_property.is_value_ignored(v)  for v in values if v not in som_property._allowed_values]
+        if all(are_values_ignored):
+            return
+        name = QCoreApplication.translate("PropertySetWindow", "Ignore")
+        action = lambda: cls.set_selecteded_values_ignored(tree_view, True)
+        return name, action
+
+    @classmethod
+    def unignore_builder(cls, tree_view: ui.ValueView):
+        som_property = tree_view.som_property
+        av = som_property.all_values
+        values = [av[i.row()] for i in tree_view.selectedIndexes()]
+        are_values_ignored = [som_property.is_value_ignored(v) for v in values if v not in som_property._allowed_values]
+        if not any(are_values_ignored):
+            return
+        name = QCoreApplication.translate("PropertySetWindow", "Unignore")
+        action = lambda: cls.set_selecteded_values_ignored(tree_view, False)
+        return name, action
+
+    @classmethod
+    def set_selecteded_values_ignored(cls,tree_view: ui.ValueView, state: bool):
+        som_property = tree_view.som_property
+        av = som_property.all_values
+        for index in tree_view.selectedIndexes():
+            value = av[index.row()]
+            if state:
+                som_property.ignore_parent_value(value)
+            else:
+                som_property.unignore_parent_value(value)
+
+    @classmethod
+    def get_context_menu_builders(cls) -> list:
+        """
+        Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
+        """
+        return cls.get_properties().context_menu_builders

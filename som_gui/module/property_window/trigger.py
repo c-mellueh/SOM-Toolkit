@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from . import ui
 def connect():
     core.connect_signals(tool.PropertyWindow,tool.PropertyTable)
-
+    core.create_context_menu_builders(tool.PropertyWindow)
 def retranslate_ui():
     pass
 
@@ -25,3 +25,6 @@ def window_created(window:ui.PropertyWindow):
 
 def update_window(window:ui.PropertyWindow):
     core.update_window(window,tool.PropertyWindow,tool.Util)
+
+def value_context_menu_request(pos,table_view:ui.ValueView):
+    core.value_context_menu_request(pos,table_view,tool.PropertyWindow,tool.Util)

@@ -7,7 +7,7 @@ import tempfile
 from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QAction, QKeySequence, QShortcut
+from PySide6.QtGui import QAction, QKeySequence, QShortcut,QPalette,QBrush
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QListWidget,
     QCompleter,
+    QApplication
 )
 
 import som_gui.core.tool
@@ -385,3 +386,20 @@ class Util(som_gui.core.tool.Util):
         if widget is not None:
             widget.setCompleter(completer)
         return completer
+
+    @classmethod
+    def user_is_using_darkmode(cls):
+        palette = QApplication.palette()
+        return palette.color(QPalette.Window).lightness() < 128
+
+    @classmethod
+    def get_greyed_out_brush(cls):
+        if cls.user_is_using_darkmode():
+            return QBrush(Qt.GlobalColor.lightGray)
+        else: # Light mode
+            return QBrush(Qt.GlobalColor.darkGray)
+    
+    @classmethod
+    def get_standard_text_brush(cls):
+        palette = QApplication.palette()
+        return QBrush(palette.color(QPalette.ColorRole.Text))

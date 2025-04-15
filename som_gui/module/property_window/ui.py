@@ -6,13 +6,12 @@ from PySide6.QtCore import (
     Signal,
 )
 from PySide6.QtWidgets import QWidget, QWidget, QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem,QPalette,QIcon
 
-from som_gui.resources.icons import get_icon
-
+from som_gui.resources.icons import get_icon,get_link_icon
 import SOMcreator
 from . import trigger
-
+from som_gui import tool
 
 class PropertyWindow(QWidget):
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
@@ -46,25 +45,45 @@ class ValueModel(QAbstractTableModel):
         self.column_count = 1
 
     def rowCount(self, parent=QModelIndex()):
-        return len(self.som_property.allowed_values)
+        return len(self.som_property.all_values)
 
     def columnCount(self, parent=QModelIndex()):
         return self.column_count
 
     @property
     def values(self) -> list:
-        return self.som_property.allowed_values
+        return self.som_property.all_values
+
 
     def data(self, index: QModelIndex, role):
+        som_property = self.som_property
         row = index.row()
+        value = self.values[row]
+        palette = QPalette()
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
-            return str(self.values[row])
+            return str(value)
+        if role == Qt.ItemDataRole.ForegroundRole:
+            if self.som_property.is_value_ignored(value):
+             
+                return tool.Util.get_greyed_out_brush()
+            else:
+                return tool.Util.get_standard_text_brush()
+        if role == Qt.ItemDataRole.DecorationRole:
+
+            if value in som_property._allowed_values:
+                return QIcon()
+            else:
+                return get_link_icon()
+        
+        if role == Qt.ItemDataRole.BackgroundRole:
+
+            return palette.mid() if som_property.is_identifier() else palette.base()
         return None
 
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         row = index.row()
         if role == Qt.ItemDataRole.EditRole:
-            self.som_property.allowed_values[row] = value
+            self.som_property.all_values[row] = value
             self.dataChanged.emit(index, index, [role])
             self.values_changed.emit()
             return True
@@ -72,7 +91,14 @@ class ValueModel(QAbstractTableModel):
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        flags |= Qt.ItemFlag.ItemIsEditable
+        value = self.values[index.row()]
+
+        if self.som_property.is_value_ignored(value):
+            flags &= ~Qt.ItemFlag.ItemIsEditable
+        else:
+            flags |= Qt.ItemFlag.ItemIsEditable
+
+        flags |=Qt.ItemFlag.ItemIsSelectable
         return flags
 
     def insertRow(self, row, parent=QModelIndex()):
