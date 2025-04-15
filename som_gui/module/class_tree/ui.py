@@ -262,6 +262,7 @@ class ClassModel(QAbstractItemModel):
         self.endRemoveRows()
 
     def insertRow(self, row, parent=QModelIndex()):
+        parent = parent.siblingAtColumn(0)
         if not parent in self.row_count_dict:
             self.row_count_dict[parent] = 0
         self.beginInsertRows(parent, row, row)
