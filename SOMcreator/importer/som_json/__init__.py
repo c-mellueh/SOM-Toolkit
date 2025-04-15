@@ -84,7 +84,7 @@ def open_json(cls: Type[SOMProject], path: str | os.PathLike):
     for som_property in proj.get_properties(filter=False):
         av = som_property._own_values
         som_property._own_values = list()
-        som_property.allowed_values = av
+        som_property.allowed_values = [v for v in av if v not in som_property._ignored_values]
 
     proj.plugin_dict = SOMcreator.importer.som_json.plugin_dict
     proj.import_dict = main_dict

@@ -196,17 +196,10 @@ class SOMProperty(BaseClass):
         if self.is_inheriting_values:
             if self.parent is None:
                 raise ValueError("Parent is expected but dne")
-            own_values = set(values)
             for value in self.parent.allowed_values:
                 if value in values:
-                    self.unignore_parent_value(value)
-                else:
-                    self.ignore_parent_value(value)
-                own_values.remove(value)
-            if own_values:
-                raise ValueError("Value input doesn't match Parent Values")
-        else:
-            self._own_values = values
+                    values.remove(value)
+        self._own_values = values
 
     @property
     def value_type(self) -> str:
