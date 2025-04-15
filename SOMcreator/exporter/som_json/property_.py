@@ -22,6 +22,6 @@ def write(som_property: SOMcreator.SOMProperty) -> PropertyDict:
     property_dict[VALUE_TYPE] = som_property.value_type
     property_dict[CHILD_INHERITS_VALUE] = som_property.child_inherits_values
     property_dict[REVIT_MAPPING] = som_property.revit_name
-    property_dict[VALUE] = som_property.all_values
+    property_dict[VALUE] = som_property._own_values
     property_dict[IGNORED_VALUES] = som_property.ignored_values
     return property_dict

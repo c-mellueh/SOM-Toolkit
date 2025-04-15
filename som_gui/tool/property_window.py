@@ -293,11 +293,13 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
                 som_property.ignore_parent_value(value)
             else:
                 som_property.unignore_parent_value(value)
+        table_view.model().sourceModel().update_values()
 
     @classmethod
     def remove_selected_values(cls, table_view: ui.ValueView):
         som_property = table_view.som_property
         av = som_property.all_values
+        model = table_view.model().sourceModel()
         for index in reversed(
             sorted(table_view.selectedIndexes(), key=lambda i: i.row())
         ):
@@ -305,11 +307,11 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
             value = av[index.row()]
             if som_property.is_value_inherited(value):
                 som_property.ignore_parent_value(value)
-            elif value not in som_property.allowed_values:
-                return
+                model.dataChanged.emit(index, index, Qt.ItemDataRole.EditRole)
             else:
                 table_view.model().sourceModel().removeRow(index.row())
                 cls.signaller.values_changed.emit(som_property)
+
     @classmethod
     def get_context_menu_builders(cls) -> list:
         """
@@ -318,8 +320,12 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         return cls.get_properties().context_menu_builders
 
     @classmethod
-    def add_value(cls,table_view:ui.ValueView,value=""):
+    def add_value(cls, table_view: ui.ValueView, value=""):
         model = table_view.model().sourceModel()
         model.append_row()
-        model.setData(model.index(model.rowCount(),0),value,Qt.ItemDataRole.EditRole)
-        cls.signaller.values_changed.emit()
+        model.setData(
+            model.createIndex(model.rowCount() - 1, 0, None),
+            value,
+            Qt.ItemDataRole.EditRole,
+        )
+        cls.signaller.values_changed.emit(table_view.som_property)

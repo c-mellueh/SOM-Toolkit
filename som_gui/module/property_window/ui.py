@@ -28,9 +28,9 @@ class PropertyWindow(QWidget):
         self.initial_fill = True
         trigger.window_created(self)
 
-    def enterEvent(self, event):
-        trigger.update_window(self)
-        return super().enterEvent(event)
+    # def enterEvent(self, event):
+    #     trigger.update_window(self)
+    #     return super().enterEvent(event)
 
 
 class ValueView(QTableView):
@@ -50,9 +50,21 @@ class ValueModel(QAbstractTableModel):
         self.som_property: SOMcreator.SOMProperty = som_property
         self.column_count = 1
         self.row_count = len(self.som_property.all_values)
-
+        self.ignored_values = set()
+        self.inherited_values = set()
+        self._values = list()
+        self.link_item = get_link_icon()
+        self.update_values()
+        self.dataChanged.connect(lambda x,y,z:self.update_values())
+    
     def update_values(self):
-        self.row_count = len(self.som_property.all_values)
+        self._values = list(self.som_property.all_values)
+        self.row_count = len(self.values)
+        self.ignored_values = {
+            v for v in self.values if self.som_property.is_value_ignored(v)
+        }
+        self.is_identifier = self.som_property.is_identifier()
+        self.inherited_values = {v for v in self.values if self.som_property.is_value_inherited(v)}
 
     def rowCount(self, parent=QModelIndex()):
         return self.row_count
@@ -62,7 +74,10 @@ class ValueModel(QAbstractTableModel):
 
     @property
     def values(self) -> list:
-        return self.som_property.all_values
+        return self._values
+
+    def is_value_ignored(self, v):
+        return v in self.ignored_values
 
     def data(self, index: QModelIndex, role):
         som_property = self.som_property
@@ -72,37 +87,43 @@ class ValueModel(QAbstractTableModel):
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return str(value)
         if role == Qt.ItemDataRole.ForegroundRole:
-            if self.som_property.is_value_ignored(value):
-
+            if self.is_value_ignored(value):
                 return tool.Util.get_greyed_out_brush()
             else:
                 return tool.Util.get_standard_text_brush()
-        if role == Qt.ItemDataRole.DecorationRole:
 
-            if value in som_property._own_values:
-                return QIcon()
+        if role == Qt.ItemDataRole.DecorationRole:
+            if self.is_value_inherited(value):
+                return self.link_item
             else:
-                return get_link_icon()
+                return QIcon()
 
         if role == Qt.ItemDataRole.BackgroundRole:
-
-            return palette.mid() if som_property.is_identifier() else palette.base()
+            return palette.mid() if self.is_identifier else palette.base()
         return None
 
+    def get_own_value_index(self,row:int):
+        all_values = self.som_property.all_values
+        inherit_row_count = len([v for v in all_values if self.is_value_inherited(v)])
+        if 0<=row<inherit_row_count:
+            return None
+        return row-inherit_row_count
+
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
-        row = index.row()
-        if role == Qt.ItemDataRole.EditRole:
-            self.som_property.all_values[row] = value
-            self.dataChanged.emit(index, index, [role])
-            self.values_changed.emit()
-            return True
-        return False
+        if role != Qt.ItemDataRole.EditRole:
+            return False
+
+        old_value_row = self.get_own_value_index(index.row())
+        self.som_property._own_values[old_value_row] = value
+        self.dataChanged.emit(index, index, [role])
+        self.values_changed.emit()
+        return True
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
         value = self.values[index.row()]
 
-        if self.som_property.is_value_ignored(value):
+        if self.is_value_inherited(value):
             flags &= ~Qt.ItemFlag.ItemIsEditable
         else:
             flags |= Qt.ItemFlag.ItemIsEditable
@@ -117,13 +138,19 @@ class ValueModel(QAbstractTableModel):
         self.endInsertRows()
 
     def removeRow(self, row, parent=QModelIndex()):
+        own_value_row = self.get_own_value_index(row)
+        if own_value_row is None:
+            return
         self.beginRemoveRows(parent, row, row)
-        value = self.som_property.all_values[row]
-        self.som_property.remove_value(value)
+        self.som_property._own_values.pop(own_value_row)
+        self.update_values()
         self.endRemoveRows()
 
     def append_row(self):
         self.insertRow(self.rowCount())
+
+    def is_value_inherited(self,value):
+        return value in self.inherited_values
 
 
 class SortModel(QSortFilterProxyModel):

@@ -394,6 +394,8 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def get_greyed_out_brush(cls):
+        palette = QApplication.palette()
+        return QBrush(palette.color(QPalette.ColorRole.PlaceholderText))
         if cls.user_is_using_darkmode():
             return QBrush(Qt.GlobalColor.lightGray)
         else: # Light mode

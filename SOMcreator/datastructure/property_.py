@@ -165,12 +165,14 @@ class SOMProperty(BaseClass):
     @property
     def all_values(self):
         """returns all values even if they are ignored"""
+        values = list()
         if self.is_inheriting_values:
             if self.parent is not None:
-                return self.parent.allowed_values
+                values += self.parent.allowed_values
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._own_values
+        values += self._own_values
+        return values
 
     @property
     def allowed_values(self) -> list:
@@ -183,6 +185,10 @@ class SOMProperty(BaseClass):
                 ]
             else:
                 raise ValueError("Parent is expected but dne")
+        return self._own_values
+
+    @property
+    def own_values(self) -> list:
         return self._own_values
 
     @allowed_values.setter
