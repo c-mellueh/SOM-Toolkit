@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtCore import QCoreApplication, Qt,QObject,Signal
 from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
@@ -26,9 +26,11 @@ if TYPE_CHECKING:
     from som_gui.module.predefined_property_set import ui
     from PySide6.QtGui import QAction
 
+class Signaller(QObject):
+    property_requested = Signal(SOMcreator.SOMProperty)
 
 class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
-
+    signaller = Signaller()
     @classmethod
     def get_properties(cls) -> PredefinedPsetProperties:
         return som_gui.PredefinedPsetProperties
@@ -51,7 +53,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         props.predefined_property_set_window = window
 
     @classmethod
-    def connect_triggers(cls, window):
+    def connect_triggers(cls, window:ui.PredefinedPropertySetWindow):
         som_gui.module.predefined_property_set.trigger.connect_dialog(window)
 
     @classmethod
@@ -65,6 +67,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         window = cls.get_window()
         window.hide()
 
+    @classmethod
+    def get_property_table(cls):
+        return cls.get_window().ui.table_properties
+    
     @classmethod
     def get_class_table_widget(cls) -> QTableWidget:
         return cls.get_window().ui.table_widgets_classes

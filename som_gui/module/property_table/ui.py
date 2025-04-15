@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 class PropertyTable(QTableWidget):
     def __init__(self, *args):
         super().__init__(*args)
+        print("PROPERTY TABLE CREATED")
         property_table.trigger.connect_table(self)
         self.setSelectionBehavior(self.SelectionBehavior.SelectRows)
         self.setSelectionMode(self.SelectionMode.ContiguousSelection)

@@ -18,12 +18,12 @@ def connect():
 
 
 def open_window():
-    core.open_window(tool.PredefinedPropertySet, tool.Util)
+    core.open_window(tool.PredefinedPropertySet, tool.Util,tool.PropertyTable,tool.PropertyWindow)
 
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.ui.list_view_pset.itemSelectionChanged.connect(
-        lambda: core.pset_selection_changed(tool.PredefinedPropertySet)
+        lambda: core.pset_selection_changed(tool.PredefinedPropertySet,tool.PropertyTable)
     )
 
     dialog.ui.table_widgets_classes.itemDoubleClicked.connect(
@@ -40,11 +40,6 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
 
     dialog.ui.list_view_pset.itemChanged.connect(
         lambda item: core.pset_data_changed(item, tool.PropertySet)
-    )
-
-    dialog.ui.list_view_pset.itemDoubleClicked.connect(
-        lambda item: core.pset_double_clicked(
-            item, tool.PropertySet, tool.PropertySetWindow,     )
     )
 
     dialog.ui.table_widgets_classes.customContextMenuRequested.connect(
@@ -79,4 +74,5 @@ def accept():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.PredefinedPropertySet, tool.Util)
+    core.retranslate_ui(tool.PredefinedPropertySet, tool.Util,tool.PropertyTable)
+    

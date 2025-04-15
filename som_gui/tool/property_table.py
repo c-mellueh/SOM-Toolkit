@@ -24,7 +24,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
 from som_gui.resources.icons import get_link_icon
 from som_gui.module.property_table.constants import MIME_DATA_KEY
-
+from som_gui.module.property_table import trigger
 if TYPE_CHECKING:
     from som_gui.module.property_table.prop import PropertyTableProperties
 from som_gui.module.property_table import ui
@@ -35,7 +35,7 @@ import pickle
 
 class Signaller(QObject):
     property_info_requested = Signal(SOMcreator.SOMProperty)
-
+    translation_requested = Signal(ui.PropertyTable)
 
 class PropertyTable(som_gui.core.tool.PropertyTable):
     signaller = Signaller()
@@ -46,12 +46,13 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def connect_table(cls, table: ui.PropertyTable):
+        print("CONNECT TABLE")
         table.doubleClicked.connect(
             lambda i: cls.signaller.property_info_requested.emit(
                 cls.get_property_from_item(i)
             )
         )
-
+        cls.signaller.translation_requested.connect(trigger.retranslate_ui)
     @classmethod
     def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
         """
@@ -436,14 +437,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     def get_property_set_by_table(
         cls, table: QTableWidget
     ) -> SOMcreator.SOMPropertySet | None:
-        if table is None:
-            return None
-        window = table.window()
-        if isinstance(window, PropertySetWindow):
-            return tool.PropertySetWindow.get_property_set_by_window(window)
-        if isinstance(window, MainWindow):
-            return tool.PropertySet.get_active_property_set()
-
+        return table.property_set
     @classmethod
     def get_row_index_from_property(
         cls, som_property: SOMcreator.SOMProperty, table: QTableWidget
