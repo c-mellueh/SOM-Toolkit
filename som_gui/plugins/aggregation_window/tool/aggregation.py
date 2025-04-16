@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import logging
 
 from PySide6.QtGui import QPalette
@@ -18,6 +20,8 @@ from SOMcreator.exporter.desite import building_structure
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QCoreApplication
 
+if TYPE_CHECKING:
+    from som_gui.module.class_info import ui as ui_class_info
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
@@ -97,9 +101,12 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         som_class.abbreviation = abbreviation
 
     @classmethod
-    def create_ci_line_edit(cls):
-        cls.get_properties().class_info_line_edit = ui_aggregation.ClassInfoLineEdit()
+    def create_ci_line_edit(cls,dialog:ui_class_info.ClassInfoDialog):
+        le = ui_aggregation.ClassInfoLineEdit(dialog)
+        cls.get_properties().class_info_line_edit = le
+        tool.Util.insert_tab_order(dialog.ui.line_edit_name,le)
         return cls.get_properties().class_info_line_edit
+    
 
     @classmethod
     def get_ci_text(cls):

@@ -75,7 +75,7 @@ def activate(
     class_info_tool.add_plugin_entry(
         LABEL_KEY,
         "horizontal_layout_info",
-        lambda: QLabel(name),
+        lambda *a: QLabel(name),
         -1,
         lambda *a: None,
         lambda *a: None,

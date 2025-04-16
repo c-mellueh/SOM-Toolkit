@@ -144,7 +144,12 @@
  </widget>
  <tabstops>
   <tabstop>line_edit_name</tabstop>
+  <tabstop>button_gruppe</tabstop>
+  <tabstop>combo_box_pset</tabstop>
+  <tabstop>combo_box_property</tabstop>
+  <tabstop>line_edit_property_value</tabstop>
   <tabstop>button_add_ifc</tabstop>
+  <tabstop>text_edit_description</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -155,8 +160,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -171,8 +176,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

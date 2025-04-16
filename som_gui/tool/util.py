@@ -405,3 +405,10 @@ class Util(som_gui.core.tool.Util):
     def get_standard_text_brush(cls):
         palette = QApplication.palette()
         return QBrush(palette.color(QPalette.ColorRole.Text))
+    
+    @classmethod
+    def insert_tab_order(cls,previous_widget:QWidget,inserted_widget:QWidget):
+        old_element = previous_widget.nextInFocusChain()
+        window = previous_widget.window()
+        window.setTabOrder(previous_widget,inserted_widget)
+        window.setTabOrder(inserted_widget,old_element)

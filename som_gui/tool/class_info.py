@@ -111,7 +111,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         prop.dialog = ClassInfoDialog()
         for plugin in prop.class_info_plugin_list:
             layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
-            layout.insertWidget(plugin.index, plugin.widget())
+            layout.insertWidget(plugin.index, plugin.widget(prop.dialog))
             setattr(prop, plugin.key, plugin.init_value_getter)
         cls.get_dialog().setWindowTitle(title)
         return cls.get_dialog()
@@ -274,8 +274,15 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         line_edit.setCompleter(cls.create_ifc_completer())
         line_edit.setText(mapping)
         prop = cls.get_properties()
+        if prop.ifc_line_edits:
+            last_tab_widget = prop.ifc_line_edits[-1]
+        else:
+            last_tab_widget = cls.get_ui().button_add_ifc
         prop.ifc_line_edits.append(line_edit)
+
+
         cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
+        tool.Util.insert_tab_order(last_tab_widget,line_edit)
 
     @classmethod
     def add_classes_infos_add_function(cls, key: str, getter_function: Callable):

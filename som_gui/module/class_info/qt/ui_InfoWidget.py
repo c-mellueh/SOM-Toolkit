@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'InfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -135,7 +135,12 @@ class Ui_ClassInfo(object):
 
         self.verticalLayout.addWidget(self.button_box)
 
-        QWidget.setTabOrder(self.line_edit_name, self.button_add_ifc)
+        QWidget.setTabOrder(self.line_edit_name, self.button_gruppe)
+        QWidget.setTabOrder(self.button_gruppe, self.combo_box_pset)
+        QWidget.setTabOrder(self.combo_box_pset, self.combo_box_property)
+        QWidget.setTabOrder(self.combo_box_property, self.line_edit_property_value)
+        QWidget.setTabOrder(self.line_edit_property_value, self.button_add_ifc)
+        QWidget.setTabOrder(self.button_add_ifc, self.text_edit_description)
 
         self.retranslateUi(ClassInfo)
         self.button_box.accepted.connect(ClassInfo.accept)
