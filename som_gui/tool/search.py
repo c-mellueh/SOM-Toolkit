@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
-from PySide6.QtCore import QCoreApplication, Qt,QObject,Signal
+from PySide6.QtCore import QCoreApplication, Qt, QObject, Signal
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 import som_gui
@@ -11,19 +11,23 @@ from som_gui import __version__ as version
 from som_gui import tool
 from som_gui.module import search
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.search import trigger,constants
+from som_gui.module.search import trigger, constants
+
 if TYPE_CHECKING:
     from som_gui.module.search.prop import SearchProperties
 from som_gui.module.search.ui import SearchDialog
 import SOMcreator
 from thefuzz import fuzz
 
+
 class Signaller(QObject):
     update_requested = Signal(SearchDialog)
     strict_state_changed = Signal(bool)
 
+
 class Search(som_gui.core.tool.Search):
     signaller = Signaller()
+
     @classmethod
     def get_properties(cls) -> SearchProperties:
         return som_gui.SearchProperties
@@ -50,14 +54,22 @@ class Search(som_gui.core.tool.Search):
         search_dialog.search_mode = search_mode
         cls.fill_table(search_dialog, search_items, data_getters)
         cls.retranslate_title(search_dialog, prop.search_mode)
-        search_dialog.ui.lineEdit.textChanged.connect(lambda:cls.signaller.update_requested.emit(search_dialog))
+        search_dialog.ui.lineEdit.textChanged.connect(
+            lambda: cls.signaller.update_requested.emit(search_dialog)
+        )
         check_box = search_dialog.ui.checkBox_strict
-        check_state = tool.Appdata.get_bool_setting(constants.SEARCH_SECTION,constants.STRICT_SETTING,False)
+        check_state = tool.Appdata.get_bool_setting(
+            constants.SEARCH_SECTION, constants.STRICT_SETTING, False
+        )
         if check_state:
             check_box.setChecked(check_state)
 
-        check_box.checkStateChanged.connect(lambda:cls.signaller.update_requested.emit(search_dialog))
-        check_box.checkStateChanged.connect(lambda:cls.signaller.strict_state_changed.emit(check_box.isChecked()))
+        check_box.checkStateChanged.connect(
+            lambda: cls.signaller.update_requested.emit(search_dialog)
+        )
+        check_box.checkStateChanged.connect(
+            lambda: cls.signaller.strict_state_changed.emit(check_box.isChecked())
+        )
 
         if not search_dialog.exec_():
             prop.search_dialogues.remove(search_dialog)
@@ -183,13 +195,21 @@ class Search(som_gui.core.tool.Search):
         :param column_count:
         :return:
         """
-        table =cls.get_table(dialog)
+        table = cls.get_table(dialog)
         model = table.model()
         texts = [table.item(row, col).text().lower() for col in range(column_count)]
-        if cls.is_in_strict_model(dialog):
-            ratio = max(fuzz.ratio(search_text.lower(), text) for text in texts)
-        else:
-            ratio = max(fuzz.partial_ratio(search_text.lower(), text) for text in texts)
+        search_text = search_text.lower()
+
+        def calc_ratio(t, index):
+            if search_text == t:
+                return 1000
+            if cls.is_in_strict_model(dialog):
+                return fuzz.ratio(search_text, t) * 1.0 - 0.1 * index
+            else:
+                return fuzz.partial_ratio(search_text, t) * 1.0 - 0.1 * index
+
+        ratio = max(calc_ratio(text, index) for index, text in enumerate(texts))
+
         model.setData(
             model.index(row, column_count), ratio, Qt.ItemDataRole.DisplayRole
         )  # Used for Sorting
@@ -254,5 +274,5 @@ class Search(som_gui.core.tool.Search):
         return cls.get_properties().search_dialogues
 
     @classmethod
-    def is_in_strict_model(cls,dialog:SearchDialog):
+    def is_in_strict_model(cls, dialog: SearchDialog):
         return dialog.ui.checkBox_strict.isChecked()
