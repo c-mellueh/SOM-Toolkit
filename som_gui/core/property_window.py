@@ -44,7 +44,7 @@ def connect_signals(
     property_window: Type[tool.PropertyWindow], property_table: Type[tool.PropertyTable]
 ):
     property_table.signaller.property_info_requested.connect(
-        property_window.property_info_requested
+        property_window.show_property_info
     )
     property_window.connect_signals()
 
@@ -197,9 +197,7 @@ def splitter_settings_accepted(
     property_window: Type[tool.PropertyWindow], appdata: Type[tool.Appdata]
 ):
     widget = property_window.get_splitter_settings_widget()
-    is_seperator_activated = property_window.get_splitter_settings_checkstate(
-        widget
-    )
+    is_seperator_activated = property_window.get_splitter_settings_checkstate(widget)
     text = property_window.get_splitter_settings_text(widget)
     text = text.replace("\\n", "\n")
     text = text.replace("\\t", "\t")
@@ -214,7 +212,5 @@ def update_splitter_enabled_state(
     widget: ui.SplitterSettings,
     property_window: Type[tool.PropertyWindow],
 ):
-    is_seperator_activated = property_window.get_splitter_settings_checkstate(
-        widget
-    )
+    is_seperator_activated = property_window.get_splitter_settings_checkstate(widget)
     widget.ui.line_edit_seperator.setEnabled(is_seperator_activated)

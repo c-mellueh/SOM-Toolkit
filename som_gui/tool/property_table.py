@@ -45,7 +45,6 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def connect_table(cls, table: ui.PropertyTable):
-        print("CONNECT TABLE")
         table.doubleClicked.connect(
             lambda i: cls.signaller.property_info_requested.emit(
                 cls.get_property_from_item(i)

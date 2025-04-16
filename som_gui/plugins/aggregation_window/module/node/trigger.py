@@ -27,7 +27,7 @@ def on_new_project() -> None:
 
 def pset_tree_double_clicked(item: QTreeWidgetItem, _: int) -> None:
     core.pset_tree_double_clicked(
-        item, aw_tool.Node, tool.PropertySetWindow, tool.PropertyTable
+        item, aw_tool.Node, tool.PropertyWindow, tool.PropertyTable
     )
 
 

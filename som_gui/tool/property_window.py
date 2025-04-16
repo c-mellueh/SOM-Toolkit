@@ -40,7 +40,7 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         cls.signaller.paste_clipboard.connect(trigger.paste_clipboard)
 
     @classmethod
-    def property_info_requested(cls, som_property: SOMcreator.SOMProperty):
+    def show_property_info(cls, som_property: SOMcreator.SOMProperty):
         trigger.property_info_requested(som_property)
 
     @classmethod

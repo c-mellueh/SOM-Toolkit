@@ -7,7 +7,6 @@ from PySide6.QtGui import QPainter, QPalette, QPen
 from PySide6.QtWidgets import QTreeWidgetItem, QGraphicsSceneMouseEvent
 import logging
 import SOMcreator
-from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.tool import View, Node, Window
@@ -52,7 +51,7 @@ def rename_identity_text(
 def pset_tree_double_clicked(
     item: QTreeWidgetItem,
     node: Type[Node],
-    property_set_window: Type[tool.PropertySetWindow],
+    property_window: Type[tool.PropertyWindow],
     property_table: Type[tool.PropertyTable],
 ) -> None:
     """
@@ -83,14 +82,9 @@ def pset_tree_double_clicked(
 
     if active_property_set is None:
         return
-    property_set_window.trigger_window_open(active_property_set)
-    window = property_set_window.get_window_by_property_set(active_property_set)
     if active_property is None:
         return
-    property_set_window.trigger_property_activation(
-        active_property,
-        window,
-    )
+    property_window.show_property_info(active_property)
 
 
 def header_click(

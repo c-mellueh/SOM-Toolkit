@@ -115,7 +115,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         if logical_index < 0:
             logical_index = model.old_column_count + logical_index
-            print(f"New INdex: {logical_index}")
         model.insertColumn(
             logical_index, QModelIndex(), (name_getter, getter_func, setter_func, role)
         )
