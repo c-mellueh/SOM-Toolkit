@@ -34,7 +34,7 @@ class ClassView(QTreeView):
         trigger.connect_new_class_tree(self)
 
     def enterEvent(self, event):
-        self.update_requested.emit()
+        #self.update_requested.emit()
         return super().enterEvent(event)
 
     # for Typehints

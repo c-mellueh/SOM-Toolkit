@@ -119,8 +119,9 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     @classmethod
     def reset(cls):
         cls.get_properties().dialog = None
+        cls.get_properties().ifc_line_edits = []
         cls.set_active_class(None)
-
+        cls.get_properties().ifc_mappings = []
     @classmethod
     def connect_dialog(
         cls,
