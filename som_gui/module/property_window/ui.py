@@ -14,7 +14,7 @@ from som_gui.resources.icons import get_icon, get_link_icon
 import SOMcreator
 from . import trigger
 from som_gui import tool
-
+from .qt.ui_SplitterSettings import Ui_SplitterSettings
 
 class PropertyWindow(QWidget):
     closed = Signal()
@@ -172,3 +172,11 @@ class SortModel(QSortFilterProxyModel):
 
     def sourceModel(self) -> ValueModel:
         return super().sourceModel()
+
+
+class SplitterSettings(QWidget):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.ui = Ui_SplitterSettings()
+        self.ui.setupUi(self)
+        trigger.splitter_settings_created(self)

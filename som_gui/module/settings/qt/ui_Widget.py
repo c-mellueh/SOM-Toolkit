@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -29,6 +29,7 @@ class Ui_Settings(object):
         self.verticalLayout.setContentsMargins(1, 9, 1, -1)
         self.tabWidget = QTabWidget(Settings)
         self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.tabWidget.setTabPosition(QTabWidget.TabPosition.West)
         self.tabGeneral = QWidget()
         self.tabGeneral.setObjectName(u"tabGeneral")
@@ -68,7 +69,7 @@ class Ui_Settings(object):
         self.tbPath.setObjectName(u"tbPath")
         self.pageProject = QWidget()
         self.pageProject.setObjectName(u"pageProject")
-        self.pageProject.setGeometry(QRect(0, 0, 98, 28))
+        self.pageProject.setGeometry(QRect(0, 0, 856, 497))
         self.verticalLayout_6 = QVBoxLayout(self.pageProject)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.tbPath.addItem(self.pageProject, u"Project")
@@ -82,11 +83,11 @@ class Ui_Settings(object):
         self.verticalLayout_3.addWidget(self.tbPath)
 
         self.tabWidget.addTab(self.tabPath, "")
-        self.tabPropertySet = QWidget()
-        self.tabPropertySet.setObjectName(u"tabPropertySet")
-        self.verticalLayout_11 = QVBoxLayout(self.tabPropertySet)
+        self.tabProperty = QWidget()
+        self.tabProperty.setObjectName(u"tabProperty")
+        self.verticalLayout_11 = QVBoxLayout(self.tabProperty)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.tb_property_set = QToolBox(self.tabPropertySet)
+        self.tb_property_set = QToolBox(self.tabProperty)
         self.tb_property_set.setObjectName(u"tb_property_set")
         self.tb_property_set.setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.pageSplitter = QWidget()
@@ -97,7 +98,7 @@ class Ui_Settings(object):
         self.tb_property_set.addItem(self.pageSplitter, u"Splitter")
         self.pageUnits = QWidget()
         self.pageUnits.setObjectName(u"pageUnits")
-        self.pageUnits.setGeometry(QRect(0, 0, 98, 28))
+        self.pageUnits.setGeometry(QRect(0, 0, 840, 485))
         self.pageUnits.setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.verticalLayout_13 = QVBoxLayout(self.pageUnits)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
@@ -105,7 +106,7 @@ class Ui_Settings(object):
 
         self.verticalLayout_11.addWidget(self.tb_property_set)
 
-        self.tabWidget.addTab(self.tabPropertySet, "")
+        self.tabWidget.addTab(self.tabProperty, "")
         self.tabPlugins = QWidget()
         self.tabPlugins.setObjectName(u"tabPlugins")
         self.verticalLayout_2 = QVBoxLayout(self.tabPlugins)
@@ -115,7 +116,7 @@ class Ui_Settings(object):
         self.tbPlugins.setObjectName(u"tbPlugins")
         self.pagePlugins = QWidget()
         self.pagePlugins.setObjectName(u"pagePlugins")
-        self.pagePlugins.setGeometry(QRect(0, 0, 98, 28))
+        self.pagePlugins.setGeometry(QRect(0, 0, 856, 527))
         self.verticalLayout_5 = QVBoxLayout(self.pagePlugins)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tbPlugins.addItem(self.pagePlugins, u"Plugins")
@@ -138,7 +139,7 @@ class Ui_Settings(object):
         self.buttonBox.accepted.connect(Settings.accept)
         self.buttonBox.rejected.connect(Settings.reject)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         self.toolBox.setCurrentIndex(0)
         self.tbPath.setCurrentIndex(0)
         self.tb_property_set.setCurrentIndex(0)
@@ -159,7 +160,7 @@ class Ui_Settings(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPath), QCoreApplication.translate("Settings", u"Path", None))
         self.tb_property_set.setItemText(self.tb_property_set.indexOf(self.pageSplitter), QCoreApplication.translate("Settings", u"Splitter", None))
         self.tb_property_set.setItemText(self.tb_property_set.indexOf(self.pageUnits), QCoreApplication.translate("Settings", u"Units", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPropertySet), QCoreApplication.translate("Settings", u"PropertySets", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabProperty), QCoreApplication.translate("Settings", u"Properties", None))
         self.tbPlugins.setItemText(self.tbPlugins.indexOf(self.pagePlugins), QCoreApplication.translate("Settings", u"Plugins", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPlugins), QCoreApplication.translate("Settings", u"Plugins", None))
     # retranslateUi

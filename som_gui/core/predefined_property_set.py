@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING, TextIO, Type
 from PySide6.QtCore import QCoreApplication
 
 import SOMcreator
-from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
 def create_main_menu_actions(

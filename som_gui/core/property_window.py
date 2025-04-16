@@ -170,3 +170,51 @@ def handle_paste_event(
     seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
     text_list = text.split(seperator)
     property_window.set_values(table_view, start_row, text_list)
+
+
+#### Settings Window
+
+
+def fill_splitter_settings(
+    widget: ui.SplitterSettings,
+    property_window: Type[tool.PropertyWindow],
+    appdata: Type[tool.Appdata],
+):
+    property_window.set_splitter_settings_widget(widget)
+    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+    is_sperator_activated = appdata.get_bool_setting(
+        SEPERATOR_SECTION, SEPERATOR_STATUS
+    )
+
+    widget.ui.line_edit_seperator.setText(seperator)
+    widget.ui.check_box_seperator.setChecked(is_sperator_activated)
+    property_window.connect_splitter_widget(widget)
+    update_splitter_enabled_state(widget, property_window)
+    pass
+
+
+def splitter_settings_accepted(
+    property_window: Type[tool.PropertyWindow], appdata: Type[tool.Appdata]
+):
+    widget = property_window.get_splitter_settings_widget()
+    is_seperator_activated = property_window.get_splitter_settings_checkstate(
+        widget
+    )
+    text = property_window.get_splitter_settings_text(widget)
+    text = text.replace("\\n", "\n")
+    text = text.replace("\\t", "\t")
+
+    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR, text)
+    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, is_seperator_activated)
+    if not text:
+        appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, False)
+
+
+def update_splitter_enabled_state(
+    widget: ui.SplitterSettings,
+    property_window: Type[tool.PropertyWindow],
+):
+    is_seperator_activated = property_window.get_splitter_settings_checkstate(
+        widget
+    )
+    widget.ui.line_edit_seperator.setEnabled(is_seperator_activated)

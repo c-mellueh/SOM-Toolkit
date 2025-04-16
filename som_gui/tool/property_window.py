@@ -372,3 +372,26 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
             Qt.ItemDataRole.EditRole,
         )
         cls.signaller.values_changed.emit(table_view.som_property)
+
+    ### Settings Window
+    @classmethod
+    def set_splitter_settings_widget(cls, widget: ui.SplitterSettings):
+        cls.get_properties().splitter_settings = widget
+
+    @classmethod
+    def get_splitter_settings_widget(cls) -> ui.SplitterSettings:
+        return cls.get_properties().splitter_settings
+
+    @classmethod
+    def connect_splitter_widget(cls, widget: ui.SplitterSettings):
+        widget.ui.check_box_seperator.checkStateChanged.connect(
+            lambda: trigger.splitter_checkstate_changed(widget)
+        )
+
+    @classmethod
+    def get_splitter_settings_checkstate(cls, widget: ui.SplitterSettings) -> bool:
+        return widget.ui.check_box_seperator.isChecked()
+
+    @classmethod
+    def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
+        return widget.ui.line_edit_seperator.text()

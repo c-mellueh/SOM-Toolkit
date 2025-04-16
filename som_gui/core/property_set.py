@@ -4,11 +4,9 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from som_gui.core import property_table as property_table_core
-from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_set_window.ui import PropertySetWindow
     from PySide6.QtWidgets import QTableWidgetItem
 from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 

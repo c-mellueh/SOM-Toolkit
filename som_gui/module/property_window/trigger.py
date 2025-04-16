@@ -4,12 +4,17 @@ from som_gui import tool
 from som_gui.core import property_window as core
 from typing import TYPE_CHECKING
 import SOMcreator
-
-if TYPE_CHECKING:
-    from . import ui
+from PySide6.QtGui import QKeySequence
+from .constants import SEPERATOR_SECTION,SEPERATOR_STATUS
+from . import ui
 
 
 def connect():
+    tool.Settings.add_page_to_toolbox(
+        ui.SplitterSettings,
+        "pageSplitter",
+        lambda: core.splitter_settings_accepted(tool.PropertyWindow, tool.Appdata),
+    )
     core.connect_signals(tool.PropertyWindow, tool.PropertyTable)
     core.create_context_menu_builders(tool.PropertyWindow)
 
@@ -41,3 +46,12 @@ def value_context_menu_request(pos, table_view: ui.ValueView):
 
 def paste_clipboard(table_view:ui.ValueView):
     core.handle_paste_event(table_view,tool.PropertyWindow,tool.Appdata)
+
+#Settings Window
+
+def splitter_settings_created(widget: ui.SplitterSettings):
+    core.fill_splitter_settings(widget, tool.PropertyWindow, tool.Appdata)
+
+
+def splitter_checkstate_changed(widget: ui.SplitterSettings):
+    core.update_splitter_enabled_state(widget, tool.PropertyWindow)

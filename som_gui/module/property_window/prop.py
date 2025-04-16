@@ -21,3 +21,4 @@ class PropertyWindowProperties:
     plugin_widget_list: list[PluginProperty] = list()
     windows:dict[SOMcreator.SOMProperty,ui.PropertyWindow] = dict()
     context_menu_builders = list()
+    splitter_settings:ui.SplitterSettings =None
