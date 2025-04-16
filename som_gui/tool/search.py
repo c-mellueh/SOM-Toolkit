@@ -53,7 +53,7 @@ class Search(som_gui.core.tool.Search):
         prop.search_dialogues.add(search_dialog)
         search_dialog.search_mode = search_mode
         cls.fill_table(search_dialog, search_items, data_getters)
-        cls.retranslate_title(search_dialog, prop.search_mode)
+        cls.retranslate_title(search_dialog, search_mode)
         search_dialog.ui.lineEdit.textChanged.connect(
             lambda: cls.signaller.update_requested.emit(search_dialog)
         )
