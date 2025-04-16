@@ -5,11 +5,16 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt
 
 from som_gui.module.project.constants import UMLAUT_DICT
-
+from som_gui.module.search.constants import SEARCH_SECTION,STRICT_SETTING
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.search.ui import SearchDialog
 
+def connect_signals(search:Type[tool.Search]):
+    search.connect_signals()
+
+def set_strict_state(state:bool,appdata:Type[tool.Appdata]):
+    appdata.set_setting(SEARCH_SECTION,STRICT_SETTING,state)
 
 def update_filter_table(dialog: SearchDialog, search: Type[tool.Search]):
     """
@@ -31,7 +36,7 @@ def update_filter_table(dialog: SearchDialog, search: Type[tool.Search]):
 
     # Hide all Rows which match-score < threshold
     for row in range(table_widget.rowCount()):
-        match_score = search.get_row_matchscore(table_widget, search_text, row, last_column_index)
+        match_score = search.get_row_matchscore(dialog, search_text, row, last_column_index)
         if match_score > threshold:
             table_widget.showRow(row)
         else:

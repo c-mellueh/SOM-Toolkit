@@ -3,21 +3,21 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDialog, QGridLayout,
-                               QHeaderView, QLineEdit, QSizePolicy, QTableWidget,
-                               QTableWidgetItem, QWidget)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QDialog,
+    QGridLayout, QHeaderView, QLineEdit, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_Search(object):
     def setupUi(self, Search):
@@ -43,7 +43,13 @@ class Ui_Search(object):
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.tableWidget.verticalHeader().setVisible(False)
 
-        self.gridLayout.addWidget(self.tableWidget, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.tableWidget, 1, 0, 1, 2)
+
+        self.checkBox_strict = QCheckBox(Search)
+        self.checkBox_strict.setObjectName(u"checkBox_strict")
+
+        self.gridLayout.addWidget(self.checkBox_strict, 0, 1, 1, 1)
+
 
         self.retranslateUi(Search)
 
@@ -52,5 +58,6 @@ class Ui_Search(object):
 
     def retranslateUi(self, Search):
         Search.setWindowTitle(QCoreApplication.translate("Search", u"Dialog", None))
+        self.checkBox_strict.setText(QCoreApplication.translate("Search", u"Strict", None))
     # retranslateUi
 
