@@ -394,8 +394,8 @@ def rearange(
     root_y_pos = [n.pos().y() for n in root_nodes]
     root_mid_x = (min(root_x_pos) + max(root_x_pos)) / 2
     root_mid_y = (min(root_y_pos) + max(root_y_pos)) / 2
-    min_x = min(n.pos().x() for n in all_nodes)
-    min_y = min(n.pos().y() for n in all_nodes)
+    min_x = max(min(n.pos().x() for n in all_nodes),500.)
+    min_y = max(min(n.pos().y() for n in all_nodes),500.)
 
     # position helper node in the center of all root_nodes
     node.set_node_pos(helper_node, QPointF(root_mid_x, root_mid_y))
@@ -410,7 +410,7 @@ def rearange(
     # delete Helpers which won't be needed anymore
     helper_node.deleteLater()
     helper_class.delete()
-
+    view.autofit_view()
 
 def add_node_at_pos(
     pos,
