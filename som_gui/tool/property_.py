@@ -3,8 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Callable, TYPE_CHECKING, TextIO, Union, Type, Sequence, TypeVar
 
-from PySide6.QtCore import QCoreApplication
-from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtCore import QModelIndex, Qt,QObject,Signal,QCoreApplication
 from PySide6.QtGui import QBrush, QColor, QPalette
 from PySide6.QtWidgets import (
     QTableWidget,
@@ -40,11 +39,18 @@ style_list = [
     ["#840002", [0]],  # red         ->  Data was deleted
 ]
 
-
+class Signaller(QObject):
+    empty_property_requested = Signal(SOMcreator.SOMPropertySet)
+    property_created = Signal(SOMcreator.SOMProperty)
 class Property(som_gui.core.tool.Property):
+    signaller = Signaller()
     @classmethod
     def get_properties(cls) -> PropertyProperties:
         return som_gui.PropertyProperties  # type: ignore
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.empty_property_requested.connect(trigger.create_empty_property)
 
     @classmethod
     def add_property_data_value(

@@ -519,3 +519,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             return
         property_dicts = pickle.loads(pickled_data)
         return property_dicts
+
+    @classmethod
+    def refresh_table(cls,table:ui.PropertyTable):
+        table.repaint()

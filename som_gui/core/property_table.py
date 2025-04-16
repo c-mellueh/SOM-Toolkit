@@ -227,3 +227,4 @@ def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
     # update rows
     for row in range(table.rowCount()):
         property_table.update_row(table, row)
+

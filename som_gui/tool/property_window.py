@@ -261,6 +261,9 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
         table_view.customContextMenuRequested.connect(
             lambda pos: trigger.value_context_menu_request(pos, table_view)
         )
+        model.dataChanged.connect(
+            lambda: cls.signaller.values_changed.emit(model.som_property)
+        )
 
     @classmethod
     def add_context_menu_builder(cls, context_menu_builder: Callable):
@@ -369,17 +372,3 @@ class PropertyWindow(som_gui.core.tool.PropertyWindow):
             Qt.ItemDataRole.EditRole,
         )
         cls.signaller.values_changed.emit(table_view.som_property)
-
-    @classmethod
-    def get_paste_text_list(cls, text, seperator):
-        seperator = tool.Appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
-        seperator_status = tool.Appdata.get_bool_setting(
-            SEPERATOR_SECTION, SEPERATOR_STATUS
-        )
-        text = QGuiApplication.clipboard().text()
-
-        if not seperator_status:
-            return [text]
-
-        text_list = text.split(seperator)
-        return text_list
