@@ -32,7 +32,7 @@
       <enum>QTabWidget::TabPosition::West</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -65,6 +65,9 @@
             <height>467</height>
            </rect>
           </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
+          </property>
           <attribute name="label">
            <string>General</string>
           </attribute>
@@ -75,9 +78,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Logging</string>
@@ -89,9 +95,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Filter</string>
@@ -133,6 +142,9 @@
             <height>497</height>
            </rect>
           </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
+          </property>
           <attribute name="label">
            <string>Project</string>
           </attribute>
@@ -143,9 +155,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>497</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Export</string>
@@ -167,7 +182,7 @@
           <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="pageSplitter">
           <property name="geometry">
@@ -177,6 +192,9 @@
             <width>840</width>
             <height>485</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Splitter</string>
@@ -194,6 +212,9 @@
           </property>
           <property name="contextMenuPolicy">
            <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Units</string>
@@ -234,6 +255,9 @@
             <width>856</width>
             <height>527</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Plugins</string>
