@@ -25,6 +25,9 @@
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="layoutDirection">
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
+     </property>
      <property name="tabPosition">
       <enum>QTabWidget::TabPosition::West</enum>
      </property>
@@ -62,6 +65,9 @@
             <height>467</height>
            </rect>
           </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
+          </property>
           <attribute name="label">
            <string>General</string>
           </attribute>
@@ -72,9 +78,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Logging</string>
@@ -86,9 +95,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Filter</string>
@@ -126,9 +138,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>497</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Project</string>
@@ -140,9 +155,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>497</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Export</string>
@@ -153,9 +171,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabPropertySet">
+     <widget class="QWidget" name="tabProperty">
       <attribute name="title">
-       <string>PropertySets</string>
+       <string>Properties</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
@@ -164,7 +182,7 @@
           <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="pageSplitter">
           <property name="geometry">
@@ -174,6 +192,9 @@
             <width>840</width>
             <height>485</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Splitter</string>
@@ -185,12 +206,15 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>840</width>
+            <height>485</height>
            </rect>
           </property>
           <property name="contextMenuPolicy">
            <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Units</string>
@@ -228,9 +252,12 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>527</height>
            </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <attribute name="label">
            <string>Plugins</string>

@@ -52,57 +52,57 @@
 <context>
     <name>Class</name>
     <message>
-        <location filename="core/main_window.py" line="297"/>
+        <location filename="core/main_window.py" line="313"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="303"/>
+        <location filename="core/main_window.py" line="319"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="313"/>
+        <location filename="core/main_window.py" line="329"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="197"/>
+        <location filename="core/main_window.py" line="213"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="205"/>
+        <location filename="core/main_window.py" line="221"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="213"/>
+        <location filename="core/main_window.py" line="229"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="221"/>
+        <location filename="core/main_window.py" line="237"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="229"/>
+        <location filename="core/main_window.py" line="245"/>
         <source>Group</source>
         <translation>Gruppieren</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="237"/>
+        <location filename="core/main_window.py" line="253"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="250"/>
+        <location filename="core/main_window.py" line="266"/>
         <source>Reset View</source>
         <translation>Ansicht zurücksetzen</translation>
     </message>
     <message>
-        <location filename="core/class_tree.py" line="67"/>
+        <location filename="core/class_tree.py" line="69"/>
         <source>NewGroup</source>
         <translation>NeueGruppe</translation>
     </message>
@@ -199,22 +199,22 @@
 <context>
     <name>Compare</name>
     <message>
-        <location filename="core/property_.py" line="70"/>
+        <location filename="core/property_.py" line="80"/>
         <source>Properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message>
-        <location filename="core/property_.py" line="131"/>
+        <location filename="core/property_.py" line="141"/>
         <source>PROPERTY COMPARISON</source>
         <translation>EIGENSCHAFTS VERGLEICH</translation>
     </message>
     <message>
-        <location filename="core/property_.py" line="134"/>
+        <location filename="core/property_.py" line="144"/>
         <source>{} ({}) was deleted</source>
         <translation>{} ({}) wurde gelöscht</translation>
     </message>
     <message>
-        <location filename="core/property_.py" line="140"/>
+        <location filename="core/property_.py" line="150"/>
         <source>{} ({}) was added</source>
         <translation>{} ({}) wurde hinzugefügt</translation>
     </message>
@@ -551,51 +551,57 @@
     <message>
         <location filename="module/main_window/qt/MainWindow.ui" line="61"/>
         <location filename="module/main_window/qt/MainWindow.ui" line="195"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="282"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
         <location filename="module/main_window/qt/MainWindow.ui" line="169"/>
         <source>PropertySet:</source>
-        <translation>PropertySet:</translation>
+        <translation>Merkmalssatz:</translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="284"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="262"/>
+        <source>Property:</source>
+        <translation>Merkmal:</translation>
+    </message>
+    <message>
+        <location filename="module/main_window/qt/MainWindow.ui" line="327"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="295"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="338"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="300"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="343"/>
         <source>Desite</source>
         <translation>Desite</translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="305"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="348"/>
         <source>Models</source>
         <translation>Modelle</translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="316"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="359"/>
         <source>dqwd</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="module/main_window/qt/MainWindow.ui" line="288"/>
+        <location filename="module/main_window/qt/MainWindow.ui" line="331"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="73"/>
+        <location filename="core/main_window.py" line="89"/>
         <source>Hide Console</source>
         <translation>Konsole Ausblenden</translation>
     </message>
     <message>
-        <location filename="core/main_window.py" line="75"/>
+        <location filename="core/main_window.py" line="91"/>
         <source>Show Console</source>
         <translation>Konsole Einblenden</translation>
     </message>
@@ -1129,40 +1135,40 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="66"/>
-        <location filename="core/predefined_property_set.py" line="99"/>
+        <location filename="core/predefined_property_set.py" line="65"/>
+        <location filename="core/predefined_property_set.py" line="96"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="67"/>
+        <location filename="core/predefined_property_set.py" line="66"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="69"/>
+        <location filename="core/predefined_property_set.py" line="68"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="100"/>
+        <location filename="core/predefined_property_set.py" line="97"/>
         <source>Remove Link</source>
         <translation>Verknüpfung entfernen</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="33"/>
-        <location filename="core/predefined_property_set.py" line="40"/>
-        <location filename="core/predefined_property_set.py" line="210"/>
+        <location filename="core/predefined_property_set.py" line="31"/>
+        <location filename="core/predefined_property_set.py" line="38"/>
+        <location filename="core/predefined_property_set.py" line="207"/>
         <source>Predefined Pset</source>
         <translation>Vordefiniertes PropertySet</translation>
     </message>
     <message>
-        <location filename="core/predefined_property_set.py" line="272"/>
+        <location filename="core/predefined_property_set.py" line="269"/>
         <source>PREDEFINED PROPERTYSETS</source>
         <translation>VORDEFINIERTE PROPERTYSETS</translation>
     </message>
     <message>
-        <location filename="tool/predefined_property_set.py" line="204"/>
+        <location filename="tool/predefined_property_set.py" line="210"/>
         <source>New PropertySet</source>
         <translation>Neues PropertySet</translation>
     </message>
@@ -1172,24 +1178,29 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="module/predefined_property_set/qt/Widget.ui" line="49"/>
+        <location filename="module/predefined_property_set/qt/Widget.ui" line="30"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="module/predefined_property_set/qt/Widget.ui" line="56"/>
+        <location filename="module/predefined_property_set/qt/Widget.ui" line="57"/>
         <source>Inherits to:</source>
         <translation>Erbt an:</translation>
     </message>
     <message>
-        <location filename="module/predefined_property_set/qt/Widget.ui" line="82"/>
+        <location filename="module/predefined_property_set/qt/Widget.ui" line="83"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="module/predefined_property_set/qt/Widget.ui" line="87"/>
+        <location filename="module/predefined_property_set/qt/Widget.ui" line="88"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
+    </message>
+    <message>
+        <location filename="module/predefined_property_set/qt/Widget.ui" line="100"/>
+        <source>Properties:</source>
+        <translation>Merkmale:</translation>
     </message>
 </context>
 <context>
@@ -1286,6 +1297,14 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
 </context>
 <context>
+    <name>Property</name>
+    <message>
+        <location filename="core/property_.py" line="63"/>
+        <source>New Property</source>
+        <translation>Neues Merkmal</translation>
+    </message>
+</context>
+<context>
     <name>PropertyCompare</name>
     <message>
         <location filename="module/property_/qt/CompareWidget.ui" line="14"/>
@@ -1293,58 +1312,58 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="500"/>
-        <location filename="tool/property_.py" line="514"/>
+        <location filename="tool/property_.py" line="506"/>
+        <location filename="tool/property_.py" line="520"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="501"/>
+        <location filename="tool/property_.py" line="507"/>
         <source>Child Count</source>
         <translation>Kinder Anzahl</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="515"/>
+        <location filename="tool/property_.py" line="521"/>
         <source>Inheriting values</source>
         <translation>Erbt Werte</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="516"/>
+        <location filename="tool/property_.py" line="522"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="518"/>
+        <location filename="tool/property_.py" line="524"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="824"/>
+        <location filename="tool/property_.py" line="830"/>
         <source>was deleted.</source>
         <translation>wurde entfernt.</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="825"/>
+        <location filename="tool/property_.py" line="831"/>
         <source>was added.</source>
         <translation>wurde hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="842"/>
+        <location filename="tool/property_.py" line="848"/>
         <source>was renamed to</source>
         <translation>wurde umbenannt zu</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="875"/>
+        <location filename="tool/property_.py" line="881"/>
         <source>was changed from</source>
         <translation>wurde geändert zu</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="915"/>
+        <location filename="tool/property_.py" line="921"/>
         <source>added child</source>
         <translation>fügte Kindelement hinzu</translation>
     </message>
     <message>
-        <location filename="tool/property_.py" line="916"/>
+        <location filename="tool/property_.py" line="922"/>
         <source>removed child</source>
         <translation>entfernte Kindelement</translation>
     </message>
@@ -1447,29 +1466,29 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySet</name>
     <message>
-        <location filename="core/property_set.py" line="25"/>
+        <location filename="core/property_set.py" line="23"/>
         <source>Add PropertySet</source>
         <translation>PropertySet hinzufügen</translation>
     </message>
     <message>
-        <location filename="core/property_set.py" line="26"/>
+        <location filename="core/property_set.py" line="24"/>
         <source>PropertySet name?</source>
         <translation>PropertySet Name?</translation>
     </message>
     <message>
-        <location filename="core/property_set.py" line="38"/>
+        <location filename="core/property_set.py" line="36"/>
         <location filename="tool/property_set.py" line="127"/>
         <source>PropertySet &apos;{}&apos; exists allready</source>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="core/property_set.py" line="88"/>
-        <location filename="core/property_set.py" line="100"/>
+        <location filename="core/property_set.py" line="86"/>
+        <location filename="core/property_set.py" line="98"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="core/property_set.py" line="96"/>
+        <location filename="core/property_set.py" line="94"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -1503,90 +1522,79 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySetWindow</name>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="14"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="vanished">Form</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="199"/>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="266"/>
         <source>Update</source>
-        <translation>Update</translation>
+        <translation type="vanished">Update</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="269"/>
-        <location filename="module/property_set_window/qt/Window.ui" line="152"/>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation type="vanished">Hinzufügen</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="283"/>
         <source>Property was inherited -&gt; Type change not possible</source>
-        <translation>Merkmal wurde vererbt -&gt; Änderung des Werttypens nicht möglich</translation>
+        <translation type="vanished">Merkmal wurde vererbt -&gt; Änderung des Werttypens nicht möglich</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="287"/>
         <source>Property was inherited -&gt; DataType change not possible</source>
-        <translation>Merkmal wurde vererbt -&gt; Änderung des Datentypens nicht möglich</translation>
+        <translation type="vanished">Merkmal wurde vererbt -&gt; Änderung des Datentypens nicht möglich</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="291"/>
         <source>Property was inherited -&gt; Unit change not possible</source>
-        <translation>Merkmal wurde vererbt -&gt; Änderung der Einheit nicht möglich</translation>
+        <translation type="vanished">Merkmal wurde vererbt -&gt; Änderung der Einheit nicht möglich</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="497"/>
+        <location filename="tool/property_window.py" line="295"/>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <location filename="tool/property_window.py" line="310"/>
         <source>Ignore</source>
         <translation>Ignorieren</translation>
     </message>
     <message>
-        <location filename="tool/property_set_window.py" line="511"/>
+        <location filename="tool/property_window.py" line="325"/>
         <source>Unignore</source>
         <translation>Nicht mehr Ignorieren</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="29"/>
         <source>Valuetype:</source>
-        <translation>Werttyp:</translation>
+        <translation type="vanished">Werttyp:</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="36"/>
         <source>Datatype:</source>
-        <translation>Datentyp:</translation>
+        <translation type="vanished">Datentyp:</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="43"/>
         <source>Unit:</source>
-        <translation>Einheit:</translation>
+        <translation type="vanished">Einheit:</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="138"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="145"/>
         <source>Inherit Values</source>
-        <translation>Werte vererben</translation>
+        <translation type="vanished">Werte vererben</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="171"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="212"/>
         <source>Allowed Values:</source>
-        <translation>Erlaubte Werte:</translation>
+        <translation type="vanished">Erlaubte Werte:</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/Window.ui" line="124"/>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation type="vanished">Beschreibung</translation>
     </message>
 </context>
 <context>
@@ -1607,64 +1615,137 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Eindeutig</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="48"/>
+        <location filename="core/property_table.py" line="52"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="49"/>
+        <location filename="core/property_table.py" line="53"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="50"/>
+        <location filename="core/property_table.py" line="54"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="51"/>
+        <location filename="core/property_table.py" line="55"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="52"/>
+        <location filename="core/property_table.py" line="56"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="core/property_table.py" line="54"/>
+        <location filename="core/property_table.py" line="58"/>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="169"/>
+        <location filename="tool/property_table.py" line="194"/>
         <source>Predefined PropertySet</source>
         <translation>Vortefiniertem PropertySet</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="170"/>
+        <location filename="tool/property_table.py" line="199"/>
         <source>Inherits Settings from {}</source>
         <translation>Erbt Einstellungen von {}</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="292"/>
+        <location filename="tool/property_table.py" line="325"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="323"/>
+        <location filename="tool/property_table.py" line="358"/>
         <source>Delete (with subproperties)</source>
         <translation>Löschen (mit Kindmerkmalen)</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="324"/>
+        <location filename="tool/property_table.py" line="360"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="347"/>
+        <location filename="tool/property_table.py" line="384"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
+    </message>
+</context>
+<context>
+    <name>PropertyWindow</name>
+    <message>
+        <location filename="tool/property_window.py" line="216"/>
+        <source>Property was inherited -&gt; Type change not possible</source>
+        <translation>Merkmal wurde vererbt -&gt; Änderung des Werttypens nicht möglich</translation>
+    </message>
+    <message>
+        <location filename="tool/property_window.py" line="220"/>
+        <source>Property was inherited -&gt; DataType change not possible</source>
+        <translation>Merkmal wurde vererbt -&gt; Änderung des Datentypens nicht möglich</translation>
+    </message>
+    <message>
+        <location filename="tool/property_window.py" line="224"/>
+        <source>Property was inherited -&gt; Unit change not possible</source>
+        <translation>Merkmal wurde vererbt -&gt; Änderung der Einheit nicht möglich</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="30"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="49"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="60"/>
+        <source>Valuetype:</source>
+        <translation>Werttyp:</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="67"/>
+        <source>Datatype:</source>
+        <translation>Datentyp:</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="74"/>
+        <source>Unit:</source>
+        <translation>Einheit:</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="124"/>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="137"/>
+        <source>Allowed Values:</source>
+        <translation>Erlaubte Werte:</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="147"/>
+        <source>Optional</source>
+        <translation>Optional</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="157"/>
+        <source>Inherit Values</source>
+        <translation>Werte vererben</translation>
+    </message>
+    <message>
+        <location filename="module/property_window/qt/Window.ui" line="229"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
     </message>
 </context>
 <context>
@@ -1739,54 +1820,58 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="36"/>
-        <location filename="module/settings/qt/Widget.ui" line="66"/>
+        <location filename="module/settings/qt/Widget.ui" line="39"/>
+        <location filename="module/settings/qt/Widget.ui" line="69"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="80"/>
+        <location filename="module/settings/qt/Widget.ui" line="83"/>
         <source>Logging</source>
         <translation>Logging</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="94"/>
+        <location filename="module/settings/qt/Widget.ui" line="97"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="104"/>
+        <location filename="module/settings/qt/Widget.ui" line="107"/>
         <source>Path</source>
         <translation>Pfad</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="134"/>
+        <location filename="module/settings/qt/Widget.ui" line="137"/>
         <source>Project</source>
         <translation>Projekt</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="148"/>
+        <location filename="module/settings/qt/Widget.ui" line="151"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="158"/>
-        <source>PropertySets</source>
-        <translation>PropertySets</translation>
+        <location filename="module/settings/qt/Widget.ui" line="161"/>
+        <source>Properties</source>
+        <translation>Merkmale</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="179"/>
+        <source>PropertySets</source>
+        <translation type="vanished">PropertySets</translation>
+    </message>
+    <message>
+        <location filename="module/settings/qt/Widget.ui" line="182"/>
         <source>Splitter</source>
         <translation>Trennzeichen</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="196"/>
+        <location filename="module/settings/qt/Widget.ui" line="199"/>
         <source>Units</source>
         <translation>Einheiten</translation>
     </message>
     <message>
-        <location filename="module/settings/qt/Widget.ui" line="206"/>
-        <location filename="module/settings/qt/Widget.ui" line="236"/>
+        <location filename="module/settings/qt/Widget.ui" line="209"/>
+        <location filename="module/settings/qt/Widget.ui" line="239"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
@@ -1864,17 +1949,17 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>SplitterSettings</name>
     <message>
-        <location filename="module/property_set_window/qt/SplitterSettings.ui" line="14"/>
+        <location filename="module/property_window/qt/SplitterSettings.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/SplitterSettings.ui" line="44"/>
+        <location filename="module/property_window/qt/SplitterSettings.ui" line="44"/>
         <source>Splitter text</source>
         <translation>Trennzeichen</translation>
     </message>
     <message>
-        <location filename="module/property_set_window/qt/SplitterSettings.ui" line="64"/>
+        <location filename="module/property_window/qt/SplitterSettings.ui" line="64"/>
         <source>Use Splitter</source>
         <translation>Trennzeichen verwenden</translation>
     </message>
@@ -2006,7 +2091,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="tool/property_table.py" line="374"/>
+        <location filename="tool/property_table.py" line="410"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>

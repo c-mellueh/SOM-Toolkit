@@ -30,7 +30,7 @@ class SOMProperty(BaseClass):
         super(SOMProperty, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._allowed_values = allowed_values if allowed_values is not None else []
+
         self._property_set = property_set
         self._value_type = (
             value_type
@@ -52,12 +52,14 @@ class SOMProperty(BaseClass):
             self.uuid = str(uuid4())
         if allowed_values is None:
             self.allowed_values = list()
+        else:
+            self.allowed_values = allowed_values
         if value_type is None:
             self._value_type = SOMcreator.value_constants.LIST
         if property_set is not None:
             self.property_set = property_set
 
-        #Values which the parent inherits but the user choses to ignore
+        # Values which the parent inherits but the user choses to ignore
         self._ignored_values = set()
 
     def __str__(self) -> str:
@@ -77,7 +79,6 @@ class SOMProperty(BaseClass):
         new_property = SOMProperty(
             property_set=None,
             name=self.name,
-            allowed_values=cp.copy(self.allowed_values),
             value_type=cp.copy(self.value_type),
             data_type=cp.copy(self.data_type),
             child_inherits_values=self.child_inherits_values,
@@ -91,6 +92,8 @@ class SOMProperty(BaseClass):
 
         if self.parent is not None:
             self.parent.add_child(new_property)  # type:ignore
+
+        self.allowed_values = cp.copy(self.allowed_values)
         return new_property
 
     def get_all_parents(self) -> list[SOMProperty]:
@@ -133,59 +136,72 @@ class SOMProperty(BaseClass):
         if self.parent.is_inheriting_values or self.parent.child_inherits_values:
             return True
         return False
-    
-    def is_value_ignored(self,value) -> bool:
+
+    def is_value_inherited(self, value) -> bool:
+        if value not in self.all_values:
+            return False
+        if value in self._own_values:
+            return False
+        return True
+
+    def is_value_ignored(self, value) -> bool:
         return value in self._ignored_values
 
-    def ignore_parent_value(self,value):
+    def ignore_parent_value(self, value):
         self._ignored_values.add(value)
 
-    def unignore_parent_value(self,value):
+    def unignore_parent_value(self, value):
         if value in self._ignored_values:
             self._ignored_values.remove(value)
 
     @property
     def ignored_values(self) -> list:
         return list(self._ignored_values)
-    
+
     @ignored_values.setter
-    def ignored_values(self,value:set) -> None:
+    def ignored_values(self, value: set) -> None:
         self._ignored_values = value
-    
+
     @property
     def all_values(self):
         """returns all values even if they are ignored"""
+        values = list()
         if self.is_inheriting_values:
             if self.parent is not None:
-                return self.parent.allowed_values 
+                values += self.parent.allowed_values
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._allowed_values
+        values += self._own_values
+        return values
+
     @property
     def allowed_values(self) -> list:
+        values = list()
         if self.is_inheriting_values:
             if self.parent is not None:
-                return [v for v in self.parent.allowed_values if v not in self._ignored_values]
+                values += [
+                    v
+                    for v in self.parent.allowed_values
+                    if v not in self._ignored_values
+                ]
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._allowed_values
-    
+        values += self._own_values
+        return values
+
+    @property
+    def own_values(self) -> list:
+        return self._own_values
+
     @allowed_values.setter
     def allowed_values(self, values: list) -> None:
         if self.is_inheriting_values:
             if self.parent is None:
                 raise ValueError("Parent is expected but dne")
-            own_values = set(values)
             for value in self.parent.allowed_values:
                 if value in values:
-                    self.unignore_parent_value(value)
-                else:
-                    self.ignore_parent_value(value)
-                own_values.remove(value)
-            if own_values:
-                raise ValueError("Value input doesn't match Parent Values")
-        else:
-            self._allowed_values = values
+                    values.remove(value)
+        self._own_values = values
 
     @property
     def value_type(self) -> str:
@@ -218,9 +234,7 @@ class SOMProperty(BaseClass):
     @data_type.setter
     def data_type(self, value: str) -> None:
         if self.is_child:
-            logging.info(
-                f"won't overwrite Datatype because Property '{self}' is child"
-            )
+            logging.info(f"won't overwrite Datatype because Property '{self}' is child")
             return
         self._data_type = value
         if self.is_parent:
@@ -296,13 +310,32 @@ class SOMProperty(BaseClass):
         return child
 
     @property
-    def project(self) -> SOMcreator.SOMProject|None:
+    def project(self) -> SOMcreator.SOMProject | None:
         if self._project:
             return self._project
         if self.property_set:
             return self.property_set.project
-    
+
     @project.setter
     def project(self, value: SOMcreator.SOMProject) -> None:
         super(SOMProperty, self.__class__).project.__set__(self, value)
-    
+
+    def is_identifier(self):
+        if not self.property_set:
+            return False
+        if not self.property_set.som_class:
+            return False
+        if not self.property_set.som_class.identifier_property:
+            return False
+        if self.property_set.som_class.identifier_property != self:
+            return False
+        return True
+
+    def add_value(self, value):
+        self._own_values.append(value)
+
+    def remove_value(self, value):
+        if value not in self.all_values:
+            pass
+        elif value in self._own_values:
+            self._own_values.remove(value)

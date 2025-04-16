@@ -17,20 +17,19 @@ from som_gui import tool
 
 import som_gui
 import som_gui.core.tool
-from som_gui.module.main_window import ui as ui_main_window
+from som_gui.module.main_window import ui
 from som_gui.module.main_window import trigger
 from PySide6.QtCore import Signal, QObject, QModelIndex
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties
     from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
-
+    from som_gui.module.property_table import ui as ui_property_table
 
 class Signaller(QObject):
     change_active_class = Signal(SOMcreator.SOMClass)
     class_info_requested = Signal(SOMcreator.SOMClass)
-
-
+    new_property_requested = Signal(SOMcreator.SOMPropertySet)
 class MainWindow(som_gui.core.tool.MainWindow):
     signaller = Signaller()
 
@@ -69,7 +68,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         :return:
         """
         if cls.get_properties().window is None:
-            window = ui_main_window.MainWindow(application)
+            window = ui.MainWindow(application)
             cls.get_properties().window = window
             cls.get_properties().ui = window.ui
             cls.get_properties().application = application
@@ -173,7 +172,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_properties().application
 
     @classmethod
-    def get_property_table(cls):
+    def get_property_table(cls) ->ui_property_table.PropertyTable:
         return cls.get_ui().table_property
 
     @classmethod
@@ -206,3 +205,19 @@ class MainWindow(som_gui.core.tool.MainWindow):
         tree.class_double_clicked.connect(cls.signaller.class_info_requested.emit)
         tree.selected_class_changed.connect(cls.signaller.change_active_class.emit)
         tree.item_dropped.connect(trigger.class_tree_item_dropped)
+    
+    @classmethod
+    def get_active_property_set(cls):
+        som_class = cls.get_active_class()
+        if not som_class:
+            return None
+        table = cls.get_property_set_table_widget()
+        pset = tool.PropertySet.get_active_property_set()
+        return pset
+    
+    @classmethod
+    def request_new_property(cls):
+        pset = cls.get_active_property_set()
+        if not pset:
+            return
+        cls.signaller.new_property_requested.emit(pset)

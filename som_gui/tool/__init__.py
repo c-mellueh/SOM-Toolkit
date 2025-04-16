@@ -28,7 +28,6 @@ from som_gui.tool.predefined_property_set import (
 )
 from som_gui.tool.project import Project
 from som_gui.tool.property_set import PropertySet
-from som_gui.tool.property_set_window import PropertySetWindow
 from som_gui.tool.search import Search
 from som_gui.tool.settings import Settings
 from som_gui.tool.util import Util
@@ -36,3 +35,4 @@ from som_gui.tool.class_info import ClassInfo
 from som_gui.tool.class_ import Class
 from som_gui.tool.class_tree import ClassTree
 from som_gui.tool.use_case import UseCase
+from som_gui.tool.property_window import PropertyWindow

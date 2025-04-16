@@ -13,11 +13,6 @@ if TYPE_CHECKING:
 
 def connect():
     core.init_property_columns(tool.PropertyTable)
-    tool.MainWindow.get_property_table().itemDoubleClicked.connect(
-        lambda item: core.activate_item(
-            item, tool.PropertyTable, tool.PropertySet, tool.PropertySetWindow
-        )
-    )
     core.init_context_menu(tool.PropertyTable)
 
 
@@ -26,6 +21,7 @@ def retranslate_ui(table=None):
 
 
 def connect_table(table: PropertyTable):
+    core.connect_table(table,tool.PropertyTable)
     table.customContextMenuRequested.connect(
         lambda pos: core.create_context_menu(table, pos, tool.PropertyTable, tool.Util)
     )

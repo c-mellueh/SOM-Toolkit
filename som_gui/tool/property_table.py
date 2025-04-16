@@ -3,7 +3,15 @@ from __future__ import annotations
 import logging
 from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, QPoint, Qt,QMimeData,QByteArray
+from PySide6.QtCore import (
+    QCoreApplication,
+    QPoint,
+    Qt,
+    QMimeData,
+    QByteArray,
+    Signal,
+    QObject,
+)
 from PySide6.QtGui import QIcon, QPalette, QDropEvent
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
@@ -13,10 +21,9 @@ import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.main_window.ui import MainWindow
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.property_set_window.ui import PropertySetWindow
 from som_gui.resources.icons import get_link_icon
 from som_gui.module.property_table.constants import MIME_DATA_KEY
-
+from som_gui.module.property_table import trigger
 if TYPE_CHECKING:
     from som_gui.module.property_table.prop import PropertyTableProperties
 from som_gui.module.property_table import ui
@@ -25,12 +32,25 @@ LINKSTATE = Qt.ItemDataRole.UserRole + 2
 import pickle
 
 
+class Signaller(QObject):
+    property_info_requested = Signal(SOMcreator.SOMProperty)
+    translation_requested = Signal(ui.PropertyTable)
+
 class PropertyTable(som_gui.core.tool.PropertyTable):
+    signaller = Signaller()
 
     @classmethod
     def get_properties(cls) -> PropertyTableProperties:
         return som_gui.PropertyTableProperties
 
+    @classmethod
+    def connect_table(cls, table: ui.PropertyTable):
+        table.doubleClicked.connect(
+            lambda i: cls.signaller.property_info_requested.emit(
+                cls.get_property_from_item(i)
+            )
+        )
+        cls.signaller.translation_requested.connect(trigger.retranslate_ui)
     @classmethod
     def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
         """
@@ -166,12 +186,22 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             if som_property.is_child:
                 row_items[0].setIcon(get_link_icon())
                 parent = som_property.parent.property_set
-                class_name = QCoreApplication.translate("PropertyTable", "Predefined PropertySet") if parent.is_predefined else parent.som_class.name
-                text = QCoreApplication.translate("PropertyTable", "Inherits Settings from {}").format(class_name)
-                row_items[0].setToolTip(QCoreApplication.translate("PropertyTable", text))
+                class_name = (
+                    QCoreApplication.translate(
+                        "PropertyTable", "Predefined PropertySet"
+                    )
+                    if parent.is_predefined
+                    else parent.som_class.name
+                )
+                text = QCoreApplication.translate(
+                    "PropertyTable", "Inherits Settings from {}"
+                ).format(class_name)
+                row_items[0].setToolTip(
+                    QCoreApplication.translate("PropertyTable", text)
+                )
             else:
-             row_items[0].setIcon(QIcon())
-             row_items[0].setToolTip("")
+                row_items[0].setIcon(QIcon())
+                row_items[0].setToolTip("")
             row_items[0].setData(LINKSTATE, som_property.is_child)
 
     @classmethod
@@ -289,7 +319,9 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         :return:
         """
         if len(cls.get_selected_properties(table)) == 1:
-            return  QCoreApplication.translate("PropertyTable", "Rename"), lambda: cls.edit_selected_property_name(table)
+            return QCoreApplication.translate(
+                "PropertyTable", "Rename"
+            ), lambda: cls.edit_selected_property_name(table)
         else:
             return None
 
@@ -320,7 +352,11 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             and with_child
         ):
             return None
-        text = QCoreApplication.translate("PropertyTable", "Delete (with subproperties)") if with_child else QCoreApplication.translate("PropertyTable", "Delete")
+        text = (
+            QCoreApplication.translate("PropertyTable", "Delete (with subproperties)")
+            if with_child
+            else QCoreApplication.translate("PropertyTable", "Delete")
+        )
         return text, lambda: cls.delete_selected_properties(
             table, with_child=with_child
         )
@@ -344,8 +380,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         if not any(a.is_child for a in selected_properties):
             return None
         text = QCoreApplication.translate("PropertyTable", "Remove Connection")
-        return text,lambda: cls.remove_parent_of_selected_properties(table) 
-
+        return text, lambda: cls.remove_parent_of_selected_properties(table)
 
     @classmethod
     def context_menu_builder_add_connection(
@@ -400,14 +435,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     def get_property_set_by_table(
         cls, table: QTableWidget
     ) -> SOMcreator.SOMPropertySet | None:
-        if table is None:
-            return None
-        window = table.window()
-        if isinstance(window, PropertySetWindow):
-            return tool.PropertySetWindow.get_property_set_by_window(window)
-        if isinstance(window, MainWindow):
-            return tool.PropertySet.get_active_property_set()
-
+        return table.property_set
     @classmethod
     def get_row_index_from_property(
         cls, som_property: SOMcreator.SOMProperty, table: QTableWidget
@@ -455,12 +483,14 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         if source_table == target_table:
             event.accept()
             return False
-        if not isinstance(source_table, ui.PropertyTable|None):
+        if not isinstance(source_table, ui.PropertyTable | None):
             return False
         return True
 
     @classmethod
-    def write_property_dicts_to_mime_data(cls,property_dicts:list[dict],mime_data:QMimeData):
+    def write_property_dicts_to_mime_data(
+        cls, property_dicts: list[dict], mime_data: QMimeData
+    ):
         """
         write properties to MimeData
         :param properties:
@@ -474,7 +504,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     @classmethod
     def get_property_dict_from_mime_data(
         cls,
-        mime_data:QMimeData,
+        mime_data: QMimeData,
     ) -> list[dict]:
         """
         get PropertyDict from MimeData
@@ -487,3 +517,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             return
         property_dicts = pickle.loads(pickled_data)
         return property_dicts
+
+    @classmethod
+    def refresh_table(cls,table:ui.PropertyTable):
+        table.repaint()

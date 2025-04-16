@@ -4,11 +4,9 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from som_gui.core import property_table as property_table_core
-from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_set_window.ui import PropertySetWindow
     from PySide6.QtWidgets import QTableWidgetItem
 from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
@@ -152,12 +150,3 @@ def repaint_pset_table(
     property_set_tool.remove_property_sets_from_table(delete_property_sets, table)
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
     property_set_tool.update_property_set_table(table)
-
-
-def table_double_clicked(
-    property_set_tool: Type[tool.PropertySet],
-    property_table: Type[tool.PropertyTable],
-    property_set_window: Type[tool.PropertySetWindow],
-):
-    property_set = property_set_tool.get_selecte_property_set_from_table()
-    property_set_window.trigger_window_open(property_set)

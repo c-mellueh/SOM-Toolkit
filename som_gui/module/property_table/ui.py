@@ -9,7 +9,6 @@ import SOMcreator
 from som_gui.module import property_table
 
 if TYPE_CHECKING:
-    from som_gui.module.property_set_window.ui import PropertySetWindow
     from som_gui.module.main_window.ui import MainWindow
 
 
@@ -33,5 +32,5 @@ class PropertyTable(QTableWidget):
         property_table.trigger.drop_event(event, self)
         super().dropEvent(event)
 
-    def window(self) -> MainWindow | PropertySetWindow:
+    def window(self) -> MainWindow:
         return super().window()

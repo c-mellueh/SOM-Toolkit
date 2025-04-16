@@ -9,10 +9,10 @@ if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
     from som_gui.module.class_tree import ui as class_tree_ui
-from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QSortFilterProxyModel
+from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QSortFilterProxyModel,QTimer
 from PySide6.QtGui import QCloseEvent, QDropEvent
 import SOMcreator
-
+import time
 initial_tree = True
 
 
@@ -21,6 +21,9 @@ def init(
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
     class_tool: Type[tool.Class],
+    property_tool:Type[tool.Property],
+    property_table:Type[tool.PropertyTable],
+    property_window:Type[tool.PropertyWindow],
 ):
     """
     Create the actions used in the MainMenuBar. using add_action and set_action. Afterwards the Actions can be called by get_action. This is mostly used in retranslate_ui
@@ -38,6 +41,7 @@ def init(
     main_window.get_ui().button_search.pressed.connect(
         lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
+
     # init ClassTree
     from som_gui.module.class_tree.ui import ClassModel
 
@@ -56,6 +60,18 @@ def init(
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
+
+    main_window.get_ui().button_property_add.clicked.connect(main_window.request_new_property)
+
+    main_window.signaller.new_property_requested.connect(property_tool.signaller.empty_property_requested.emit)
+    
+    refresh_table_func = lambda:property_table.refresh_table(main_window.get_property_table())
+    property_tool.signaller.property_created.connect(refresh_table_func)
+    property_window.signaller.datatype_changed.connect(refresh_table_func)
+    property_window.signaller.valuetype_changed.connect(refresh_table_func)
+    property_window.signaller.values_changed.connect(refresh_table_func)
+    property_window.signaller.name_changed.connect(refresh_table_func)
+    property_window.signaller.unit_changed.connect(refresh_table_func)
 
 
 def retranslate_ui(

@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING, TextIO, Type
 from PySide6.QtCore import QCoreApplication
 
 import SOMcreator
-from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
 def create_main_menu_actions(
@@ -25,7 +23,7 @@ def create_main_menu_actions(
 
 
 def retranslate_ui(
-    predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util]
+    predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util],property_table:Type[tool.PropertyTable]
 ):
     open_window_action = predefined_pset.get_action("open_window")
     open_window_action.setText(
@@ -39,17 +37,18 @@ def retranslate_ui(
         QCoreApplication.translate("PredefinedPset", "Predefined Pset")
     )
     window.setWindowTitle(title)
-
+    property_table.signaller.translation_requested.emit(predefined_pset.get_property_table())
 
 def open_window(
-    predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util]
+    predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util],property_table:Type[tool.PropertyTable],
+    property_window:Type[tool.PropertyWindow]
 ):
     if not predefined_pset.get_window():
         dialog = predefined_pset.create_window()
         predefined_pset.connect_triggers(dialog)
     window = predefined_pset.get_window()
     window.show()
-    retranslate_ui(predefined_pset, util)
+    retranslate_ui(predefined_pset, util,property_table)
     window.activateWindow()
 
 
@@ -75,19 +74,17 @@ def pset_context_menu(
     property_set.create_context_menu(list_widget.mapToGlobal(pos), functions)
 
 
-def pset_selection_changed(predefined_pset: Type[tool.PredefinedPropertySet]):
+def pset_selection_changed(predefined_pset: Type[tool.PredefinedPropertySet],property_table:Type[tool.PropertyTable]):
     property_set = predefined_pset.get_selected_property_set()
+    table_view = predefined_pset.get_property_table()
     predefined_pset.set_active_property_set(property_set)
     repaint_class_list(predefined_pset)
+    property_table.set_property_set_of_table(table_view, property_set)
+    from som_gui.core import property_table as property_table_core
+    property_table_core.update_table(table_view, property_table)
+    property_table.signaller.translation_requested.emit(table_view)
 
 
-def pset_double_clicked(
-    item,
-    property_set: Type[tool.PropertySet],
-    property_set_window: Type[tool.PropertySetWindow],
-):
-    pset = property_set.get_property_set_from_item(item)
-    property_set_window.trigger_window_open(pset)
 
 
 def class_context_menu(

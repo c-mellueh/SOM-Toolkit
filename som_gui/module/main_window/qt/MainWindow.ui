@@ -252,19 +252,62 @@
         </item>
        </layout>
       </widget>
-      <widget class="PropertyTable" name="table_property">
-       <property name="contextMenuPolicy">
-        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-       </property>
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <attribute name="horizontalHeaderStretchLastSection">
-        <bool>true</bool>
-       </attribute>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <layout class="QVBoxLayout" name="vertical_layout_properties">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_properties">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Property:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="button_property_add">
+            <property name="text">
+             <string>New</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="PropertyTable" name="table_property">
+          <property name="contextMenuPolicy">
+           <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -319,14 +362,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ClassView</class>
-   <extends>QTreeView</extends>
-   <header>som_gui.module.class_tree.ui</header>
-  </customwidget>
-  <customwidget>
    <class>PropertyTable</class>
    <extends>QTableWidget</extends>
    <header>som_gui.module.property_table.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>ClassView</class>
+   <extends>QTreeView</extends>
+   <header>som_gui.module.class_tree.ui</header>
   </customwidget>
   <customwidget>
    <class>PsetTableWidget</class>

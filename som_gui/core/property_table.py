@@ -17,6 +17,10 @@ if TYPE_CHECKING:
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
+def connect_table(table: ui.PropertyTable, property_table: Type[tool.PropertyTable]):
+    property_table.connect_table(table)
+
+
 def init_context_menu(property_table: Type[tool.PropertyTable]):
     """
     Defines all standard context menu actions associated with an property table.
@@ -223,3 +227,4 @@ def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
     # update rows
     for row in range(table.rowCount()):
         property_table.update_row(table, row)
+

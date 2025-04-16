@@ -18,8 +18,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QSplitter,
-    QStatusBar, QTableWidgetItem, QVBoxLayout, QWidget)
+    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
+    QSplitter, QStatusBar, QTableWidgetItem, QVBoxLayout,
+    QWidget)
 
 from som_gui.module.class_tree.ui import ClassView
 from som_gui.module.property_set.ui import PsetTableWidget
@@ -168,13 +169,42 @@ class Ui_MainWindow(object):
         self.vertical_layout_pset.addWidget(self.table_pset)
 
         self.splitter.addWidget(self.verticalLayoutWidget)
-        self.table_property = PropertyTable(self.splitter)
+        self.verticalLayoutWidget_2 = QWidget(self.splitter)
+        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
+        self.vertical_layout_properties = QVBoxLayout(self.verticalLayoutWidget_2)
+        self.vertical_layout_properties.setObjectName(u"vertical_layout_properties")
+        self.vertical_layout_properties.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_properties = QHBoxLayout()
+        self.horizontalLayout_properties.setObjectName(u"horizontalLayout_properties")
+        self.label = QLabel(self.verticalLayoutWidget_2)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout_properties.addWidget(self.label)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_properties.addItem(self.horizontalSpacer)
+
+        self.button_property_add = QPushButton(self.verticalLayoutWidget_2)
+        self.button_property_add.setObjectName(u"button_property_add")
+
+        self.horizontalLayout_properties.addWidget(self.button_property_add)
+
+
+        self.vertical_layout_properties.addLayout(self.horizontalLayout_properties)
+
+        self.table_property = PropertyTable(self.verticalLayoutWidget_2)
         self.table_property.setObjectName(u"table_property")
         self.table_property.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_property.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table_property.setDragEnabled(True)
+        self.table_property.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
         self.table_property.setSortingEnabled(True)
-        self.splitter.addWidget(self.table_property)
         self.table_property.horizontalHeader().setStretchLastSection(True)
+
+        self.vertical_layout_properties.addWidget(self.table_property)
+
+        self.splitter.addWidget(self.verticalLayoutWidget_2)
 
         self.verticalLayout.addWidget(self.splitter)
 
@@ -228,6 +258,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Inherited By", None));
         ___qtablewidgetitem2 = self.table_pset.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Optional", None));
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Property:", None))
+        self.button_property_add.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"Edit", None))
