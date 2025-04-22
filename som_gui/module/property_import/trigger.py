@@ -26,7 +26,7 @@ def open_import_window():
 
 
 def open_results_window():
-    core.open_results_window(tool.PropertyImportResults)
+    core.open_results_window(tool.PropertyImportResults,tool.PropertyImport,tool.PropertyImportSQL,tool.Popups)
 
 
 def retranslate_ui():
