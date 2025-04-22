@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import logging
-from PySide6.QtCore import QCoreApplication,QObject,Signal
+from PySide6.QtCore import QCoreApplication, QObject, Signal
 import som_gui.core.tool
 import som_gui
 from som_gui import tool
@@ -13,18 +13,21 @@ import uuid
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties
 
+
 class Signaller(QObject):
     create_class = Signal(ClassDataDict)
-    copy_class = Signal(ClassDataDict,ClassDataDict)
-    modify_class = Signal(SOMcreator.SOMClass,ClassDataDict)
+    copy_class = Signal(ClassDataDict, ClassDataDict)
+    modify_class = Signal(SOMcreator.SOMClass, ClassDataDict)
     class_created = Signal(SOMcreator.SOMClass)
     class_deleted = Signal(SOMcreator.SOMClass)
+
+
 class Class(som_gui.core.tool.Class):
     signaller = Signaller()
+
     @classmethod
     def get_properties(cls) -> ClassProperties:
         return som_gui.ClassProperties
-
 
     @classmethod
     def connect_signals(cls):
@@ -158,13 +161,36 @@ class Class(som_gui.core.tool.Class):
             if som_class.ident_value:
                 ident_values.add(som_class.ident_value)
         return ident_values
-    
+
     @classmethod
-    def delete_class(cls,som_class:SOMcreator.SOMClass,recursive:bool):
-        def iterate_deletion(c:SOMcreator.SOMClass):
+    def delete_class(cls, som_class: SOMcreator.SOMClass, recursive: bool):
+        def iterate_deletion(c: SOMcreator.SOMClass):
             if recursive:
                 for child in list(c.get_children(filter=False)):
                     iterate_deletion(child)
             cls.signaller.class_deleted.emit(c)
             c.delete()
+
         iterate_deletion(som_class)
+
+    @classmethod
+    def inherit_property_set_to_all_children(
+        cls, som_class: SOMcreator.SOMClass, property_set: SOMcreator.SOMPropertySet
+    ):
+        def iter_children(sc:SOMcreator.SOMClass):
+            for child_class in sc.get_children(filter=False):
+                child_class: SOMcreator.SOMClass
+                pset_dict = {p.name: p for p in child_class.get_property_sets(filter=False)}
+                child_pset = pset_dict.get(property_set.name)
+                if child_pset is None:
+                    child_pset = property_set.create_child()
+                    child_class.add_property_set(child_pset)
+                for som_property in property_set.get_properties(filter=False):
+                    new_property = child_pset.get_property_by_name(som_property.name)
+                    if not new_property:
+                        new_property = som_property.create_child()
+                        child_pset.add_property(new_property)
+                    else:
+                        new_property.parent = som_property
+                iter_children(child_class)
+        iter_children(som_class)

@@ -73,7 +73,7 @@ def pset_selection_changed(
     main_window.get_pset_name_label().setText(text)
 
 
-def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):
+def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet],class_tool:Type[tool.Class]):
 
     table = property_set_tool.get_table()
     if not table.itemAt(pos):
@@ -99,6 +99,18 @@ def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):
                 property_set_tool.delete_table_pset,
             ],
         ]
+    
+    def inherit_to_child():
+        pset = property_set_tool.get_active_property_set()
+        som_class = pset.som_class
+        if not som_class:
+            return
+        class_tool.inherit_property_set_to_all_children(som_class,pset)
+    actions.append(
+        [QCoreApplication.translate(f"PropertySet", "Inherit to child classes"),inherit_to_child]
+        
+    )
+
 
     property_set_tool.create_context_menu(table.mapToGlobal(pos), actions)
 
