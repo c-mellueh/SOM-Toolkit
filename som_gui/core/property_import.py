@@ -22,6 +22,10 @@ import time
 # DB_PATH = ""
 
 
+def window_closed(property_import_results: Type[tool.PropertyImportResults]):
+    property_import_results.remove_results_window()
+
+
 def create_main_menu_actions(
     property_import: Type[tool.PropertyImport], main_window: Type[tool.MainWindow]
 ):
@@ -279,7 +283,12 @@ def last_import_finished(
     trigger.open_results_window()
 
 
-def open_results_window(property_import_results: Type[tool.PropertyImportResults]):
+def open_results_window(
+    property_import_results: Type[tool.PropertyImportResults],
+    property_import: Type[tool.PropertyImport],
+    property_import_sql: Type[tool.PropertyImportSQL],
+    popups: Type[tool.Popups],
+):
     property_import_widget = property_import_results.create_import_window()
     property_import_results.connect_trigger(property_import_widget)
     property_import_widget.show()
@@ -294,6 +303,20 @@ def open_results_window(property_import_results: Type[tool.PropertyImportResults
 
     trigger.retranslate_ui()
     property_import_results.update_results_window()
+    if not property_import_sql.are_entities_with_identifiers_existing():
+
+        main_property = property_import.get_main_property()
+        main_property_set = property_import.get_main_pset()
+        text = QCoreApplication.translate(
+            "PropertyImport",
+            "There were not Entities with the required Identifier ('{}:{}') found!\nImport not possible!",
+        ).format(main_property_set, main_property)
+        title = QCoreApplication.translate(
+            "PropertyImport",
+            "Identifier not found",
+        )
+        popups.create_warning_popup(text, title, title)
+        property_import_results.get_results_window().close()
 
 
 def update_results_window(attriubte_import_results: Type[tool.PropertyImportResults]):

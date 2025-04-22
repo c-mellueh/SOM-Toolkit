@@ -26,7 +26,7 @@ def open_import_window():
 
 
 def open_results_window():
-    core.open_results_window(tool.PropertyImportResults)
+    core.open_results_window(tool.PropertyImportResults,tool.PropertyImport,tool.PropertyImportSQL,tool.Popups)
 
 
 def retranslate_ui():
@@ -165,3 +165,6 @@ def download_clicked():
     core.export_properties(
         tool.PropertyImportResults, tool.PropertyImportSQL, tool.Appdata, tool.Popups
     )
+
+def window_closed():
+    core.window_closed(tool.PropertyImportResults)

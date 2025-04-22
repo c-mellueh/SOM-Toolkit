@@ -1219,3 +1219,12 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
             # Write the DataFrame to an Excel sheet
             df.to_excel(writer, sheet_name="EXPORT", index=False)
         cls.disconnect_from_database()
+
+    @classmethod
+    def are_entities_with_identifiers_existing(cls) ->bool:
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        query =         query = f"SELECT DISTINCT {IDENTIFIER} FROM {ENTITY_TABLE_NAME}"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        return bool([x for x in rows if len(x[0])!=0])
