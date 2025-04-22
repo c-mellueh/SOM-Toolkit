@@ -16,6 +16,9 @@ class PropertyImportResultWindow(QWidget):
         self.ui.button_settings.setIcon(get_settings_icon())
         self.setWindowIcon(get_icon())
 
+    def closeEvent(self, event):
+        trigger.window_closed()
+        return super().closeEvent(event)
 
 class PropertySetTable(QTableWidget):
     def __init__(self, *args, **kwargs):

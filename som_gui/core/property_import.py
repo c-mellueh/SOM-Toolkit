@@ -22,6 +22,9 @@ import time
 # DB_PATH = ""
 
 
+def window_closed(property_import_results:Type[tool.PropertyImportResults]):
+    property_import_results.remove_results_window()
+
 def create_main_menu_actions(
     property_import: Type[tool.PropertyImport], main_window: Type[tool.MainWindow]
 ):

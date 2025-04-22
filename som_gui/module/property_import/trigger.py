@@ -165,3 +165,6 @@ def download_clicked():
     core.export_properties(
         tool.PropertyImportResults, tool.PropertyImportSQL, tool.Appdata, tool.Popups
     )
+
+def window_closed():
+    core.window_closed(tool.PropertyImportResults)
