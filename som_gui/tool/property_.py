@@ -51,7 +51,7 @@ class Property(som_gui.core.tool.Property):
     @classmethod
     def connect_signals(cls):
         cls.signaller.empty_property_requested.connect(trigger.create_empty_property)
-
+        
     @classmethod
     def add_property_data_value(
         cls, name: str, getter: Callable, setter: Callable

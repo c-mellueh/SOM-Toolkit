@@ -16,9 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialog,
-    QDialogButtonBox, QHeaderView, QLabel, QListWidget,
-    QListWidgetItem, QSizePolicy, QSplitter, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QDialogButtonBox, QHBoxLayout, QHeaderView, QLabel,
+    QListWidget, QListWidgetItem, QPushButton, QSizePolicy,
+    QSpacerItem, QSplitter, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 from som_gui.module.property_table.ui import PropertyTable
 
@@ -33,37 +34,88 @@ class Ui_PredefinedPset(object):
         self.splitter = QSplitter(PredefinedPset)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.widget = QWidget(self.splitter)
-        self.widget.setObjectName(u"widget")
-        self.verticalLayout = QVBoxLayout(self.widget)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(self.widget)
+        self.layoutWidget = QWidget(self.splitter)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.layout_pset = QVBoxLayout(self.layoutWidget)
+        self.layout_pset.setObjectName(u"layout_pset")
+        self.layout_pset.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.layoutWidget)
         self.label.setObjectName(u"label")
 
-        self.verticalLayout.addWidget(self.label)
+        self.layout_pset.addWidget(self.label)
 
-        self.list_view_pset = QListWidget(self.widget)
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.button_pset = QPushButton(self.layoutWidget)
+        self.button_pset.setObjectName(u"button_pset")
+
+        self.horizontalLayout.addWidget(self.button_pset)
+
+
+        self.layout_pset.addLayout(self.horizontalLayout)
+
+        self.list_view_pset = QListWidget(self.layoutWidget)
         self.list_view_pset.setObjectName(u"list_view_pset")
         self.list_view_pset.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.list_view_pset.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_view_pset.setEditTriggers(QAbstractItemView.EditTrigger.EditKeyPressed)
         self.list_view_pset.setSortingEnabled(False)
 
-        self.verticalLayout.addWidget(self.list_view_pset)
+        self.layout_pset.addWidget(self.list_view_pset)
 
-        self.splitter.addWidget(self.widget)
-        self.widget1 = QWidget(self.splitter)
-        self.widget1.setObjectName(u"widget1")
-        self.verticalLayout_2 = QVBoxLayout(self.widget1)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label_2 = QLabel(self.widget1)
+        self.splitter.addWidget(self.layoutWidget)
+        self.layoutWidget1 = QWidget(self.splitter)
+        self.layoutWidget1.setObjectName(u"layoutWidget1")
+        self.layout_inheritance = QVBoxLayout(self.layoutWidget1)
+        self.layout_inheritance.setObjectName(u"layout_inheritance")
+        self.layout_inheritance.setContentsMargins(0, 0, 0, 0)
+        self.label_properties = QLabel(self.layoutWidget1)
+        self.label_properties.setObjectName(u"label_properties")
+
+        self.layout_inheritance.addWidget(self.label_properties)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
+
+        self.button_property = QPushButton(self.layoutWidget1)
+        self.button_property.setObjectName(u"button_property")
+
+        self.horizontalLayout_2.addWidget(self.button_property)
+
+
+        self.layout_inheritance.addLayout(self.horizontalLayout_2)
+
+        self.table_properties = PropertyTable(self.layoutWidget1)
+        self.table_properties.setObjectName(u"table_properties")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.table_properties.sizePolicy().hasHeightForWidth())
+        self.table_properties.setSizePolicy(sizePolicy)
+        self.table_properties.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table_properties.horizontalHeader().setStretchLastSection(True)
+
+        self.layout_inheritance.addWidget(self.table_properties)
+
+        self.splitter.addWidget(self.layoutWidget1)
+        self.layoutWidget2 = QWidget(self.splitter)
+        self.layoutWidget2.setObjectName(u"layoutWidget2")
+        self.layout_property = QVBoxLayout(self.layoutWidget2)
+        self.layout_property.setObjectName(u"layout_property")
+        self.layout_property.setContentsMargins(0, 0, 0, 0)
+        self.label_2 = QLabel(self.layoutWidget2)
         self.label_2.setObjectName(u"label_2")
 
-        self.verticalLayout_2.addWidget(self.label_2)
+        self.layout_property.addWidget(self.label_2)
 
-        self.table_widgets_classes = QTableWidget(self.widget1)
+        self.table_widgets_classes = QTableWidget(self.layoutWidget2)
         if (self.table_widgets_classes.columnCount() < 2):
             self.table_widgets_classes.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
@@ -78,32 +130,9 @@ class Ui_PredefinedPset(object):
         self.table_widgets_classes.horizontalHeader().setStretchLastSection(True)
         self.table_widgets_classes.verticalHeader().setVisible(False)
 
-        self.verticalLayout_2.addWidget(self.table_widgets_classes)
+        self.layout_property.addWidget(self.table_widgets_classes)
 
-        self.splitter.addWidget(self.widget1)
-        self.widget2 = QWidget(self.splitter)
-        self.widget2.setObjectName(u"widget2")
-        self.verticalLayout_3 = QVBoxLayout(self.widget2)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.label_properties = QLabel(self.widget2)
-        self.label_properties.setObjectName(u"label_properties")
-
-        self.verticalLayout_3.addWidget(self.label_properties)
-
-        self.table_properties = PropertyTable(self.widget2)
-        self.table_properties.setObjectName(u"table_properties")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.table_properties.sizePolicy().hasHeightForWidth())
-        self.table_properties.setSizePolicy(sizePolicy)
-        self.table_properties.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_properties.horizontalHeader().setStretchLastSection(True)
-
-        self.verticalLayout_3.addWidget(self.table_properties)
-
-        self.splitter.addWidget(self.widget2)
+        self.splitter.addWidget(self.layoutWidget2)
 
         self.verticalLayout_4.addWidget(self.splitter)
 
@@ -125,11 +154,13 @@ class Ui_PredefinedPset(object):
     def retranslateUi(self, PredefinedPset):
         PredefinedPset.setWindowTitle(QCoreApplication.translate("PredefinedPset", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("PredefinedPset", u"PropertySet", None))
+        self.button_pset.setText(QCoreApplication.translate("PredefinedPset", u"New", None))
+        self.label_properties.setText(QCoreApplication.translate("PredefinedPset", u"Properties:", None))
+        self.button_property.setText(QCoreApplication.translate("PredefinedPset", u"New", None))
         self.label_2.setText(QCoreApplication.translate("PredefinedPset", u"Inherits to:", None))
         ___qtablewidgetitem = self.table_widgets_classes.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("PredefinedPset", u"Name", None));
         ___qtablewidgetitem1 = self.table_widgets_classes.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("PredefinedPset", u"Identifier", None));
-        self.label_properties.setText(QCoreApplication.translate("PredefinedPset", u"Properties:", None))
     # retranslateUi
 

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import predefined_property_set as core
 from som_gui.core import property_set as property_set_core
+import SOMcreator
 
 if TYPE_CHECKING:
     from .ui import PredefinedPropertySetWindow
@@ -15,38 +16,45 @@ def connect():
     core.add_compare_widget(
         tool.PredefinedPropertySetCompare, tool.PropertyCompare, tool.CompareWindow
     )
+    core.connect_signals(tool.PredefinedPropertySet,tool.Property,tool.PropertyTable,tool.PropertyWindow)
 
 
 def open_window():
-    core.open_window(tool.PredefinedPropertySet, tool.Util,tool.PropertyTable,tool.PropertyWindow)
+    core.open_window(
+        tool.PredefinedPropertySet, tool.Util, tool.PropertyTable, tool.PropertyWindow
+    )
 
+
+def set_active_property_set(property_set: SOMcreator.SOMPropertySet):
+    core.pset_selection_changed(
+        property_set, tool.PredefinedPropertySet, tool.PropertyTable
+    )
+
+
+def activate_linked_property_set(property_set: SOMcreator.SOMPropertySet):
+    core.activate_linked_property_set(
+        property_set,
+        tool.PredefinedPropertySet,
+        tool.PropertySet,
+        tool.ClassTree,
+        tool.MainWindow,
+    )
+
+
+def pset_context_menu_requested(pos):
+    core.create_pset_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet)
+
+
+def rename_property_set(item):
+    core.pset_data_changed(item, tool.PropertySet)
+
+
+def class_context_menu_requested(pos):
+        core.class_context_menu(
+            pos, tool.PredefinedPropertySet, tool.PropertySet
+        )
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
-    dialog.ui.list_view_pset.itemSelectionChanged.connect(
-        lambda: core.pset_selection_changed(tool.PredefinedPropertySet,tool.PropertyTable)
-    )
-
-    dialog.ui.table_widgets_classes.itemDoubleClicked.connect(
-        lambda: core.class_double_clicked(
-            tool.PredefinedPropertySet, tool.PropertySet, tool.ClassTree,tool.MainWindow
-        )
-    )
-
-    dialog.ui.list_view_pset.customContextMenuRequested.connect(
-        lambda pos: core.pset_context_menu(
-            pos, tool.PredefinedPropertySet, tool.PropertySet
-        )
-    )
-
-    dialog.ui.list_view_pset.itemChanged.connect(
-        lambda item: core.pset_data_changed(item, tool.PropertySet)
-    )
-
-    dialog.ui.table_widgets_classes.customContextMenuRequested.connect(
-        lambda pos: core.class_context_menu(
-            pos, tool.PredefinedPropertySet, tool.PropertySet
-        )
-    )
 
     dialog.edit_started.connect(
         lambda: core.name_edit_started(tool.PredefinedPropertySet)
@@ -55,7 +63,6 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.edit_stopped.connect(
         lambda: core.name_edit_stopped(tool.PredefinedPropertySet)
     )
-
 
 def edit_name(text, index):
     property_set_core.rename_pset_by_editor(text, index, tool.PropertySet)
@@ -74,5 +81,4 @@ def accept():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.PredefinedPropertySet, tool.Util,tool.PropertyTable)
-    
+    core.retranslate_ui(tool.PredefinedPropertySet, tool.Util, tool.PropertyTable)

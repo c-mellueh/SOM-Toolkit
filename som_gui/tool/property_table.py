@@ -520,4 +520,5 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def refresh_table(cls,table:ui.PropertyTable):
-        table.repaint()
+        if table:
+            table.repaint()

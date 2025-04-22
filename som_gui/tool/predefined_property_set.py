@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, Qt,QObject,Signal
+from PySide6.QtCore import QCoreApplication, Qt, QObject, Signal
 from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
@@ -17,6 +17,7 @@ import som_gui.module.compare
 import som_gui.module.predefined_property_set
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.module.predefined_property_set import trigger
 
 if TYPE_CHECKING:
     from som_gui.module.predefined_property_set.prop import (
@@ -26,14 +27,55 @@ if TYPE_CHECKING:
     from som_gui.module.predefined_property_set import ui
     from PySide6.QtGui import QAction
 
+
 class Signaller(QObject):
     property_requested = Signal(SOMcreator.SOMProperty)
+    active_pset_changed = Signal(SOMcreator.SOMPropertySet)
+    linked_pset_requested = Signal(SOMcreator.SOMClass)
+    context_menu_requested = Signal()
+    new_property_requested = Signal(SOMcreator.SOMPropertySet)
 
 class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     signaller = Signaller()
+
     @classmethod
     def get_properties(cls) -> PredefinedPsetProperties:
         return som_gui.PredefinedPsetProperties
+
+    @classmethod
+    def connect_signals(cls):
+        cls.signaller.active_pset_changed.connect(trigger.set_active_property_set)
+        cls.signaller.linked_pset_requested.connect(
+            trigger.activate_linked_property_set
+        )
+
+    @classmethod
+    def connect_window(cls, window: ui.PredefinedPropertySetWindow):
+        pset_list = window.ui.list_view_pset
+        pset_list.itemSelectionChanged.connect(
+            lambda: cls.signaller.active_pset_changed.emit(
+                cls.get_selected_property_set()
+            )
+        )
+
+        pset_list.customContextMenuRequested.connect(
+            trigger.pset_context_menu_requested
+        )
+
+        pset_list.itemChanged.connect(trigger.rename_property_set)
+
+        class_table = window.ui.table_widgets_classes
+        class_table.itemDoubleClicked.connect(
+            lambda i: cls.signaller.linked_pset_requested.emit(
+                tool.PropertySet.get_pset_from_item(i)
+            )
+        )
+        class_table.customContextMenuRequested.connect(trigger.class_context_menu_requested)
+        
+        window.ui.button_pset.clicked.connect(cls.create_property_set)
+        window.ui.button_property.clicked.connect(lambda:cls.signaller.new_property_requested.emit(cls.get_active_property_set()))
+
+        som_gui.module.predefined_property_set.trigger.connect_dialog(window)
 
     @classmethod
     def set_action(cls, name: str, action: QAction):
@@ -53,10 +95,6 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         props.predefined_property_set_window = window
 
     @classmethod
-    def connect_triggers(cls, window:ui.PredefinedPropertySetWindow):
-        som_gui.module.predefined_property_set.trigger.connect_dialog(window)
-
-    @classmethod
     def create_window(cls) -> ui.PredefinedPropertySetWindow:
         window = som_gui.module.predefined_property_set.ui.PredefinedPropertySetWindow()
         cls.set_window(window)
@@ -69,8 +107,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def get_property_table(cls):
+        if not cls.get_window():
+            return None
         return cls.get_window().ui.table_properties
-    
+
     @classmethod
     def get_class_table_widget(cls) -> QTableWidget:
         return cls.get_window().ui.table_widgets_classes
@@ -101,7 +141,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def get_selected_property_set(cls):
         props = cls.get_properties()
-        return props.predefined_property_set_window.ui.list_view_pset.selectedItems()[
+        selected_items =cls.get_window().ui.list_view_pset.selectedItems()
+        if not selected_items:
+            return None
+        return selected_items[
             0
         ].data(CLASS_REFERENCE)
 
@@ -244,6 +287,12 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         table = cls.get_class_table_widget()
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
+
+    @classmethod
+    def get_class_from_item(cls, item):
+        pset = tool.PropertySet.get_property_set_from_item(item)
+        som_class = pset.som_class
+        return som_class
 
 
 class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompare):
