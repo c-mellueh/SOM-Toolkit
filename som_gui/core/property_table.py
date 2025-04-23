@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
     from PySide6.QtGui import QDropEvent
     from som_gui.module.property_table import ui
-    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
 def connect_table(table: ui.PropertyTable, property_table: Type[tool.PropertyTable]):

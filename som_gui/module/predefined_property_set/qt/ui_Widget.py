@@ -99,6 +99,7 @@ class Ui_PredefinedPset(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.table_properties.sizePolicy().hasHeightForWidth())
         self.table_properties.setSizePolicy(sizePolicy)
+        self.table_properties.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_properties.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table_properties.horizontalHeader().setStretchLastSection(True)
 
