@@ -32,6 +32,7 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 
 ### 2. **som_gui**
 The `som_gui` is a graphical user interface for non-programmers or users seeking an interactive way to work with Semantic Object Models.
+![image](https://github.com/user-attachments/assets/2f6e0f0d-538b-421b-b0fe-1d8b2289a821)
 
 **Key Features:**
 - **Interactive Editing**: Create, view, and modify classes, property sets, and properties.
