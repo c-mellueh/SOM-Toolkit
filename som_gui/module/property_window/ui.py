@@ -48,8 +48,10 @@ class ValueView(QTableView):
 
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_V and (event.modifiers() & Qt.ControlModifier):
+        if event.key() == Qt.Key.Key_V and (event.modifiers() & Qt.ControlModifier):
             trigger.paste_clipboard(self)
+        elif event.key() == Qt.Key.Key_C and (event.modifiers() & Qt.ControlModifier):
+            trigger.copy_table_content(self)
         else:
             return super().keyPressEvent(event)
 

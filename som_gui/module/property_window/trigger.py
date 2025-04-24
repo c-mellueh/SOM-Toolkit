@@ -28,7 +28,7 @@ def on_new_project():
 
 
 def property_info_requested(som_property: SOMcreator.SOMProperty):
-    core.open_property_info(som_property, tool.PropertyWindow)
+    core.open_property_info(som_property, tool.PropertyWindow,tool.Util)
 
 
 def window_created(window: ui.PropertyWindow):
@@ -47,6 +47,9 @@ def value_context_menu_request(pos, table_view: ui.ValueView):
 def paste_clipboard(table_view:ui.ValueView):
     core.handle_paste_event(table_view,tool.PropertyWindow,tool.Appdata)
 
+
+def copy_table_content(table_view:ui.ValueView):
+    core.handle_copy_event(table_view,tool.PropertyWindow,tool.Appdata)
 #Settings Window
 
 def splitter_settings_created(widget: ui.SplitterSettings):

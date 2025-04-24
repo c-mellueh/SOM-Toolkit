@@ -20,7 +20,9 @@ from som_gui.module.property_window.constants import (
 
 
 def open_property_info(
-    som_property: SOMcreator.SOMProperty, property_window: Type[tool.PropertyWindow]
+    som_property: SOMcreator.SOMProperty,
+    property_window: Type[tool.PropertyWindow],
+    util: Type[tool.Util],
 ):
     if window := property_window.get_window(som_property):
         if window.isHidden():
@@ -159,7 +161,7 @@ def handle_paste_event(
     table_view: ui.ValueView,
     property_window: Type[tool.PropertyWindow],
     appdata: Type[tool.Appdata],
-) -> bool:
+) -> None:
     start_row = min(property_window.get_selected_rows(table_view), default=0)
     sep_bool = appdata.get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
     text = QGuiApplication.clipboard().text()
@@ -167,9 +169,21 @@ def handle_paste_event(
         property_window.set_value(table_view, start_row, text)
         return
 
-    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ";")
     text_list = text.split(seperator)
     property_window.set_values(table_view, start_row, text_list)
+
+
+def handle_copy_event(
+    table_view: ui.ValueView,
+    property_window: Type[tool.PropertyWindow],
+    appdata: Type[tool.Appdata],
+):
+    values = property_window.get_selected_values(table_view)
+    if not values:
+        return
+    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ";")
+    QGuiApplication.clipboard().setText(seperator.join(values))
 
 
 #### Settings Window
