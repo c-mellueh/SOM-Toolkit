@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<QtoSetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.buildingsmart-tech.org/xml/qto/QTO_IFC4.xsd">
+  <Name>Qto_SanitaryTerminalBaseQuantities</Name>
+  <Definition>Base quantities that are common to the definition of all occurrences of sanitary terminal.</Definition>
+  <IfcVersion version="2x4" />
+  <ApplicableClasses>
+    <ClassName>IfcSanitaryTerminal</ClassName>
+  </ApplicableClasses>
+  <ApplicableTypeValue>IfcSanitaryTerminal</ApplicableTypeValue>
+  <QtoDefs>
+    <QtoDef>
+      <Name>GrossWeight</Name>
+      <Definition>Weight of the element.</Definition>
+      <QtoType>Q_WEIGHT</QtoType>
+      <NameAliases />
+      <DefinitionAliases />
+    </QtoDef>
+  </QtoDefs>
+  <QtoDefinitionAliases />
+</QtoSetDef>
