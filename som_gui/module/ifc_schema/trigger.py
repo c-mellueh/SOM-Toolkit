@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 
 def connect():
-    pass
+    core.init(tool.IfcSchema,tool.Appdata)
 
 def retranslate_ui():
     pass
