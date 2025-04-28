@@ -112,8 +112,6 @@ class Class:
 class ClassInfo:
     def add_classes_infos_add_function(self, key, getter_function): pass
 
-    def add_ifc_mapping(self, mapping): pass
-
     def add_plugin_entry(self, key, layout_name, widget_creator, index, init_value_getter, widget_value_getter, widget_value_setter, test_function, value_setter): pass
 
     def add_plugin_infos_to_class(self, som_class, data_dict): pass
