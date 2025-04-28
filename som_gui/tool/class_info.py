@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Callable
 from som_gui.module.class_info.prop import PluginProperty
 from som_gui.module.class_.prop import ClassDataDict
 from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
-from PySide6.QtCore import QCoreApplication,QObject,Slot
+from PySide6.QtCore import QCoreApplication, QObject, Slot
 import copy as cp
 import uuid
 import logging
@@ -122,13 +122,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         cls.get_properties().ifc_line_edits = []
         cls.set_active_class(None)
         cls.get_properties().ifc_mappings = []
+
     @classmethod
     def connect_dialog(
         cls,
         dialog: ClassInfoDialog,
         predefined_psets: list[SOMcreator.SOMPropertySet],
     ):
-        dialog.ui.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
+        dialog.ui.button_add_ifc.pressed.connect(lambda: trigger.append_ifc_mapping(""))
         dialog.ui.combo_box_pset.currentTextChanged.connect(
             lambda: cls.update_property_combobox(predefined_psets)
         )
@@ -253,7 +254,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             plugin.widget_value_setter(prop.plugin_infos.get(plugin.key))
 
         for mapping in prop.ifc_mappings:
-            cls.add_ifc_mapping(mapping)
+            trigger.append_ifc_mapping(mapping)
 
         mode = cls.get_mode()
         dialog.ui.text_edit_description.setPlainText(prop.description or "")
@@ -270,28 +271,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             dialog.ui.line_edit_property_value.setText(prop.ident_value)
 
     @classmethod
-    def add_ifc_mapping(cls, mapping):
-        line_edit = QLineEdit()
-        line_edit.setCompleter(cls.create_ifc_completer())
-        line_edit.setText(mapping)
-        prop = cls.get_properties()
-        if prop.ifc_line_edits:
-            last_tab_widget = prop.ifc_line_edits[-1]
-        else:
-            last_tab_widget = cls.get_ui().button_add_ifc
-        prop.ifc_line_edits.append(line_edit)
-
-
-        cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
-        tool.Util.insert_tab_order(last_tab_widget,line_edit)
-
-    @classmethod
     def add_classes_infos_add_function(cls, key: str, getter_function: Callable):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod
-    def trigger_class_info_widget(cls, mode: int,som_class:SOMcreator.SOMClass = None):
-        trigger.create_class_info_widget(mode,som_class)
+    def trigger_class_info_widget(
+        cls, mode: int, som_class: SOMcreator.SOMClass = None
+    ):
+        trigger.create_class_info_widget(mode, som_class)
 
     @classmethod
     def are_plugin_requirements_met(
@@ -355,3 +342,12 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     ):
         for plugin in cls.get_properties().class_info_plugin_list:  # call Setter Func
             plugin.value_setter(som_class, data_dict[plugin.key])
+
+    @classmethod
+    def get_ifc_lineedits(cls):
+        return cls.get_properties().ifc_line_edits
+
+    @classmethod
+    def append_ifc_lineedit(cls, line_edit: QLineEdit):
+        cls.get_properties().ifc_line_edits.append(line_edit)
+        cls.get_ui().vertical_layout_ifc.addWidget(line_edit)

@@ -4,14 +4,20 @@ from typing import TYPE_CHECKING, Type
 from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QLineEdit, QCompleter
 
 if TYPE_CHECKING:
     from som_gui import tool
     import SOMcreator
+    from som_gui.module.class_info import ui
 
-def init(class_info:Type[tool.ClassInfo],main_window:Type[tool.MainWindow]):
-    main_window.signaller.class_info_requested.connect(lambda som_class:class_info.trigger_class_info_widget(1,som_class))
-    
+
+def init(class_info: Type[tool.ClassInfo], main_window: Type[tool.MainWindow]):
+    main_window.signaller.class_info_requested.connect(
+        lambda som_class: class_info.trigger_class_info_widget(1, som_class)
+    )
+
+
 def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
     pass
 
@@ -49,18 +55,16 @@ def create_class_info_widget(
         data_dict = class_info.generate_datadict()
         if mode == 0:
             if som_class:
-                data_dict["parent_uuid"] =som_class.uuid
+                data_dict["parent_uuid"] = som_class.uuid
             class_tool.signaller.create_class.emit(data_dict)
         elif mode == 1:
             class_tool.signaller.modify_class.emit(active_class, data_dict)
         elif mode == 2:
-            class_tool.signaller.copy_class.emit(active_class,data_dict)
+            class_tool.signaller.copy_class.emit(active_class, data_dict)
     class_info.reset()
 
 
-def class_info_refresh(
-    class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]
-):
+def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]):
     data_dict = class_info.generate_datadict()
     class_info.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
@@ -77,5 +81,22 @@ def class_info_refresh(
     class_info.oi_change_visibility_identifiers(group)
 
 
-def class_info_add_ifc(class_info: Type[tool.ClassInfo]):
-    class_info.add_ifc_mapping("")
+def append_ifc_mapping(
+    text: str,
+    class_info: Type[tool.ClassInfo],
+    ifc_schema: Type[tool.IfcSchema],
+    util: Type[tool.Util],
+):
+    line_edit = QLineEdit()
+    PROD = "IfcProduct"
+    classes = set()
+    for version in ifc_schema.get_active_versions():
+        classes.update(set(ifc_schema.get_all_classes(version, PROD)))
+    line_edit.setCompleter(QCompleter(classes))
+    line_edit.setText(text)
+    if class_info.get_ifc_lineedits():
+        last_tab_widget = class_info.get_ifc_lineedits()[-1]
+    else:
+        last_tab_widget = class_info.get_ui().button_add_ifc
+    class_info.append_ifc_lineedit(line_edit)
+    util.insert_tab_order(last_tab_widget, line_edit)
