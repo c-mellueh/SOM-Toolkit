@@ -1,18 +1,18 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from typing import Literal
 import som_gui.core.tool
 import som_gui
 import os
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element
+import logging
+
 
 from som_gui.module.ifc_schema.constants import PSD, VERSION_TYPE, QTO
 import json
 
 if TYPE_CHECKING:
     from som_gui.module.ifc_schema.prop import IfcSchemaProperties
-
-VERSIONS = Literal["open", "closed", "pending"]
 
 
 class IfcSchema(som_gui.core.tool.IfcSchema):
@@ -35,7 +35,7 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         return PATH
 
     @classmethod
-    def get_all_psets(cls, version: VERSIONS) -> set[str]:
+    def get_all_psets(cls, version: VERSION_TYPE) -> set[str]:
         allowed_psets: set[str] = set()
         folder_path = os.path.join(cls.get_resource_folder_path(), version, PSD)
         if not os.path.exists(folder_path):
@@ -65,9 +65,9 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         return sets
 
     @classmethod
-    def get_properties_by_pset_name(
-        cls, property_set_name: str, version: str
-    ) -> set[str]:
+    def get_property_set_path(
+        cls, property_set_name: str, version: VERSION_TYPE
+    ) -> str:
         path = cls.get_resource_folder_path()
         if property_set_name.startswith("Pset"):
             path = os.path.join(path, version, PSD)
@@ -83,6 +83,13 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
             raise ValueError(
                 f"PropertySet '{property_set_name}' doesn't exist in {version}"
             )
+        return file_path
+
+    @classmethod
+    def get_properties_by_pset_name(
+        cls, property_set_name: str, version: VERSION_TYPE
+    ) -> set[str]:
+        file_path = cls.get_property_set_path(property_set_name, version)
         etree = ET.parse(file_path)
         definitions = etree.find("PropertyDefs")
         if definitions is None:
@@ -90,3 +97,56 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         definitions = [property_def.find("Name") for property_def in definitions]
         names = {n.text for n in definitions if n is not None and n.text is not None}
         return names
+
+    @classmethod
+    def get_property_data(
+        cls, property_set_name: str, property_name: str, version: VERSION_TYPE
+    ) -> tuple[str, str, str]:
+        def _get_property_def(name: str) -> Element[str]:
+            for property_def in etree.getroot().find("PropertyDefs") or []:
+                n = property_def.find("Name")
+                n = n.text if n is not None else ""
+                if n == name:
+                    return property_def
+            raise ValueError(
+                f"Property '{property_name}' doesn't exist in PropertySet '{property_set_name}'"
+            )
+
+        def _get_type() -> str:
+            missing_datype_error = ValueError(
+                f"Property '{property_set_name}:{property_name}' has no Datatype"
+            )
+            property_type = definition.find("PropertyType")
+            if property_type is None:
+                raise missing_datype_error
+            if len(property_type) > 1:
+                raise ValueError(
+                    f"Property '{property_set_name}:{property_name}' has multiple ValueTypes"
+                )
+            t = property_type[0]
+            if t.tag != "TypePropertySingleValue":
+                logging.info(f"ValueType {t.tag} unknown")
+                return "IfcLabel"
+            dt = t.find("DataType")
+            if dt is None:
+                raise missing_datype_error
+            dt_value = dt.get("type")
+            if dt_value is None:
+                raise missing_datype_error
+            return dt_value
+
+        file_path = cls.get_property_set_path(property_set_name, version)
+        etree = ET.parse(file_path)
+        definition = _get_property_def(property_name)
+
+        name = definition.find("Name")
+        name = name.text if name is not None and name.text is not None else ""
+
+        description = definition.find("Definition")
+        description = (
+            description.text
+            if description is not None and description.text is not None
+            else ""
+        )
+        datatype = _get_type()
+        return (name, description, datatype)
