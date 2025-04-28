@@ -16,9 +16,22 @@ if TYPE_CHECKING:
 
 
 class IfcSchema(som_gui.core.tool.IfcSchema):
+
     @classmethod
     def get_properties(cls) -> IfcSchemaProperties:
         return som_gui.IfcSchemaProperties  # type: ignore
+
+    @classmethod
+    def read_jsons(cls, version: str):
+        prop = cls.get_properties()
+        p = cls.get_resource_folder_path()
+        with open(os.path.join(p, version, "parent.json"), "r") as f:
+            d: dict[str, list[str]] = json.load(f)  # type: ignore
+        prop.parent_dict[version] = d
+
+        with open(os.path.join(p, version, "pset_class.json"), "r") as f:
+            d: dict[str, list[str]] = json.load(f)  # type: ignore
+        prop.pset_class_dict[version] = d
 
     @classmethod
     def set_active_versions(cls, versions: set[VERSION_TYPE]):
@@ -49,12 +62,8 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
     def get_property_sets_of_class(
         cls, class_name: str, version: str, predefined_type: str | None = None
     ) -> set[str]:
-        p = cls.get_resource_folder_path()
-        with open(os.path.join(p, version, "parent.json"), "r") as f:
-            parent_dict = json.load(f)
-
-        with open(os.path.join(p, version, "pset_class.json"), "r") as f:
-            property_dict = json.load(f)
+        parent_dict = cls.get_parent_dict(version)
+        property_dict = cls.get_pset_class_dict(version)
         sets: set[str] = set()
         for c in parent_dict.get(class_name, []):
             sets.update(set(property_dict.get(c, set())))
@@ -150,3 +159,78 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         )
         datatype = _get_type()
         return (name, description, datatype)
+
+    @classmethod
+    def get_predefined_types(cls, class_name: str, version: str) -> list[str]:
+        def _get_complext_type(name: str) -> Element:
+            children = [c for c in root]
+            element = {
+                e.get("name"): e
+                for e in root.iterfind(".//xs:complexType", namespace)
+                if e in children
+            }.get(name)
+            if element is None:
+                raise ValueError
+            return element
+
+        def _find_enumeration(elem: Element):
+            cc = elem.find("xs:complexContent", namespace)
+            if cc is None:
+                raise ValueError
+            ext = cc.find("xs:extension", namespace)
+            if ext is None:
+                return None
+            attr = ext.find('xs:attribute[@name="PredefinedType"]', namespace)
+            if attr is None:
+                return None
+            t = attr.get("type")
+            if t is None:
+                raise ValueError
+            if t.startswith("ifc:"):
+                return t[4:]
+            return t
+
+        def _get_values_by_enum(type_enum: str) -> list[str]:
+            element = root.find(f'xs:simpleType[@name="{type_enum}"]', namespace)
+            if element is None:
+                raise ValueError
+            restriction = element.find("xs:restriction", namespace)
+            if restriction is None:
+                return []
+            values = [e.get("value") for e in restriction]
+            return [v.upper() for v in values if v is not None]
+
+        path = os.path.join(cls.get_resource_folder_path(), version, "IFC.xml")
+        tree = ET.parse(path)
+        root = tree.getroot()
+        namespace = {"xs": "http://www.w3.org/2001/XMLSchema"}
+
+        ct = _get_complext_type(class_name)
+        enum = _find_enumeration(ct)
+        if enum is None:
+            return []
+        return _get_values_by_enum(enum)
+
+    @classmethod
+    def is_subclass(cls, class_name: str, parent_name: str, version: str) -> bool:
+        parent_list = cls.get_parent_dict(version).get(class_name)
+        if not parent_list:
+            return False
+        return parent_name in parent_list
+
+    @classmethod
+    def get_all_classes(
+        cls, version: str, class_filter: str | None = None
+    ) -> list[str]:
+        classes = list(cls.get_parent_dict(version).keys())
+        if class_filter is None:
+            return classes
+        return [c for c in classes if cls.is_subclass(c, class_filter, version)]
+
+    @classmethod
+    def get_parent_dict(cls, version: str) -> dict[str, list[str]]:
+        return cls.get_properties().parent_dict[version]
+
+    @classmethod
+    def get_pset_class_dict(cls, version: str) -> dict[str, list[str]]:
+        return cls.get_properties().pset_class_dict[version]
