@@ -36,3 +36,4 @@ from som_gui.tool.class_ import Class
 from som_gui.tool.class_tree import ClassTree
 from som_gui.tool.use_case import UseCase
 from som_gui.tool.property_window import PropertyWindow
+from som_gui.tool.ifc_schema import IfcSchema
