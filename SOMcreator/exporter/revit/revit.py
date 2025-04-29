@@ -21,13 +21,18 @@ def export_ifc_template(
     with open(path, "w") as file:
         property_set: SOMcreator.SOMPropertySet
         for pset_name, (property_list, ifc_mapping) in sorted(pset_dict.items()):
-            file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
+            text = "\t".join(
+                ["PropertySet:", pset_name, "I", ",".join(sorted(ifc_mapping))]
+            )
+            file.write(text + "\n")
             for som_property in property_list:
+                item = SP_Item(pset_name, som_property, 0)
                 revit_datatype = _transform_datatype(
                     som_property.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT
                 )
-                file.write(f"   {som_property.name}    {revit_datatype}\n")
-            file.write("\n")
+                text = "\t".join(["",som_property.name, revit_datatype, item.name()])
+                file.write(text + "\n")
+            file.write("#\n")
 
 
 class IterItem(type):
@@ -49,21 +54,49 @@ class IterItem(type):
 
 class SP_Item(metaclass=IterItem):
 
-    def __init__(self, property_set_name:str, som_property:SOMcreator.SOMProperty, pset_number):
+    def __init__(
+        self, property_set_name: str, som_property: SOMcreator.SOMProperty, pset_number
+    ):
         self.__class__.add_item(self)
-        self.property_set_name:str = property_set_name
-        self.som_property:SOMcreator.SOMProperty = som_property
-        self.pset_number:int = pset_number
+        self.property_set_name: str = property_set_name
+        self.som_property: SOMcreator.SOMProperty = som_property
+        self.pset_number: int = pset_number
 
     def output(self, file: IO):
-        file.write(
-            f"PARAM	{self.som_property.uuid}	{self.som_property.name}	{self.datatype()}		{self.pset_number}	1		1\n"
+
+        text = "\t".join(
+            [
+                "PARAM",
+                self.uuid(),
+                self.name(),
+                self.datatype(),
+                self.datacategory(),
+                str(self.pset_number),
+                "1",
+                self.description(),
+                "1",
+                "0",
+            ]
         )
+        file.write(text + "\n")
+
+    def description(self):
+        return self.som_property.description or ""
+
+    def uuid(self):
+        return self.som_property.uuid
+
+    def name(self):
+        return f"{self.som_property.property_set.name}.{self.som_property.name}"
 
     def datatype(self) -> str:
         return _transform_datatype(
-            self.som_property.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT
+            self.som_property.data_type,
+            value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT,
         )
+
+    def datacategory(self) -> str:
+        return ""
 
 
 def export_shared_parameters(
@@ -82,16 +115,16 @@ def export_shared_parameters(
             file.write(f"GROUP	{i + 1}	{pset_name}\n")
 
         file.write(
-            "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE\n"
+            "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE	HIDEWHENNOVALUE\n"
         )
 
         property_set: SOMcreator.SOMPropertySet
         for i, (pset_name, (property_list, ifc_mapping)) in enumerate(
-            sorted(pset_dict.items())
+            sorted(pset_dict.items()), start=1
         ):
             for attrib in property_list:
                 t = SP_Item(pset_name, attrib, i)
 
-        for item in sorted(SP_Item, key=lambda x: x.som_property.name):
+        for item in sorted(SP_Item, key=lambda x: x.name()):
             item.output(file)
             pass

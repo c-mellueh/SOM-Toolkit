@@ -1,4 +1,4 @@
-from .ifc_datatypes import LABEL, REAL, BOOLEAN, DATE, INTEGER,IFC_DATATYPES
+from .ifc_datatypes import *
 
 AGGREGATION = 1
 INHERITANCE = 2
@@ -31,13 +31,15 @@ REVIT_TEMPLATE_DATATYPE_DICT = {INTEGER: "Integer",
                                 LABEL:   "Label",
                                 REAL:    "Real",
                                 BOOLEAN: "Boolean",
-                                DATE:    "Date"}
+                                DATE:    "Time",
+                                LENGTHMEASURE: "Length"}
 
 REVIT_SHARED_PARAM_DATATYPE_DICT = {INTEGER: "INTEGER",
                                     LABEL:   "TEXT",
                                     REAL:    "NUMBER",
                                     BOOLEAN: "YESNO",
-                                    DATE:    "DATE"}
+                                    DATE:    "TIMEINTERVAL",
+                                    LENGTHMEASURE: "LENGTH"}
 DATATYPE_DICT = {
     LABEL:   str,
     BOOLEAN: bool,
