@@ -15,16 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
-    QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
-    QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QComboBox,
+    QDialog, QDialogButtonBox, QHBoxLayout, QHeaderView,
+    QLabel, QLineEdit, QPushButton, QRadioButton,
+    QSizePolicy, QSpacerItem, QTableView, QTextEdit,
+    QVBoxLayout, QWidget)
 
 class Ui_ClassInfo(object):
     def setupUi(self, ClassInfo):
         if not ClassInfo.objectName():
             ClassInfo.setObjectName(u"ClassInfo")
-        ClassInfo.resize(881, 236)
+        ClassInfo.resize(881, 292)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -117,6 +118,13 @@ class Ui_ClassInfo(object):
 
         self.vertical_layout_ifc = QVBoxLayout()
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
+        self.table_widget_ifc = QTableView(ClassInfo)
+        self.table_widget_ifc.setObjectName(u"table_widget_ifc")
+        self.table_widget_ifc.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        self.table_widget_ifc.horizontalHeader().setStretchLastSection(True)
+
+        self.vertical_layout_ifc.addWidget(self.table_widget_ifc)
+
 
         self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
 

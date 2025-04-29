@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>881</width>
-    <height>236</height>
+    <height>292</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -119,7 +119,21 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="vertical_layout_ifc"/>
+      <layout class="QVBoxLayout" name="vertical_layout_ifc">
+       <item>
+        <widget class="QTableView" name="table_widget_ifc">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

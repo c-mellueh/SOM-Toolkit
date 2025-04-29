@@ -204,7 +204,8 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         tree = ET.parse(path)
         root = tree.getroot()
         namespace = {"xs": "http://www.w3.org/2001/XMLSchema"}
-
+        if not class_name:
+            return []
         ct = _get_complext_type(class_name)
         enum = _find_enumeration(ct)
         if enum is None:

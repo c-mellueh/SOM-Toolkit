@@ -3,8 +3,9 @@ import logging
 from typing import TYPE_CHECKING, Type
 from som_gui import tool
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QLineEdit, QCompleter
+from PySide6.QtGui import QPalette, QStandardItem
+from PySide6.QtWidgets import QLineEdit, QCompleter, QTableWidgetItem
+from som_gui.module.class_info.constants import PREDEFINED_SPLITTER
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -39,7 +40,7 @@ def create_class_info_widget(
     )
     if mode != 0 and not som_class:
         return
-    dialog = class_info.create_dialog(title)
+    dialog = class_info.create_dialog(title, ["IFC4_3"])
     class_info.set_active_class(som_class)
     predefined_psets = list(predefined_property_set.get_property_sets())
     class_info.connect_dialog(dialog, predefined_psets)
@@ -92,11 +93,13 @@ def append_ifc_mapping(
     classes = set()
     for version in ifc_schema.get_active_versions():
         classes.update(set(ifc_schema.get_all_classes(version, PROD)))
-    line_edit.setCompleter(QCompleter(classes))
-    line_edit.setText(text)
-    if class_info.get_ifc_lineedits():
-        last_tab_widget = class_info.get_ifc_lineedits()[-1]
-    else:
-        last_tab_widget = class_info.get_ui().button_add_ifc
-    class_info.append_ifc_lineedit(line_edit)
-    util.insert_tab_order(last_tab_widget, line_edit)
+
+    table = class_info.get_ui().table_widget_ifc
+    row = table.model().rowCount()
+    table.model().insertRow(row)
+
+    enitity_text, predef_text = (
+        text.split(PREDEFINED_SPLITTER) if PREDEFINED_SPLITTER in text else (text, "")
+    )
+    table.model().setItem(row, 0, QStandardItem(enitity_text))
+    table.model().setItem(row, 1, QStandardItem(predef_text))

@@ -2,18 +2,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 from som_gui.module.class_info.prop import PluginProperty
 from som_gui.module.class_.prop import ClassDataDict
-from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
-from PySide6.QtCore import QCoreApplication, QObject, Slot
-import copy as cp
-import uuid
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QLineEdit, QCompleter, QLayout
+from PySide6.QtCore import QCoreApplication, Qt
 import logging
+from som_gui.module.class_info.constants import PREDEFINED_SPLITTER
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassInfoProperties
 import som_gui.core.tool
 from som_gui import tool
 import SOMcreator
-from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ClassInfo
+from som_gui.module.class_info.ui import (
+    ClassInfoDialog,
+    Ui_ClassInfo,
+    Delegate,
+)
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
 import som_gui.module.class_tree.constants
@@ -106,15 +110,25 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         tool.Util.create_completer(pr_names, ui.combo_box_property)
 
     @classmethod
-    def create_dialog(cls, title) -> ClassInfoDialog:
+    def create_dialog(cls, title, ifc_versions: list[str]) -> ClassInfoDialog:
         prop = cls.get_properties()
         prop.dialog = ClassInfoDialog()
         for plugin in prop.class_info_plugin_list:
             layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
             layout.insertWidget(plugin.index, plugin.widget(prop.dialog))
             setattr(prop, plugin.key, plugin.init_value_getter)
-        cls.get_dialog().setWindowTitle(title)
-        return cls.get_dialog()
+
+        dl = cls.get_dialog()
+        tw = dl.ui.table_widget_ifc
+        tw.setModel(QStandardItemModel())
+        tw.model().insertColumns(0, 2)
+        t1 = QCoreApplication.translate("Class", "IFC-Entity")
+        t2 = QCoreApplication.translate("Class", "Predefined Type")
+        tw.model().setHorizontalHeaderLabels([t1, t2])
+        tw.setEditTriggers(tw.EditTrigger.AllEditTriggers)
+        tw.setItemDelegate(Delegate(ifc_versions))
+        dl.setWindowTitle(title)
+        return dl
 
     @classmethod
     def reset(cls):
@@ -172,9 +186,16 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     def get_ifc_mappings(cls):
         ui = cls.get_ui()
         values = list()
-        for index in range(ui.vertical_layout_ifc.count()):
-            item: QLineEdit = ui.vertical_layout_ifc.itemAt(index).widget()
-            values.append(item.text())
+        model: QStandardItemModel = ui.table_widget_ifc.model()
+        for row in range(model.rowCount()):
+            entity_index = model.index(row, 0)
+            predefined_index = model.index(row, 1)
+            if entity_index.isValid():
+                text = entity_index.data(Qt.ItemDataRole.DisplayRole)
+                predef_text = predefined_index.data(Qt.ItemDataRole.DisplayRole)
+                if predef_text:
+                    text = f"{text}{PREDEFINED_SPLITTER}{predef_text}"
+                values.append(text)
         return values
 
     @classmethod
