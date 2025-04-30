@@ -26,45 +26,4 @@ class ClassInfoDialog(QDialog):
         super().paintEvent(event)
 
 
-class Delegate(QStyledItemDelegate):
-    def __init__(self, versions, *args, **kwargs):
-        self.versions = versions
-        super().__init__(*args, **kwargs)
 
-    def createEditor(self, parent, option, index: QModelIndex):
-        if index.column() == 0:
-            classes = set()
-            for version in self.versions:
-                classes.update(
-                    set(tool.IfcSchema.get_all_classes(version, "IfcProduct"))
-                )
-            widget = QLineEdit(parent)
-            widget.setCompleter(QCompleter(sorted(classes)))
-        else:
-            t = index.siblingAtColumn(0).data(Qt.ItemDataRole.DisplayRole)
-            widget = QComboBox(parent)
-            types = set()
-            for version in self.versions:
-                types.update(set(tool.IfcSchema.get_predefined_types(t, version)))
-            pdt = [""] + sorted(types)
-            widget.addItems(pdt)
-            widget.setEditable(True)
-            widget.setCompleter(QCompleter(types))
-        return widget
-
-    def setEditorData(self, editor, index):
-        if index.column() == 0:
-            editor.setText(index.data(Qt.EditRole))
-        else:
-            value = index.data(Qt.EditRole)
-            if value:
-                i = editor.findText(value)
-                if i >= 0:
-                    editor.setCurrentIndex(i)
-
-    def setModelData(self, editor, model, index):
-        if index.column() == 0:
-            value = editor.text()
-        else:
-            value = editor.currentText()
-        model.setData(index, value, Qt.EditRole)

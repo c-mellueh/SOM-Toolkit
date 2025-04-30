@@ -10,3 +10,4 @@ QTO = "qto"
 
 APPDATA_SECTION  = "ifc_schema"
 VERSION_OPTION = "versions"
+PREDEFINED_SPLITTER = "/"

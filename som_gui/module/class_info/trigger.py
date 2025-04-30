@@ -32,9 +32,7 @@ def create_class_info_widget(mode: int, som_class: SOMcreator.SOMClass | None):
         tool.Class,
         tool.ClassInfo,
         tool.PredefinedPropertySet,
+        tool.IfcSchema,
         tool.Util,
     )
 
-
-def append_ifc_mapping(text: str):
-    core.append_ifc_mapping(text, tool.ClassInfo, tool.IfcSchema, tool.Util)

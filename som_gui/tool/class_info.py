@@ -6,21 +6,21 @@ from PySide6.QtGui import QStandardItemModel
 from PySide6.QtWidgets import QLineEdit, QCompleter, QLayout
 from PySide6.QtCore import QCoreApplication, Qt
 import logging
-from som_gui.module.class_info.constants import PREDEFINED_SPLITTER
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassInfoProperties
+    from som_gui.module.ifc_schema.ui import MappingWidget
 import som_gui.core.tool
 from som_gui import tool
 import SOMcreator
 from som_gui.module.class_info.ui import (
     ClassInfoDialog,
     Ui_ClassInfo,
-    Delegate,
 )
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
 import som_gui.module.class_tree.constants
+from som_gui.module.ifc_schema.constants import PREDEFINED_SPLITTER
 
 
 class ClassInfo(som_gui.core.tool.ClassInfo):
@@ -117,19 +117,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
             layout.insertWidget(plugin.index, plugin.widget(prop.dialog))
             setattr(prop, plugin.key, plugin.init_value_getter)
-
         dl = cls.get_dialog()
-        tw = dl.ui.table_widget_ifc
-        tw.setModel(QStandardItemModel())
-        tw.model().insertColumns(0, 2)
-        t1 = QCoreApplication.translate("Class", "IFC-Entity")
-        t2 = QCoreApplication.translate("Class", "Predefined Type")
-        tw.model().setHorizontalHeaderLabels([t1, t2])
-        tw.setEditTriggers(tw.EditTrigger.AllEditTriggers)
-        tw.setItemDelegate(Delegate(ifc_versions))
-        tw.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        hh = tw.horizontalHeader()
-        hh.setSectionResizeMode(hh.ResizeMode.Fixed)
         dl.setWindowTitle(title)
         return dl
 
@@ -146,7 +134,6 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         dialog: ClassInfoDialog,
         predefined_psets: list[SOMcreator.SOMPropertySet],
     ):
-        dialog.ui.button_add_ifc.pressed.connect(lambda: trigger.append_ifc_mapping(""))
         dialog.ui.combo_box_pset.currentTextChanged.connect(
             lambda: cls.update_property_combobox(predefined_psets)
         )
@@ -188,18 +175,24 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     @classmethod
     def get_ifc_mappings(cls):
         ui = cls.get_ui()
-        values = list()
-        model: QStandardItemModel = ui.table_widget_ifc.model()
-        for row in range(model.rowCount()):
-            entity_index = model.index(row, 0)
-            predefined_index = model.index(row, 1)
-            if entity_index.isValid():
-                text = entity_index.data(Qt.ItemDataRole.DisplayRole)
-                predef_text = predefined_index.data(Qt.ItemDataRole.DisplayRole)
-                if predef_text:
-                    text = f"{text}{PREDEFINED_SPLITTER}{predef_text}"
-                values.append(text)
-        return values
+        version_dict = dict()
+        for widget_row in range(ui.vertical_layout_ifc.count()):
+            widget: MappingWidget = ui.vertical_layout_ifc.itemAt(widget_row).widget()
+            tv = widget.ui.table_view
+            version = widget.version
+            model: QStandardItemModel = tv.model()
+            values = list()
+            for row in range(model.rowCount()):
+                entity_index = model.index(row, 0)
+                predefined_index = model.index(row, 1)
+                if entity_index.isValid():
+                    text = entity_index.data(Qt.ItemDataRole.DisplayRole)
+                    predef_text = predefined_index.data(Qt.ItemDataRole.DisplayRole)
+                    if predef_text:
+                        text = f"{text}{PREDEFINED_SPLITTER}{predef_text}"
+                    values.append(text)
+            version_dict[version] = values
+        return version_dict
 
     @classmethod
     def oi_set_values(cls, data_dict: ClassDataDict):
@@ -276,9 +269,6 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
         for plugin in prop.class_info_plugin_list:
             plugin.widget_value_setter(prop.plugin_infos.get(plugin.key))
-
-        for mapping in prop.ifc_mappings:
-            trigger.append_ifc_mapping(mapping)
 
         mode = cls.get_mode()
         dialog.ui.text_edit_description.setPlainText(prop.description or "")

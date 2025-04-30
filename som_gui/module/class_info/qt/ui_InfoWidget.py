@@ -15,17 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QComboBox,
-    QDialog, QDialogButtonBox, QHBoxLayout, QHeaderView,
-    QLabel, QLineEdit, QPushButton, QRadioButton,
-    QSizePolicy, QSpacerItem, QTableView, QTextEdit,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
+    QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
+    QRadioButton, QSizePolicy, QTextEdit, QVBoxLayout,
+    QWidget)
 
 class Ui_ClassInfo(object):
     def setupUi(self, ClassInfo):
         if not ClassInfo.objectName():
             ClassInfo.setObjectName(u"ClassInfo")
-        ClassInfo.resize(881, 292)
+        ClassInfo.resize(881, 309)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -85,51 +84,10 @@ class Ui_ClassInfo(object):
 
         self.verticalLayout.addLayout(self.layout_ident_property)
 
-        self.vertical_layout_ifc_box = QVBoxLayout()
-        self.vertical_layout_ifc_box.setObjectName(u"vertical_layout_ifc_box")
-        self.horizontal_layout_ifc = QHBoxLayout()
-        self.horizontal_layout_ifc.setObjectName(u"horizontal_layout_ifc")
-        self.label_ifc_mapping = QLabel(ClassInfo)
-        self.label_ifc_mapping.setObjectName(u"label_ifc_mapping")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_ifc_mapping.sizePolicy().hasHeightForWidth())
-        self.label_ifc_mapping.setSizePolicy(sizePolicy2)
-
-        self.horizontal_layout_ifc.addWidget(self.label_ifc_mapping)
-
-        self.horizontal_spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontal_layout_ifc.addItem(self.horizontal_spacer)
-
-        self.button_add_ifc = QPushButton(ClassInfo)
-        self.button_add_ifc.setObjectName(u"button_add_ifc")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.button_add_ifc.sizePolicy().hasHeightForWidth())
-        self.button_add_ifc.setSizePolicy(sizePolicy3)
-
-        self.horizontal_layout_ifc.addWidget(self.button_add_ifc)
-
-
-        self.vertical_layout_ifc_box.addLayout(self.horizontal_layout_ifc)
-
         self.vertical_layout_ifc = QVBoxLayout()
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
-        self.table_widget_ifc = QTableView(ClassInfo)
-        self.table_widget_ifc.setObjectName(u"table_widget_ifc")
-        self.table_widget_ifc.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
-        self.table_widget_ifc.horizontalHeader().setStretchLastSection(True)
 
-        self.vertical_layout_ifc.addWidget(self.table_widget_ifc)
-
-
-        self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
-
-
-        self.verticalLayout.addLayout(self.vertical_layout_ifc_box)
+        self.verticalLayout.addLayout(self.vertical_layout_ifc)
 
         self.text_edit_description = QTextEdit(ClassInfo)
         self.text_edit_description.setObjectName(u"text_edit_description")
@@ -147,8 +105,7 @@ class Ui_ClassInfo(object):
         QWidget.setTabOrder(self.button_gruppe, self.combo_box_pset)
         QWidget.setTabOrder(self.combo_box_pset, self.combo_box_property)
         QWidget.setTabOrder(self.combo_box_property, self.line_edit_property_value)
-        QWidget.setTabOrder(self.line_edit_property_value, self.button_add_ifc)
-        QWidget.setTabOrder(self.button_add_ifc, self.text_edit_description)
+        QWidget.setTabOrder(self.line_edit_property_value, self.text_edit_description)
 
         self.retranslateUi(ClassInfo)
         self.button_box.accepted.connect(ClassInfo.accept)
@@ -161,8 +118,6 @@ class Ui_ClassInfo(object):
         ClassInfo.setWindowTitle(QCoreApplication.translate("ClassInfo", u"Dialog", None))
         self.label_name.setText(QCoreApplication.translate("ClassInfo", u"Name", None))
         self.button_gruppe.setText(QCoreApplication.translate("ClassInfo", u"Group", None))
-        self.label_ifc_mapping.setText(QCoreApplication.translate("ClassInfo", u"IFC Mapping", None))
-        self.button_add_ifc.setText(QCoreApplication.translate("ClassInfo", u"+", None))
         self.text_edit_description.setPlaceholderText(QCoreApplication.translate("ClassInfo", u"Description", None))
     # retranslateUi
 

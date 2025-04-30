@@ -5,7 +5,6 @@ from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QPalette, QStandardItem
 from PySide6.QtWidgets import QLineEdit, QCompleter, QTableWidgetItem
-from som_gui.module.class_info.constants import PREDEFINED_SPLITTER
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -29,6 +28,7 @@ def create_class_info_widget(
     class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
     predefined_property_set: Type[tool.PredefinedPropertySet],
+    ifc_schema: Type[tool.IfcSchema],
     util: Type[tool.Util],
 ):
     """
@@ -46,11 +46,15 @@ def create_class_info_widget(
     class_info.connect_dialog(dialog, predefined_psets)
     class_info.oi_fill_properties(mode=mode)
     class_info.update_dialog(dialog)
+
     pset_names = [p.name for p in predefined_psets]
     if mode != 0:
         pset_names += list(som_class.get_properties())
     util.create_completer(pset_names, dialog.ui.combo_box_pset)
 
+    for row, version in enumerate(ifc_schema.get_active_versions()):
+        widget = ifc_schema.create_mapping_widget(som_class, version)
+        dialog.ui.vertical_layout_ifc.insertWidget(row, widget)
     if dialog.exec():
         active_class = som_class
         data_dict = class_info.generate_datadict()
@@ -80,29 +84,4 @@ def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.Class
     else:
         class_info.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     class_info.oi_change_visibility_identifiers(group)
-    tw = class_info.get_ui().table_widget_ifc
-    width = tw.columnWidth(0)+tw.columnWidth(1)
-    tw.setColumnWidth(0,width/2-3)
-    #tw.setColumnWidth(1,width/2)
 
-def append_ifc_mapping(
-    text: str,
-    class_info: Type[tool.ClassInfo],
-    ifc_schema: Type[tool.IfcSchema],
-    util: Type[tool.Util],
-):
-    line_edit = QLineEdit()
-    PROD = "IfcProduct"
-    classes = set()
-    for version in ifc_schema.get_active_versions():
-        classes.update(set(ifc_schema.get_all_classes(version, PROD)))
-
-    table = class_info.get_ui().table_widget_ifc
-    row = table.model().rowCount()
-    table.model().insertRow(row)
-
-    enitity_text, predef_text = (
-        text.split(PREDEFINED_SPLITTER) if PREDEFINED_SPLITTER in text else (text, "")
-    )
-    table.model().setItem(row, 0, QStandardItem(enitity_text))
-    table.model().setItem(row, 1, QStandardItem(predef_text))

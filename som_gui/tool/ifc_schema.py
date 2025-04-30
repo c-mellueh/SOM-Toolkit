@@ -6,9 +6,11 @@ import os
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 import logging
-
-
+import SOMcreator
+from som_gui.module.ifc_schema import ui, trigger
 from som_gui.module.ifc_schema.constants import PSD, VERSION_TYPE, QTO
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtCore import QCoreApplication, Qt
 import json
 
 if TYPE_CHECKING:
@@ -235,3 +237,33 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
     @classmethod
     def get_pset_class_dict(cls, version: str) -> dict[str, list[str]]:
         return cls.get_properties().pset_class_dict[version]
+
+    @classmethod
+    def create_mapping_widget(
+        cls, som_class: SOMcreator.SOMClass | None, version: VERSION_TYPE
+    ):
+        if som_class is not None:
+            #TODO: Rewrite Fileimport to filter for IFCversions
+            existing_mappings = list(som_class.ifc_mapping)
+        else:
+            existing_mappings = []
+        widget = ui.MappingWidget(version)
+        tv = widget.ui.table_view
+        model = QStandardItemModel()
+        tv.setModel(model)
+        model.insertColumns(0, 2)
+        t1 = QCoreApplication.translate("IFC-Mapping", "IFC-Entity")
+        t2 = QCoreApplication.translate("IFC-Mapping", "Predefined Type")
+        model.setHorizontalHeaderLabels([t1, t2])
+        tv.setEditTriggers(tv.EditTrigger.AllEditTriggers)
+        tv.setItemDelegate(ui.MappingDelegate(version))
+        tv.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        hh = tv.horizontalHeader()
+        hh.setSectionResizeMode(hh.ResizeMode.Fixed)
+        widget.ui.button_add_ifc.pressed.connect(
+            lambda: trigger.append_ifc_mapping(widget, "")
+        )
+        for mapping in existing_mappings:
+            trigger.append_ifc_mapping(widget,mapping)
+        widget.ui.label_ifc_mapping.setText(version)
+        return widget
