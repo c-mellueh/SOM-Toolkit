@@ -18,7 +18,6 @@ VERSION_OPTION = "versions"
 
 
 class IfcProperties:
-    active_versions: set[VERSION_TYPE] = {"IFC4_3"}
     parent_dict: dict[str, dict[str, list[str]]] = dict()
     pset_class_dict: dict[str, dict[str, list[str]]] = dict()
 
@@ -37,9 +36,6 @@ def read_jsons(version: str):
     with open(os.path.join(p, version, "pset_class.json"), "r") as f:
         d: dict[str, list[str]] = json.load(f)  # type: ignore
     prop.pset_class_dict[version] = d
-
-
-
 
 
 def get_resource_folder_path():
@@ -222,12 +218,12 @@ def get_all_classes(version: str, class_filter: str | None = None) -> list[str]:
 
 
 def get_parent_dict(version: str) -> dict[str, list[str]]:
-    if get_properties().parent_dict is None:
-        read_jsons()
+    if version not in get_properties().parent_dict:
+        read_jsons(version)
     return get_properties().parent_dict[version]
 
 
 def get_pset_class_dict(version: str) -> dict[str, list[str]]:
-    if get_properties().pset_class_dict is None:
-        read_jsons()
+    if version not in get_properties().pset_class_dict:
+        read_jsons(version)
     return get_properties().pset_class_dict[version]
