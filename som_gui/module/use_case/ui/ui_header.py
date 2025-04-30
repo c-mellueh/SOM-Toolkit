@@ -463,12 +463,11 @@ class EditableHeader(QHeaderView):
         self.editor.setText(
             self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole)
         )
-        self.editor.setGeometry(
-            self.sectionViewportPosition(logicalIndex),
-            0,
-            self.sectionSize(logicalIndex),
-            self.height(),
-        )
+        x = self.sectionViewportPosition(logicalIndex) if self.orientation() == Qt.Orientation.Horizontal else 0
+        y = 0  if self.orientation() == Qt.Orientation.Horizontal else self.sectionViewportPosition(logicalIndex)
+        height = self.height() if self.orientation() == Qt.Orientation.Horizontal else self.sectionSize(logicalIndex)
+        width = self.sectionSize(logicalIndex) if self.orientation() == Qt.Orientation.Horizontal else self.height()
+        self.editor.setGeometry(         x,y,            width,            height,        )
         self.editor.setFocus()
         self.editor.selectAll()
         self.editor.show()
