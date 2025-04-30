@@ -160,7 +160,7 @@ class ClassModel(QAbstractItemModel):
 
     def index(self, row: int, column: int, parent: QModelIndex):
         if not parent.isValid():
-            if row >= len(self.root_classes):
+            if row >= len(self.root_classes) or row <0:
                 logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
                 return QModelIndex()
