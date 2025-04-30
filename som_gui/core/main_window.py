@@ -186,7 +186,6 @@ def set_active_class(
 
     selected_pset = property_set_tool.get_active_property_set()
     main_window.set_active_class(som_class)
-    property_set_tool.update_completer(som_class)
     property_set_tool.set_enabled(True)
     property_set_tool.trigger_table_repaint()
 

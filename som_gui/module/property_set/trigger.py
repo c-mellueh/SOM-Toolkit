@@ -24,7 +24,9 @@ def connect():
             tool.PropertySet,
             tool.Popups,
             tool.PredefinedPropertySet,
-            tool.Util
+            tool.IfcSchema,
+            tool.Util,
+            tool.Popups
         )
     )
     table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))

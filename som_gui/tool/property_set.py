@@ -21,6 +21,7 @@ from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.resources.icons import get_link_icon
 from som_gui.module.property_set import trigger
+from SOMcreator.datastructure import ifc_schema
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
@@ -104,9 +105,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return item.data(CLASS_REFERENCE)
 
     @classmethod
-    def is_pset_allready_existing(
-        cls, pset_name: str, active_class: SOMcreator.SOMClass
-    ):
+    def is_pset_existing(cls, pset_name: str, active_class: SOMcreator.SOMClass):
         return bool(
             pset_name in {p.name for p in active_class.get_property_sets(filter=False)}
         )
@@ -259,20 +258,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
-    def get_completer(cls) -> QCompleter:
-        if not cls.get_properties().completer:
-            cls.get_properties().completer = QCompleter()
-        return cls.get_properties().completer
-
-    @classmethod
-    def update_completer(cls, som_class: SOMcreator.SOMClass = None):
-        psets = list(tool.PredefinedPropertySet.get_property_sets())
-        if som_class is not None:
-            psets += cls.get_inheritable_property_sets(som_class)
-        pset_names = sorted({p.name for p in psets})
-        cls.get_properties().completer = QCompleter(pset_names)
-
-    @classmethod
     def set_enabled(cls, enabled: bool):
         tool.MainWindow.get_ui().table_property.setEnabled(enabled)
         tool.MainWindow.get_ui().table_pset.setEnabled(enabled)
@@ -334,6 +319,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             if connect_result:
                 parent = pset_dict.get(pset_name)
                 return parent
+        ifc_names = cls.get_ifc_names(som)
         return None
 
     @classmethod
@@ -349,3 +335,79 @@ class PropertySet(som_gui.core.tool.PropertySet):
         if property is None:
             return
         property_set.remove_property(property, recursive=True)
+
+    @classmethod
+    def get_pset_name_suggestion(
+        cls,
+        som_class: SOMcreator.SOMClass,
+        predefined_psets: set[SOMcreator.SOMPropertySet],
+        ifc_versions: ifc_schema.VERSION_TYPE,
+    ) -> set[str]:
+        possible_pset_names = set()
+        possible_pset_names.update({p.name for p in predefined_psets})
+        possible_pset_names.update(
+            {p.name for p in cls.get_inheritable_property_sets(som_class)}
+        )
+        ifc_names = cls.get_ifc_names(som_class, ifc_versions)
+        possible_pset_names.update(ifc_names)
+        existing_property_sets = [
+            p.name for p in som_class.get_property_sets(filter=False)
+        ]
+        return possible_pset_names.difference(existing_property_sets)
+
+    @classmethod
+    def get_ifc_names(cls, som_class, allowed_versions: list[ifc_schema.VERSION_TYPE]):
+        ifc_names = set()
+        for version in allowed_versions:
+            mappings = som_class.ifc_mapping[version]
+            for mapping in mappings:
+                ifc_names.update(
+                    ifc_schema.get_property_sets_of_class(mapping, version)
+                )
+        return ifc_names
+
+    @classmethod
+    def is_name_in_parent_classes(
+        cls, name: str, som_class: SOMcreator.SOMClass
+    ) -> bool:
+        return name in {p.name for p in cls.get_inheritable_property_sets(som_class)}
+
+    @classmethod
+    def get_parent_by_name(cls, name, som_class: SOMcreator.SOMClass):
+        {p.name: p for p in cls.get_inheritable_property_sets(som_class)}.get(name)
+
+    @classmethod
+    def is_name_in_ifc_psets(
+        cls,
+        name: str,
+        som_class: SOMcreator.SOMClass,
+        ifc_version: ifc_schema.VERSION_TYPE,
+    ):
+        return name in cls.get_ifc_names(som_class, [ifc_version])
+
+    @classmethod
+    def create_ifc_pset(cls, name: str, ifc_version: list[ifc_schema.VERSION_TYPE]):
+        existing_properties = set()
+
+        if not ifc_schema.is_property_set_existing_in_version(name, ifc_version):
+            return None
+        for property_name in ifc_schema.get_properties_by_pset_name(name, ifc_version):
+            if property_name in {p.name for p in existing_properties}:
+                continue
+            property_name, description, datatype, values, unit = (
+                ifc_schema.get_property_data(name, property_name, ifc_version)
+            )
+            prop = SOMcreator.SOMProperty(
+                name=property_name,
+                description=description,
+                data_type=datatype,
+                allowed_values=values,
+                unit=unit,
+            )
+            existing_properties.add(prop)
+
+        if not existing_properties:
+            return None
+        pset = SOMcreator.SOMPropertySet(name)
+        [pset.add_property(p) for p in existing_properties]
+        return pset

@@ -206,8 +206,13 @@ class Popups(som_gui.core.tool.Popups):
                 "A PropertySet with the name '{}' allready exists in a parent class. Do you want to create a link?",
             )
             # text = f"Es existiert ein PropertySet mit dem Namen '{name}' in einem übergeordneten Klasse. Soll eine Verknüpfung hergestellt werden?"
+        elif mode == 3:
+            text = QCoreApplication.translate(
+                "Popups",
+                "A PropertySet with the name '{}' Is defined in the IFC-Specification. Do you want to create a link?",
+            )
         else:
-            text = "{}"
+            text = ""
         msg_box.setText(text.format(name))
         msg_box.setWindowTitle(title)
         msg_box.setIcon(QMessageBox.Icon.Question)

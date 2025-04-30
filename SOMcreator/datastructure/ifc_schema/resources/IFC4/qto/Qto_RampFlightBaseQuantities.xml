@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<QtoSetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.buildingsmart-tech.org/xml/qto/QTO_IFC4.xsd">
+  <Name>Qto_RampFlightBaseQuantities</Name>
+  <Definition>Base quantities that are common to the definition of all occurrences of ramp flights.</Definition>
+  <IfcVersion version="2x4" />
+  <ApplicableClasses>
+    <ClassName>IfcRampFlight</ClassName>
+  </ApplicableClasses>
+  <ApplicableTypeValue>IfcRampFlight</ApplicableTypeValue>
+  <QtoDefs>
+    <QtoDef>
+      <Name>Length</Name>
+      <Definition>Total length of the ramp flight along the walking line.</Definition>
+      <QtoType>Q_LENGTH</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Länge</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Gesamtlänge der Rampe gemessen entlang der Lauflinie der Rampe.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+    <QtoDef>
+      <Name>Width</Name>
+      <Definition>Thickness of the ramp flight. It should only be provided, if it is constant. </Definition>
+      <QtoType>Q_LENGTH</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Dicke</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Dicke der Rampe. Der Wert wird nur dann angegeben, wenn diese konstant ist.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+    <QtoDef>
+      <Name>GrossArea</Name>
+      <Definition>Total area of the ramp flight (not the projected area). Openings, recesses and projections are not taken into account. Only given, if the ramp flight is prismatic.</Definition>
+      <QtoType>Q_AREA</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Bruttofläche</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Gesamte Bruttofläche der Rampe (als wahre Fläche und nicht als projizierte Fläche). Alle Öffnungen werden übermessen. Wird nur bei konstanter Dicke der Rampe angegeben.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+    <QtoDef>
+      <Name>NetArea</Name>
+      <Definition>Total area of the ramp flight (not the projected area). Openings and recesses are taken into account by subtraction, projections by addition. Only given, if the ramp flight is prismatic.</Definition>
+      <QtoType>Q_AREA</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Nettofläche</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Gesamte Nettofläche der Rampe (als wahre Fläche und nicht als projizierte Fläche). Alle Öffnungen werden abgezogen. Wird nur bei konstanter Dicke der Rampe angegeben.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+    <QtoDef>
+      <Name>GrossVolume</Name>
+      <Definition>Total gross volume of the ramp flight. Openings, recesses, and projections are not taken into account. </Definition>
+      <QtoType>Q_VOLUME</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Bruttovolumen</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Gesamtes Bruttovolumen der Rampe. Alle Öffnungen werden übermessen.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+    <QtoDef>
+      <Name>NetVolume</Name>
+      <Definition>Total net volume of the ramp flight. Openings and recesses are taken into account by subtraction, projections by addition. </Definition>
+      <QtoType>Q_VOLUME</QtoType>
+      <NameAliases>
+        <NameAlias lang="de-DE">Nettovolumen</NameAlias>
+      </NameAliases>
+      <DefinitionAliases>
+        <DefinitionAlias lang="de-DE">Gesamtes Nettovolumen der Rampe. Alle Öffnungen werden abgezogen.</DefinitionAlias>
+      </DefinitionAliases>
+    </QtoDef>
+  </QtoDefs>
+  <QtoDefinitionAliases>
+    <QtoDefinitionAlias lang="de-DE">Basismengen für alle Bauelemente vom Typ Rampe.</QtoDefinitionAlias>
+  </QtoDefinitionAliases>
+</QtoSetDef>

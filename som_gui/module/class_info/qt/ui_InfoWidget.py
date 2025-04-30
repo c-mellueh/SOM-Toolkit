@@ -16,15 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
-    QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
-    QTextEdit, QVBoxLayout, QWidget)
+    QDialogButtonBox, QGroupBox, QHBoxLayout, QLabel,
+    QLineEdit, QRadioButton, QSizePolicy, QTextEdit,
+    QToolBox, QVBoxLayout, QWidget)
 
 class Ui_ClassInfo(object):
     def setupUi(self, ClassInfo):
         if not ClassInfo.objectName():
             ClassInfo.setObjectName(u"ClassInfo")
-        ClassInfo.resize(881, 236)
+        ClassInfo.resize(798, 572)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -32,46 +32,50 @@ class Ui_ClassInfo(object):
         ClassInfo.setSizePolicy(sizePolicy)
         self.verticalLayout = QVBoxLayout(ClassInfo)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.group_main = QGroupBox(ClassInfo)
+        self.group_main.setObjectName(u"group_main")
+        self.verticalLayout_3 = QVBoxLayout(self.group_main)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontal_layout_info = QHBoxLayout()
         self.horizontal_layout_info.setObjectName(u"horizontal_layout_info")
-        self.label_name = QLabel(ClassInfo)
+        self.label_name = QLabel(self.group_main)
         self.label_name.setObjectName(u"label_name")
 
         self.horizontal_layout_info.addWidget(self.label_name)
 
-        self.line_edit_name = QLineEdit(ClassInfo)
+        self.line_edit_name = QLineEdit(self.group_main)
         self.line_edit_name.setObjectName(u"line_edit_name")
 
         self.horizontal_layout_info.addWidget(self.line_edit_name)
 
 
-        self.verticalLayout.addLayout(self.horizontal_layout_info)
+        self.verticalLayout_3.addLayout(self.horizontal_layout_info)
 
         self.horizontal_layout_group = QHBoxLayout()
         self.horizontal_layout_group.setObjectName(u"horizontal_layout_group")
-        self.button_gruppe = QRadioButton(ClassInfo)
+        self.button_gruppe = QRadioButton(self.group_main)
         self.button_gruppe.setObjectName(u"button_gruppe")
 
         self.horizontal_layout_group.addWidget(self.button_gruppe)
 
 
-        self.verticalLayout.addLayout(self.horizontal_layout_group)
+        self.verticalLayout_3.addLayout(self.horizontal_layout_group)
 
         self.layout_ident_property = QHBoxLayout()
         self.layout_ident_property.setObjectName(u"layout_ident_property")
-        self.combo_box_pset = QComboBox(ClassInfo)
+        self.combo_box_pset = QComboBox(self.group_main)
         self.combo_box_pset.setObjectName(u"combo_box_pset")
         self.combo_box_pset.setEditable(True)
 
         self.layout_ident_property.addWidget(self.combo_box_pset)
 
-        self.combo_box_property = QComboBox(ClassInfo)
+        self.combo_box_property = QComboBox(self.group_main)
         self.combo_box_property.setObjectName(u"combo_box_property")
         self.combo_box_property.setEditable(True)
 
         self.layout_ident_property.addWidget(self.combo_box_property)
 
-        self.line_edit_property_value = QLineEdit(ClassInfo)
+        self.line_edit_property_value = QLineEdit(self.group_main)
         self.line_edit_property_value.setObjectName(u"line_edit_property_value")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
@@ -82,51 +86,34 @@ class Ui_ClassInfo(object):
         self.layout_ident_property.addWidget(self.line_edit_property_value)
 
 
-        self.verticalLayout.addLayout(self.layout_ident_property)
-
-        self.vertical_layout_ifc_box = QVBoxLayout()
-        self.vertical_layout_ifc_box.setObjectName(u"vertical_layout_ifc_box")
-        self.horizontal_layout_ifc = QHBoxLayout()
-        self.horizontal_layout_ifc.setObjectName(u"horizontal_layout_ifc")
-        self.label_ifc_mapping = QLabel(ClassInfo)
-        self.label_ifc_mapping.setObjectName(u"label_ifc_mapping")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_ifc_mapping.sizePolicy().hasHeightForWidth())
-        self.label_ifc_mapping.setSizePolicy(sizePolicy2)
-
-        self.horizontal_layout_ifc.addWidget(self.label_ifc_mapping)
-
-        self.horizontal_spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontal_layout_ifc.addItem(self.horizontal_spacer)
-
-        self.button_add_ifc = QPushButton(ClassInfo)
-        self.button_add_ifc.setObjectName(u"button_add_ifc")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.button_add_ifc.sizePolicy().hasHeightForWidth())
-        self.button_add_ifc.setSizePolicy(sizePolicy3)
-
-        self.horizontal_layout_ifc.addWidget(self.button_add_ifc)
+        self.verticalLayout_3.addLayout(self.layout_ident_property)
 
 
-        self.vertical_layout_ifc_box.addLayout(self.horizontal_layout_ifc)
+        self.verticalLayout.addWidget(self.group_main)
 
-        self.vertical_layout_ifc = QVBoxLayout()
-        self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
+        self.group_ifc = QGroupBox(ClassInfo)
+        self.group_ifc.setObjectName(u"group_ifc")
+        self.verticalLayout_2 = QVBoxLayout(self.group_ifc)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.toolBox = QToolBox(self.group_ifc)
+        self.toolBox.setObjectName(u"toolBox")
 
-        self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
+        self.verticalLayout_2.addWidget(self.toolBox)
 
 
-        self.verticalLayout.addLayout(self.vertical_layout_ifc_box)
+        self.verticalLayout.addWidget(self.group_ifc)
 
-        self.text_edit_description = QTextEdit(ClassInfo)
+        self.group_description = QGroupBox(ClassInfo)
+        self.group_description.setObjectName(u"group_description")
+        self.verticalLayout_4 = QVBoxLayout(self.group_description)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.text_edit_description = QTextEdit(self.group_description)
         self.text_edit_description.setObjectName(u"text_edit_description")
 
-        self.verticalLayout.addWidget(self.text_edit_description)
+        self.verticalLayout_4.addWidget(self.text_edit_description)
+
+
+        self.verticalLayout.addWidget(self.group_description)
 
         self.button_box = QDialogButtonBox(ClassInfo)
         self.button_box.setObjectName(u"button_box")
@@ -135,26 +122,24 @@ class Ui_ClassInfo(object):
 
         self.verticalLayout.addWidget(self.button_box)
 
-        QWidget.setTabOrder(self.line_edit_name, self.button_gruppe)
-        QWidget.setTabOrder(self.button_gruppe, self.combo_box_pset)
-        QWidget.setTabOrder(self.combo_box_pset, self.combo_box_property)
-        QWidget.setTabOrder(self.combo_box_property, self.line_edit_property_value)
-        QWidget.setTabOrder(self.line_edit_property_value, self.button_add_ifc)
-        QWidget.setTabOrder(self.button_add_ifc, self.text_edit_description)
 
         self.retranslateUi(ClassInfo)
         self.button_box.accepted.connect(ClassInfo.accept)
         self.button_box.rejected.connect(ClassInfo.reject)
+
+        self.toolBox.setCurrentIndex(-1)
+
 
         QMetaObject.connectSlotsByName(ClassInfo)
     # setupUi
 
     def retranslateUi(self, ClassInfo):
         ClassInfo.setWindowTitle(QCoreApplication.translate("ClassInfo", u"Dialog", None))
+        self.group_main.setTitle(QCoreApplication.translate("ClassInfo", u"Main", None))
         self.label_name.setText(QCoreApplication.translate("ClassInfo", u"Name", None))
         self.button_gruppe.setText(QCoreApplication.translate("ClassInfo", u"Group", None))
-        self.label_ifc_mapping.setText(QCoreApplication.translate("ClassInfo", u"IFC Mapping", None))
-        self.button_add_ifc.setText(QCoreApplication.translate("ClassInfo", u"+", None))
+        self.group_ifc.setTitle(QCoreApplication.translate("ClassInfo", u"IFC-Mapping", None))
+        self.group_description.setTitle(QCoreApplication.translate("ClassInfo", u"Description", None))
         self.text_edit_description.setPlaceholderText(QCoreApplication.translate("ClassInfo", u"Description", None))
     # retranslateUi
 

@@ -13,7 +13,8 @@ def on_new_project():
 
 
 def connect():
-    core.init(tool.ClassInfo,tool.MainWindow)
+    core.init(tool.ClassInfo, tool.MainWindow)
+
 
 def class_info_paint_event():
     core.class_info_refresh(tool.Class, tool.ClassInfo)
@@ -24,7 +25,14 @@ def retranslate_ui():
     core.retranslate_ui(tool.ClassInfo)
 
 
-def create_class_info_widget(mode: int,som_class:SOMcreator.SOMClass|None):
+def create_class_info_widget(mode: int, som_class: SOMcreator.SOMClass | None):
     core.create_class_info_widget(
-        mode,som_class, tool.Class, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
+        mode,
+        som_class,
+        tool.Class,
+        tool.ClassInfo,
+        tool.PredefinedPropertySet,
+        tool.IfcSchema,
+        tool.Util,
     )
+

@@ -2,21 +2,25 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 from som_gui.module.class_info.prop import PluginProperty
 from som_gui.module.class_.prop import ClassDataDict
-from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
-from PySide6.QtCore import QCoreApplication,QObject,Slot
-import copy as cp
-import uuid
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QLineEdit, QCompleter, QLayout
+from PySide6.QtCore import QCoreApplication, Qt
 import logging
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassInfoProperties
+    from som_gui.module.ifc_schema.ui import MappingWidget
 import som_gui.core.tool
 from som_gui import tool
 import SOMcreator
-from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ClassInfo
+from som_gui.module.class_info.ui import (
+    ClassInfoDialog,
+    Ui_ClassInfo,
+)
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
 import som_gui.module.class_tree.constants
+from som_gui.module.ifc_schema.constants import PREDEFINED_SPLITTER
 
 
 class ClassInfo(som_gui.core.tool.ClassInfo):
@@ -106,15 +110,16 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         tool.Util.create_completer(pr_names, ui.combo_box_property)
 
     @classmethod
-    def create_dialog(cls, title) -> ClassInfoDialog:
+    def create_dialog(cls, title, ifc_versions: list[str]) -> ClassInfoDialog:
         prop = cls.get_properties()
         prop.dialog = ClassInfoDialog()
         for plugin in prop.class_info_plugin_list:
             layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
             layout.insertWidget(plugin.index, plugin.widget(prop.dialog))
             setattr(prop, plugin.key, plugin.init_value_getter)
-        cls.get_dialog().setWindowTitle(title)
-        return cls.get_dialog()
+        dl = cls.get_dialog()
+        dl.setWindowTitle(title)
+        return dl
 
     @classmethod
     def reset(cls):
@@ -122,13 +127,13 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         cls.get_properties().ifc_line_edits = []
         cls.set_active_class(None)
         cls.get_properties().ifc_mappings = []
+
     @classmethod
     def connect_dialog(
         cls,
         dialog: ClassInfoDialog,
         predefined_psets: list[SOMcreator.SOMPropertySet],
     ):
-        dialog.ui.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
         dialog.ui.combo_box_pset.currentTextChanged.connect(
             lambda: cls.update_property_combobox(predefined_psets)
         )
@@ -170,11 +175,24 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     @classmethod
     def get_ifc_mappings(cls):
         ui = cls.get_ui()
-        values = list()
-        for index in range(ui.vertical_layout_ifc.count()):
-            item: QLineEdit = ui.vertical_layout_ifc.itemAt(index).widget()
-            values.append(item.text())
-        return values
+        version_dict = dict()
+        for widget_row in range(ui.toolBox.count()):
+            widget: MappingWidget = ui.toolBox.widget(widget_row)
+            tv = widget.ui.table_view
+            version = widget.version
+            model: QStandardItemModel = tv.model()
+            values = list()
+            for row in range(model.rowCount()):
+                entity_index = model.index(row, 0)
+                predefined_index = model.index(row, 1)
+                if entity_index.isValid():
+                    text = entity_index.data(Qt.ItemDataRole.DisplayRole)
+                    predef_text = predefined_index.data(Qt.ItemDataRole.DisplayRole)
+                    if predef_text:
+                        text = f"{text}{PREDEFINED_SPLITTER}{predef_text}"
+                    values.append(text)
+            version_dict[version] = values
+        return version_dict
 
     @classmethod
     def oi_set_values(cls, data_dict: ClassDataDict):
@@ -252,9 +270,6 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         for plugin in prop.class_info_plugin_list:
             plugin.widget_value_setter(prop.plugin_infos.get(plugin.key))
 
-        for mapping in prop.ifc_mappings:
-            cls.add_ifc_mapping(mapping)
-
         mode = cls.get_mode()
         dialog.ui.text_edit_description.setPlainText(prop.description or "")
         active_class = cls.get_active_class()
@@ -270,28 +285,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             dialog.ui.line_edit_property_value.setText(prop.ident_value)
 
     @classmethod
-    def add_ifc_mapping(cls, mapping):
-        line_edit = QLineEdit()
-        line_edit.setCompleter(cls.create_ifc_completer())
-        line_edit.setText(mapping)
-        prop = cls.get_properties()
-        if prop.ifc_line_edits:
-            last_tab_widget = prop.ifc_line_edits[-1]
-        else:
-            last_tab_widget = cls.get_ui().button_add_ifc
-        prop.ifc_line_edits.append(line_edit)
-
-
-        cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
-        tool.Util.insert_tab_order(last_tab_widget,line_edit)
-
-    @classmethod
     def add_classes_infos_add_function(cls, key: str, getter_function: Callable):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod
-    def trigger_class_info_widget(cls, mode: int,som_class:SOMcreator.SOMClass = None):
-        trigger.create_class_info_widget(mode,som_class)
+    def trigger_class_info_widget(
+        cls, mode: int, som_class: SOMcreator.SOMClass = None
+    ):
+        trigger.create_class_info_widget(mode, som_class)
 
     @classmethod
     def are_plugin_requirements_met(
@@ -355,3 +356,12 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     ):
         for plugin in cls.get_properties().class_info_plugin_list:  # call Setter Func
             plugin.value_setter(som_class, data_dict[plugin.key])
+
+    @classmethod
+    def get_ifc_lineedits(cls):
+        return cls.get_properties().ifc_line_edits
+
+    @classmethod
+    def append_ifc_lineedit(cls, line_edit: QLineEdit):
+        cls.get_properties().ifc_line_edits.append(line_edit)
+        cls.get_ui().vertical_layout_ifc.addWidget(line_edit)

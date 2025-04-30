@@ -1,6 +1,3 @@
-from PySide6.QtCore import QObject
-
-
 class Appdata:
     def _get_config(
         self,
@@ -196,6 +193,9 @@ class Class:
     def handle_property_issue(self, result):
         pass
 
+    def inherit_property_set_to_all_children(self, som_class, property_set):
+        pass
+
     def is_identifier_allowed(self, identifier, ignore, is_group):
         pass
 
@@ -208,9 +208,6 @@ class Class:
 
 class ClassInfo:
     def add_classes_infos_add_function(self, key, getter_function):
-        pass
-
-    def add_ifc_mapping(self, mapping):
         pass
 
     def add_plugin_entry(
@@ -720,6 +717,10 @@ class FilterCompare:
         pass
 
 
+class IfcSchema:
+    pass
+
+
 class IfcImporter:
     def add_progress_bar(self, widget, progress_bar):
         pass
@@ -931,6 +932,11 @@ class MainWindow:
     ):
         pass
 
+    def get_active_property_set(
+        self,
+    ):
+        pass
+
     def get_app(
         self,
     ):
@@ -995,6 +1001,11 @@ class MainWindow:
         pass
 
     def remove_submenu(self, parent_name, sub_menu):
+        pass
+
+    def request_new_property(
+        self,
+    ):
         pass
 
     def set_action(self, name, action):
@@ -1794,6 +1805,11 @@ class PredefinedPropertySet:
     ):
         pass
 
+    def connect_signals(
+        self,
+    ):
+        pass
+
     def connect_window(self, window):
         pass
 
@@ -1825,6 +1841,9 @@ class PredefinedPropertySet:
     ):
         pass
 
+    def get_class_from_item(self, item):
+        pass
+
     def get_class_table_widget(
         self,
     ):
@@ -1842,6 +1861,11 @@ class PredefinedPropertySet:
         pass
 
     def get_property_sets(
+        self,
+    ):
+        pass
+
+    def get_property_table(
         self,
     ):
         pass
@@ -2059,6 +2083,11 @@ class ProjectFilter:
 
 class Property:
     def add_property_data_value(self, name, getter, setter):
+        pass
+
+    def connect_signals(
+        self,
+    ):
         pass
 
     def create_by_dict(self, property_data):
@@ -2581,6 +2610,11 @@ class PropertyImportSQL:
     def add_property_without_value(self, som_property):
         pass
 
+    def are_entities_with_identifiers_existing(
+        self,
+    ):
+        pass
+
     def change_checkstate_of_values(
         self, ifc_type, identifier, property_set, property_query, value_text, checkstate
     ):
@@ -2749,11 +2783,6 @@ class PropertySet:
     ):
         pass
 
-    def get_completer(
-        self,
-    ):
-        pass
-
     def get_existing_psets_in_table(self, table):
         pass
 
@@ -2796,7 +2825,7 @@ class PropertySet:
     ):
         pass
 
-    def is_pset_allready_existing(self, pset_name, active_class):
+    def is_pset_existing(self, pset_name, active_class):
         pass
 
     def pset_table_is_editing(
@@ -2848,203 +2877,7 @@ class PropertySet:
         pass
 
 
-class PropertySetWindow:
-    def add_context_menu_builder(self, context_menu_builder):
-        pass
-
-    def add_value_line(self, column_count, window):
-        pass
-
-    def bring_window_to_front(self, window):
-        pass
-
-    def clear_values(self, window):
-        pass
-
-    def close_property_set_window(self, window):
-        pass
-
-    def connect_splitter_widget(self, widget):
-        pass
-
-    def connect_window_triggers(self, window):
-        pass
-
-    def create_window(self, property_set):
-        pass
-
-    def fill_window_title(self, window, property_set):
-        pass
-
-    def fill_window_ui(self, window):
-        pass
-
-    def format_values(self, value_list, window):
-        pass
-
-    def get_active_property(self, window):
-        pass
-
-    def get_allowed_data_types(
-        self,
-    ):
-        pass
-
-    def get_allowed_value_types(
-        self,
-    ):
-        pass
-
-    def get_context_menu_builders(
-        self,
-    ):
-        pass
-
-    def get_data_type(self, window):
-        pass
-
-    def get_inherit_checkbox_state(self, window):
-        pass
-
-    def get_input_value_lines(self, window):
-        pass
-
-    def get_open_windows(
-        self,
-    ):
-        pass
-
-    def get_paste_text_list(
-        self,
-    ):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_property_data(self, window):
-        pass
-
-    def get_property_name_input(self, window):
-        pass
-
-    def get_property_set_by_window(self, window):
-        pass
-
-    def get_required_column_count(self, window):
-        pass
-
-    def get_splitter_settings_checkstate(self, widget):
-        pass
-
-    def get_splitter_settings_text(self, widget):
-        pass
-
-    def get_splitter_settings_widget(
-        self,
-    ):
-        pass
-
-    def get_table(self, window):
-        pass
-
-    def get_unit_combobox(self, window):
-        pass
-
-    def get_value_type(self, window):
-        pass
-
-    def get_values(self, window):
-        pass
-
-    def get_window_by_lineedit(self, line_edit):
-        pass
-
-    def get_window_by_property_set(self, property_set):
-        pass
-
-    def ignore_builder(self, line_edit):
-        pass
-
-    def is_name_existing(self, name, window):
-        pass
-
-    def remove_data_type_restriction(self, window):
-        pass
-
-    def restrict_data_type_to_numbers(self, window):
-        pass
-
-    def set_add_button_enabled(self, enabled, window):
-        pass
-
-    def set_add_button_text(self, text, window):
-        pass
-
-    def set_comboboxes_enabled(self, enabled_state, window):
-        pass
-
-    def set_data_type(self, data_type, window):
-        pass
-
-    def set_description(self, description, window):
-        pass
-
-    def set_inherit_checkbox_state(self, state, window):
-        pass
-
-    def set_property_name(self, name, window):
-        pass
-
-    def set_selecteded_values_ignored(self, line_edit, ignore_state):
-        pass
-
-    def set_splitter_settings_widget(self, widget):
-        pass
-
-    def set_unit(self, unit, window):
-        pass
-
-    def set_value_columns(self, column_count, window):
-        pass
-
-    def set_value_type(self, value_type, window):
-        pass
-
-    def set_values(self, som_property, window):
-        pass
-
-    def trigger_property_activation(self, som_property, window):
-        pass
-
-    def trigger_window_open(self, property_set):
-        pass
-
-    def unignore_builder(self, line_edit):
-        pass
-
-    def update_add_button(self, window):
-        pass
-
-    def update_datatype_completer(self, window):
-        pass
-
-    def update_line_validators(self, window):
-        pass
-
-    def update_unit_completer(self, window):
-        pass
-
-    def update_valuetype_completer(self, window):
-        pass
-
-    def value_to_string(self, value):
-        pass
-
-
-class PropertyTable(QObject):
+class PropertyTable:
     def add_column_to_table(self, name, get_function):
         pass
 
@@ -3055,6 +2888,9 @@ class PropertyTable(QObject):
         pass
 
     def add_properties_to_table(self, properties, table):
+        pass
+
+    def connect_table(self, table):
         pass
 
     def context_menu_builder_add_connection(self, table):
@@ -3131,6 +2967,9 @@ class PropertyTable(QObject):
     def is_drop_allowed(self, event, target_table):
         pass
 
+    def refresh_table(self, table):
+        pass
+
     def remove_parent_of_selected_properties(self, table):
         pass
 
@@ -3147,8 +2986,177 @@ class PropertyTable(QObject):
         pass
 
 
+class PropertyWindow:
+    def add_context_menu_builder(self, context_menu_builder):
+        pass
+
+    def add_plugin_entry(
+        self,
+        key,
+        layout_name,
+        widget_creator,
+        index,
+        value_getter,
+        value_setter,
+        widget_value_setter,
+        test_function,
+    ):
+        pass
+
+    def add_value(self, table_view, value):
+        pass
+
+    def connect_signals(
+        self,
+    ):
+        pass
+
+    def connect_splitter_widget(self, widget):
+        pass
+
+    def connect_value_view(self, window):
+        pass
+
+    def create_window(self, som_property):
+        pass
+
+    def create_window_title(self, som_property):
+        pass
+
+    def get_allowed_data_types(
+        self,
+    ):
+        pass
+
+    def get_allowed_value_types(
+        self,
+    ):
+        pass
+
+    def get_context_menu_builders(
+        self,
+    ):
+        pass
+
+    def get_datatype_combobox(self, widget_ui):
+        pass
+
+    def get_description_textedit(self, widget_ui):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_from_window(self, window):
+        pass
+
+    def get_selected_rows(self, table_view):
+        pass
+
+    def get_selected_values(self, table_view):
+        pass
+
+    def get_splitter_settings_checkstate(self, widget):
+        pass
+
+    def get_splitter_settings_text(self, widget):
+        pass
+
+    def get_splitter_settings_widget(
+        self,
+    ):
+        pass
+
+    def get_ui(self, som_property):
+        pass
+
+    def get_unit_combobox(self, widget_ui):
+        pass
+
+    def get_valuetype_combobox(self, widget_ui):
+        pass
+
+    def get_window(self, som_property):
+        pass
+
+    def get_windows(
+        self,
+    ):
+        pass
+
+    def ignore_builder(self, table_view):
+        pass
+
+    def prefill_comboboxes(self, window):
+        pass
+
+    def remove_builder(self, table_view):
+        pass
+
+    def remove_plugin_entry(self, key):
+        pass
+
+    def remove_selected_values(self, table_view):
+        pass
+
+    def remove_window(self, window):
+        pass
+
+    def rename_property(self, som_property, value):
+        pass
+
+    def set_comboboxes_enabled(self, enabled_state, window):
+        pass
+
+    def set_datatype(self, som_property, value):
+        pass
+
+    def set_description(self, som_property, value):
+        pass
+
+    def set_optional(self, som_property, value):
+        pass
+
+    def set_selecteded_values_ignored(self, table_view, state):
+        pass
+
+    def set_splitter_settings_widget(self, widget):
+        pass
+
+    def set_unit(self, som_property, value):
+        pass
+
+    def set_value(self, table_view, row, value):
+        pass
+
+    def set_value_inherit_state(self, som_property, value):
+        pass
+
+    def set_values(self, table_view, start_row, values):
+        pass
+
+    def set_valuetype(self, som_property, value):
+        pass
+
+    def show_property_info(self, som_property):
+        pass
+
+    def unignore_builder(self, table_view):
+        pass
+
+    def update_unit_completer(self, window):
+        pass
+
+
 class Search:
     def _search(self, search_mode, search_items, data_getters):
+        pass
+
+    def connect_signals(
+        self,
+    ):
         pass
 
     def create_table_items(self, dialog, search_items, getter_methods):
@@ -3173,7 +3181,7 @@ class Search:
     ):
         pass
 
-    def get_row_matchscore(self, table, search_text, row, column_count):
+    def get_row_matchscore(self, dialog, search_text, row, column_count):
         pass
 
     def get_search_mode(self, dialog):
@@ -3191,6 +3199,9 @@ class Search:
     def get_threshold(
         self,
     ):
+        pass
+
+    def is_in_strict_model(self, dialog):
         pass
 
     def retranslate_title(self, dialog, search_mode):
@@ -3454,6 +3465,11 @@ class Util:
     def get_combobox_values(self, combo_box):
         pass
 
+    def get_greyed_out_brush(
+        self,
+    ):
+        pass
+
     def get_new_name(self, standard_name, existing_names):
         pass
 
@@ -3468,10 +3484,18 @@ class Util:
     def get_property(self, widget):
         pass
 
+    def get_standard_text_brush(
+        self,
+    ):
+        pass
+
     def get_text_from_combobox(self, combobox):
         pass
 
     def get_window_title(self, window_name):
+        pass
+
+    def insert_tab_order(self, previous_widget, inserted_widget):
         pass
 
     def menu_bar_add_action(self, menu_bar, menu_dict, menu_path, function):
@@ -3495,6 +3519,7 @@ class Util:
     def transform_guid(self, guid, add_zero_width):
         pass
 
-
-class PropertyWindow:
-    pass
+    def user_is_using_darkmode(
+        self,
+    ):
+        pass

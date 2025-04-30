@@ -35,6 +35,7 @@ class Signaller(QObject):
     context_menu_requested = Signal()
     new_property_requested = Signal(SOMcreator.SOMPropertySet)
 
+
 class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     signaller = Signaller()
 
@@ -70,10 +71,16 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
                 tool.PropertySet.get_pset_from_item(i)
             )
         )
-        class_table.customContextMenuRequested.connect(trigger.class_context_menu_requested)
-        
+        class_table.customContextMenuRequested.connect(
+            trigger.class_context_menu_requested
+        )
+
         window.ui.button_pset.clicked.connect(cls.create_property_set)
-        window.ui.button_property.clicked.connect(lambda:cls.signaller.new_property_requested.emit(cls.get_active_property_set()))
+        window.ui.button_property.clicked.connect(
+            lambda: cls.signaller.new_property_requested.emit(
+                cls.get_active_property_set()
+            )
+        )
 
         som_gui.module.predefined_property_set.trigger.connect_dialog(window)
 
@@ -141,12 +148,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def get_selected_property_set(cls):
         props = cls.get_properties()
-        selected_items =cls.get_window().ui.list_view_pset.selectedItems()
+        selected_items = cls.get_window().ui.list_view_pset.selectedItems()
         if not selected_items:
             return None
-        return selected_items[
-            0
-        ].data(CLASS_REFERENCE)
+        return selected_items[0].data(CLASS_REFERENCE)
 
     @classmethod
     def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
@@ -293,6 +298,14 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         pset = tool.PropertySet.get_property_set_from_item(item)
         som_class = pset.som_class
         return som_class
+
+    @classmethod
+    def name_is_in_predefined_psets(cls, name: str):
+        return name in cls.get_property_sets()
+
+    @classmethod
+    def get_pset_by_name(cls, name: str):
+        {p.name: p for p in cls.get_property_sets()}.get(name)
 
 
 class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompare):
