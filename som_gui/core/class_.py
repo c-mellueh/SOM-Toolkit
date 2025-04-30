@@ -162,14 +162,16 @@ def create_class(
         class_tool.handle_property_issue(result)
         return
         # create identifier property_set
-    ifc_mappings = ifc_mappings[ifc_schema.get_newest_version(ifc_schema.get_active_versions())]
+    ifc_version = ifc_schema.get_newest_version(ifc_schema.get_active_versions())
+    ifc_mappings = ifc_mappings[ifc_version]
+    allowed_ifc_psets = property_set.get_ifc_names(ifc_mappings,ifc_version)
 
     new_class = SOMcreator.SOMClass(name, project=proj)
     parent_uuid = data_dict.get("parent_uuid")
     if parent_uuid:
         parent_class = proj.get_element_by_uuid(parent_uuid)
         parent_class.add_child(new_class)
-    parent_pset,mode = property_set.search_for_parent(pset_name,new_class,ifc_mappings)
+    parent_pset,mode = property_set.search_for_parent(pset_name,new_class,allowed_ifc_psets)
     if mode ==0:
         return
     elif mode in (1,2):
