@@ -230,3 +230,17 @@ def get_pset_class_dict(version: str) -> dict[str, list[str]]:
     if version not in get_properties().pset_class_dict:
         read_jsons(version)
     return get_properties().pset_class_dict[version]
+
+
+def class_exists_in_version(class_name: str, version: VERSION_TYPE):
+    if PREDEFINED_SPLITTER in class_name:
+        class_name = class_name.split(PREDEFINED_SPLITTER)[0]
+    return class_name in get_all_classes(version)
+
+
+def predefined_type_exists_in_version(
+    class_name: str, predefined_type: str, version: VERSION_TYPE
+):
+    if not class_exists_in_version(class_name, version):
+        return False
+    return predefined_type in get_predefined_types(class_name, version)

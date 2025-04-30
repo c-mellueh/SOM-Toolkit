@@ -11,7 +11,7 @@ from SOMcreator.importer.som_json import property_set
 import SOMcreator
 from SOMcreator.importer.som_json import core
 import SOMcreator.importer.som_json
-from SOMcreator.datastructure.ifc_schema import IFC4, IFC4_3
+from SOMcreator.datastructure.ifc_schema import IFC2X3,IFC4, IFC4_3,class_exists_in_version,predefined_type_exists_in_version,PREDEFINED_SPLITTER
 
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
@@ -34,7 +34,24 @@ def _load_class(
         ifc_mapping = set(ifc_mapping)
 
     if not isinstance(ifc_mapping, dict):
-        ifc_mapping = {IFC4_3: list(ifc_mapping), IFC4: list(ifc_mapping)}
+        mapping_dict = {IFC2X3:[],IFC4:[],IFC4_3:[]}
+        for mapping in ifc_mapping:
+            if PREDEFINED_SPLITTER in mapping:
+                class_name,predefined_type = mapping.split(PREDEFINED_SPLITTER)
+            else:
+                class_name,predefined_type = mapping,None
+            
+            for version in [IFC2X3,IFC4,IFC4_3]:
+                if predefined_type is not None:
+                    if predefined_type_exists_in_version(class_name,predefined_type,version):
+                        mapping_dict[version].append(PREDEFINED_SPLITTER.join(class_name,predefined_type))
+                    elif class_exists_in_version(class_name,version):
+                        mapping_dict[version].append(class_name)
+                else:
+                    if class_exists_in_version(class_name,version):
+                        mapping_dict[version].append(class_name)
+        ifc_mapping = mapping_dict
+
     abbreviation = class_dict.get(ABBREVIATION)
 
     som_class = SOMcreator.SOMClass(
