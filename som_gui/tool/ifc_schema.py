@@ -6,7 +6,11 @@ import os
 
 import SOMcreator
 from som_gui.module.ifc_schema import ui, trigger
-from SOMcreator.datastructure.ifc_schema import VERSION_TYPE, read_jsons
+from SOMcreator.datastructure.ifc_schema import (
+    VERSION_TYPE,
+    read_jsons,
+    get_property_sets_of_class,
+)
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtCore import QCoreApplication, Qt
 
@@ -32,7 +36,7 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
     def get_active_versions(
         cls,
     ):
-        
+
         return cls.get_properties().active_versions
 
     @classmethod
@@ -62,3 +66,7 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         for mapping in existing_mappings:
             trigger.append_ifc_mapping(widget, mapping)
         return widget
+
+    @classmethod
+    def get_property_sets_of_class(cls,class_name, version):
+        return get_property_sets_of_class(class_name, version)

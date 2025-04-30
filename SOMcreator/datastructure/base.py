@@ -207,7 +207,8 @@ class BaseClass(ABC, metaclass=IterRegistry):
     @project.setter
     def project(self, value: SOMcreator.SOMProject) -> None:
         self._project = value
-        value.add_item(self, overwrite_filter_matrix=False)
+        if value is not None:
+            value.add_item(self, overwrite_filter_matrix=False)
 
     def is_optional(self, ignore_hirarchy=False) -> bool:
         if ignore_hirarchy:

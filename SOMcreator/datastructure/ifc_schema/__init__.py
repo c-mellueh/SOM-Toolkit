@@ -72,21 +72,27 @@ def get_property_sets_of_class(
 
 def get_property_set_path(property_set_name: str, version: VERSION_TYPE) -> str:
     path = get_resource_folder_path()
+    if not is_property_set_existing_in_version(property_set_name, version):
+        raise ValueError(
+            f"PropertySet '{property_set_name}' doesn't exist in {version}"
+        )
+    if property_set_name.startswith("Pset"):
+        path = os.path.join(path, version, PSD, f"{property_set_name}.xml")
+    elif property_set_name.startswith("Qto"):
+        path = os.path.join(path, version, QTO, f"{property_set_name}.xml")
+    return path
+
+
+def is_property_set_existing_in_version(property_set_name: str, version: VERSION_TYPE):
+    path = get_resource_folder_path()
     if property_set_name.startswith("Pset"):
         path = os.path.join(path, version, PSD)
     elif property_set_name.startswith("Qto"):
         path = os.path.join(path, version, QTO)
     else:
-        raise ValueError(
-            f"PropertySet '{property_set_name}' doesn't exist in IFC Specification"
-        )
-
+        return False
     file_path = os.path.join(path, f"{property_set_name}.xml")
-    if not os.path.exists(file_path):
-        raise ValueError(
-            f"PropertySet '{property_set_name}' doesn't exist in {version}"
-        )
-    return file_path
+    return os.path.exists(file_path)
 
 
 def get_properties_by_pset_name(
@@ -105,19 +111,19 @@ def get_properties_by_pset_name(
 def get_property_data(
     property_set_name: str, property_name: str, version: VERSION_TYPE
 ) -> tuple[str, str, str]:
-    def _get_property_def(name: str) -> Element[str]:
+    def _get_property_def(name: str) -> Element:
         for property_def in etree.getroot().find("PropertyDefs") or []:
             n = property_def.find("Name")
             n = n.text if n is not None else ""
             if n == name:
                 return property_def
         raise ValueError(
-            f"Property '{property_name}' doesn't exist in PropertySet '{property_set_name}'"
+            f"Property '{property_name}' doesn't exist in PropertySet '{property_set_name}' [{version}]"
         )
 
     def _get_type() -> str:
         missing_datype_error = ValueError(
-            f"Property '{property_set_name}:{property_name}' has no Datatype"
+            f"[{version}] Property '{property_set_name}:{property_name}' has no Datatype"
         )
         property_type = definition.find("PropertyType")
         if property_type is None:
@@ -127,16 +133,28 @@ def get_property_data(
                 f"Property '{property_set_name}:{property_name}' has multiple ValueTypes"
             )
         t = property_type[0]
-        if t.tag != "TypePropertySingleValue":
-            logging.info(f"ValueType {t.tag} unknown")
+        if t.tag not in [
+            "TypePropertySingleValue",
+            "TypePropertyBoundedValue",
+            "TypePropertyEnumeratedValue",
+        ]:
+            print(
+                f"[{version}]{property_set_name}:{property_name} ValueType {t.tag} unknown"
+            )
             return "IfcLabel"
         dt = t.find("DataType")
         if dt is None:
+            if t.tag in ["TypePropertyEnumeratedValue"]:
+                return "IfcLabel"
             raise missing_datype_error
         dt_value = dt.get("type")
         if dt_value is None:
             raise missing_datype_error
         return dt_value
+
+    def _get_values() -> list:
+        enum_list = definition.find("PropertyType//*//EnumList") or []
+        return [e.text for e in enum_list]
 
     file_path = get_property_set_path(property_set_name, version)
     etree = ET.parse(file_path)
@@ -152,7 +170,8 @@ def get_property_data(
         else ""
     )
     datatype = _get_type()
-    return (name, description, datatype)
+    values = _get_values()
+    return name, description, datatype, values
 
 
 def get_predefined_types(class_name: str, version: str) -> list[str]:

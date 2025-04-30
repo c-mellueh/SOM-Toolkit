@@ -16,35 +16,53 @@ def add_property_set_button_pressed(
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
-    util:Type[tool.Util]
+    ifc_schema: Type[tool.IfcSchema],
+    util: Type[tool.Util],
+    popups: Type[tool.Popups],
 ):
     logging.debug(f"Add PropertySet button clicked")
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
-    som_class = main_window_tool.get_active_class()
-    possible_pset_names = list(predefined_psets.get_property_sets())+property_set_tool.get_inheritable_property_sets(som_class)
-    existing_property_sets = [p.name for p in som_class.get_property_sets(filter = False)]
-    completer = util.create_completer([p.name for p in possible_pset_names if p.name not in existing_property_sets])
-    pset_name = popup_tool._request_text_input(
-        title, name, prefill="", parent=main_window_tool.get(),completer = completer
+    pset_existist_error = QCoreApplication.translate(
+        f"PropertySet", "PropertySet '{}' exists allready"
     )
-    if not pset_name:
-        return
-    if property_set_tool.is_pset_allready_existing(pset_name, som_class):
-        text = QCoreApplication.translate(
-            f"PropertySet", "PropertySet '{}' exists allready"
-        ).format(pset_name)
-        popup_tool.create_warning_popup(text)
+    som_class = main_window_tool.get_active_class()
+    active_ifc_versions = ifc_schema.get_active_versions()
+    pset_names = property_set_tool.get_pset_name_suggestion(
+        som_class,
+        predefined_psets.get_property_sets(),
+        active_ifc_versions,
+    )
+
+    completer = util.create_completer(pset_names)
+
+    new_name = popup_tool._request_text_input(
+        title, name, prefill="", parent=main_window_tool.get(), completer=completer
+    )
+    if not new_name:
         return
 
-    parent = property_set_tool.search_for_parent(
-        pset_name,
-        predefined_psets.get_property_sets(),
-        property_set_tool.get_inheritable_property_sets(som_class),
-    )
-    if parent is False:
+    if property_set_tool.is_pset_existing(new_name, som_class):
+        popup_tool.create_warning_popup(pset_existist_error.format(new_name))
         return
-    property_set_tool.create_property_set(pset_name, som_class, parent)
+
+    parent_pset = None
+    if predefined_psets.name_is_in_predefined_psets(new_name):
+        connect_result = tool.Popups.request_property_set_merge(new_name, 1)
+        if connect_result:
+            parent_pset = predefined_psets.get_pset_by_name(new_name)
+    elif property_set_tool.is_name_in_parent_classes(new_name, som_class):
+        connect_result = tool.Popups.request_property_set_merge(new_name, 2)
+        if connect_result:
+            parent_pset = property_set_tool.get_parent_by_name(new_name, som_class)
+    elif property_set_tool.is_name_in_ifc_psets(
+        new_name, som_class, active_ifc_versions
+    ):
+        new_pset = property_set_tool.create_ifc_pset(new_name, active_ifc_versions)
+        som_class.add_property_set(new_pset)
+        repaint_pset_table(property_set_tool, main_window_tool)
+        return
+    property_set_tool.create_property_set(new_name, som_class, parent_pset)
     repaint_pset_table(property_set_tool, main_window_tool)
 
 
@@ -73,7 +91,9 @@ def pset_selection_changed(
     main_window.get_pset_name_label().setText(text)
 
 
-def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet],class_tool:Type[tool.Class]):
+def pset_table_context_menu(
+    pos, property_set_tool: Type[tool.PropertySet], class_tool: Type[tool.Class]
+):
 
     table = property_set_tool.get_table()
     if not table.itemAt(pos):
@@ -99,18 +119,20 @@ def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet],class
                 property_set_tool.delete_table_pset,
             ],
         ]
-    
+
     def inherit_to_child():
         pset = property_set_tool.get_active_property_set()
         som_class = pset.som_class
         if not som_class:
             return
-        class_tool.inherit_property_set_to_all_children(som_class,pset)
-    actions.append(
-        [QCoreApplication.translate(f"PropertySet", "Inherit to child classes"),inherit_to_child]
-        
-    )
+        class_tool.inherit_property_set_to_all_children(som_class, pset)
 
+    actions.append(
+        [
+            QCoreApplication.translate(f"PropertySet", "Inherit to child classes"),
+            inherit_to_child,
+        ]
+    )
 
     property_set_tool.create_context_menu(table.mapToGlobal(pos), actions)
 
@@ -153,7 +175,9 @@ def repaint_pset_table(
     if property_set_tool.pset_table_is_editing():
         return
 
-    new_property_sets = property_set_tool.get_property_sets(main_window.get_active_class())
+    new_property_sets = property_set_tool.get_property_sets(
+        main_window.get_active_class()
+    )
     table = property_set_tool.get_table()
 
     existing_property_sets = property_set_tool.get_existing_psets_in_table(table)
