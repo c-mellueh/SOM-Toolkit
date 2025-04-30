@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 __version__ = (
-    "2.14.0"  # needs to be on top of som_gui import statements else ImportError
+    "2.14.1"  # needs to be on top of som_gui import statements else ImportError
 )
 
 import logging
