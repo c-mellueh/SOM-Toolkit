@@ -22,7 +22,7 @@ def on_new_project():
 
 
 def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
-    core.copy_class(som_class, data_dict, tool.Class, tool.ClassInfo,tool.IfcSchema)
+    core.copy_class(som_class, data_dict, tool.Class, tool.ClassInfo)
 
 
 def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
