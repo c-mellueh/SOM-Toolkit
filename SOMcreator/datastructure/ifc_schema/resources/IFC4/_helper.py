@@ -31,13 +31,14 @@ def get_parent_list(type_name):
 
 def get_class_names(t: ElementTree):
     root: Element = t.getroot()
-
-    applicable_classes = root.find("IfcVersion")
-    print(applicable_classes)
+    ns_uri = root.tag.split('}')[0].strip('{')
+    ns = {'ns': ns_uri}
     # Extract the class names
     class_names = [
-        class_name.text for class_name in applicable_classes.findall("ClassName")
+        cn.text
+        for cn in root.findall(".//ns:ApplicableClasses/ns:ClassName", ns)
     ]
+    print(f"Result: {class_names}")
     return class_names
 
 
@@ -51,10 +52,10 @@ def create_pset_class_dict():
         pset_class_dict[fn[:-4]] = get_class_names(tree)
 
     folder_path = "./qto"
-
     for fn in os.listdir(folder_path):
         path = os.path.join(folder_path, fn)
         tree = ET.parse(path)
+        print(f"Parse {fn}")
         pset_class_dict[fn[:-4]] = get_class_names(tree)
 
     return pset_class_dict
