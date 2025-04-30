@@ -39,10 +39,9 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         cls, som_class: SOMcreator.SOMClass | None, version: VERSION_TYPE
     ):
         if som_class is not None:
-            # TODO: Rewrite Fileimport to filter for IFCversions
-            existing_mappings = list(som_class.ifc_mapping)
+            existing_mappings = som_class.ifc_mapping.get(version, dict())
         else:
-            existing_mappings = []
+            existing_mappings = dict()
         widget = ui.MappingWidget(version)
         tv = widget.ui.table_view
         model = QStandardItemModel()

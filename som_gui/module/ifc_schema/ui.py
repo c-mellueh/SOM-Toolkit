@@ -10,7 +10,7 @@ from .qt.ui_MappingWidget import Ui_MappingWidget
 from . import trigger
 import SOMcreator
 from som_gui import tool
-
+from SOMcreator.datastructure import ifc_schema
 
 class MappingWidget(QWidget):
     def __init__(self, version, *args, **kwargs):
@@ -34,14 +34,14 @@ class MappingDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent, option, index: QModelIndex):
         if index.column() == 0:
-            classes = tool.IfcSchema.get_all_classes(self.version, "IfcProduct")
+            classes = ifc_schema.get_all_classes(self.version, "IfcProduct")
 
             widget = QLineEdit(parent)
             widget.setCompleter(QCompleter(sorted(classes)))
         else:
             t = index.siblingAtColumn(0).data(Qt.ItemDataRole.DisplayRole)
             widget = QComboBox(parent)
-            types = tool.IfcSchema.get_predefined_types(t, self.version)
+            types = ifc_schema.get_predefined_types(t, self.version)
             pdt = [""] + sorted(types)
             widget.addItems(pdt)
             widget.setEditable(True)
