@@ -12,6 +12,7 @@ import SOMcreator
 from som_gui import tool
 from SOMcreator.datastructure import ifc_schema
 
+
 class MappingWidget(QFrame):
     def __init__(self, version, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,34 +34,26 @@ class MappingDelegate(QStyledItemDelegate):
         super().__init__(*args, **kwargs)
 
     def createEditor(self, parent, option, index: QModelIndex):
+        widget = QComboBox(parent)
         if index.column() == 0:
-            classes = ifc_schema.get_all_classes(self.version, "IfcProduct")
-
-            widget = QLineEdit(parent)
-            widget.setCompleter(QCompleter(sorted(classes)))
+            texts = sorted(ifc_schema.get_all_classes(self.version, "IfcObject"))
         else:
             t = index.siblingAtColumn(0).data(Qt.ItemDataRole.DisplayRole)
-            widget = QComboBox(parent)
             types = ifc_schema.get_predefined_types(t, self.version)
-            pdt = [""] + sorted(types)
-            widget.addItems(pdt)
-            widget.setEditable(True)
-            widget.setCompleter(QCompleter(types))
+            texts = [""] + sorted(types)
+        widget.addItems(texts)
+        widget.setEditable(True)
+        widget.setCompleter(QCompleter(texts))
         return widget
 
-    def setEditorData(self, editor, index):
-        if index.column() == 0:
-            editor.setText(index.data(Qt.EditRole))
-        else:
-            value = index.data(Qt.EditRole)
-            if value:
-                i = editor.findText(value)
-                if i >= 0:
-                    editor.setCurrentIndex(i)
+    def setEditorData(self, editor: QComboBox, index: QModelIndex):
+        value = index.data(Qt.ItemDataRole.EditRole)
 
-    def setModelData(self, editor, model, index):
-        if index.column() == 0:
-            value = editor.text()
-        else:
-            value = editor.currentText()
+        if value:
+            i = editor.findText(value)
+            if i >= 0:
+                editor.setCurrentIndex(i)
+
+    def setModelData(self, editor: QComboBox, model, index: QModelIndex):
+        value = editor.currentText()
         model.setData(index, value, Qt.EditRole)
