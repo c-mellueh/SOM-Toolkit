@@ -388,16 +388,20 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def create_ifc_pset(cls, name: str, ifc_versions: list[ifc_schema.VERSION_TYPE]):
         existing_properties = set()
         for version in ifc_versions:
-            if not ifc_schema.is_property_set_existing_in_version(name,version):
+            if not ifc_schema.is_property_set_existing_in_version(name, version):
                 continue
             for property_name in ifc_schema.get_properties_by_pset_name(name, version):
                 if property_name in {p.name for p in existing_properties}:
                     continue
-                property_name, description, datatype,values = ifc_schema.get_property_data(
-                    name, property_name, version
+                property_name, description, datatype, values, unit = (
+                    ifc_schema.get_property_data(name, property_name, version)
                 )
                 prop = SOMcreator.SOMProperty(
-                    name=property_name, description=description, data_type=datatype,allowed_values=values
+                    name=property_name,
+                    description=description,
+                    data_type=datatype,
+                    allowed_values=values,
+                    unit=unit,
                 )
                 existing_properties.add(prop)
 

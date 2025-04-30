@@ -137,16 +137,26 @@ def get_property_data(
             "TypePropertySingleValue",
             "TypePropertyBoundedValue",
             "TypePropertyEnumeratedValue",
+            "TypePropertyReferenceValue",
+            "TypePropertyListValue",
+            "TypeComplexProperty",
+            "TypeSimpleProperty",
+            "TypePropertyTableValue",
         ]:
             print(
                 f"[{version}]{property_set_name}:{property_name} ValueType {t.tag} unknown"
             )
             return "IfcLabel"
-        dt = t.find("DataType")
+        dt = t.find("*DataType") if t.find("DataType") is None else t.find("DataType")
         if dt is None:
-            if t.tag in ["TypePropertyEnumeratedValue"]:
+            if t.tag in [
+                "TypePropertyEnumeratedValue",
+                "TypePropertyReferenceValue",
+                "TypeComplexProperty",
+            ]:
                 return "IfcLabel"
             raise missing_datype_error
+
         dt_value = dt.get("type")
         if dt_value is None:
             raise missing_datype_error
@@ -155,6 +165,12 @@ def get_property_data(
     def _get_values() -> list:
         enum_list = definition.find("PropertyType//*//EnumList") or []
         return [e.text for e in enum_list]
+
+    def _get_unit():
+        ut = definition.find("PropertyType//*//UnitType")
+        if ut is None:
+            return None
+        return ut.get("type")
 
     file_path = get_property_set_path(property_set_name, version)
     etree = ET.parse(file_path)
@@ -171,7 +187,8 @@ def get_property_data(
     )
     datatype = _get_type()
     values = _get_values()
-    return name, description, datatype, values
+    unit = _get_unit()
+    return name, description, datatype, values, unit
 
 
 def get_predefined_types(class_name: str, version: str) -> list[str]:
