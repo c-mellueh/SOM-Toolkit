@@ -44,4 +44,5 @@ def create_class_called(data_dict: ClassDataDict):
         tool.ClassInfo,
         tool.Project,
         tool.PropertySet,
+        tool.IfcSchema,
     )

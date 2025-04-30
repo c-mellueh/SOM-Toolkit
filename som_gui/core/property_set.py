@@ -45,7 +45,7 @@ def add_property_set_button_pressed(
     if property_set_tool.is_pset_existing(new_name, som_class):
         popup_tool.create_warning_popup(pset_existist_error.format(new_name))
         return
-
+    allowed_psets = property_set_tool.get_ifc_names(som_class.ifc_mapping[newest_version],newest_version)
     parent,mode = property_set_tool.search_for_parent(new_name,som_class,newest_version)
     if mode ==0:
         return

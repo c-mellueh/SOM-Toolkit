@@ -355,7 +355,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_parent_by_name(cls, name, som_class: SOMcreator.SOMClass):
-        {p.name: p for p in cls.get_inheritable_property_sets(som_class)}.get(name)
+        pset_dict = {p.name: p for p in cls.get_inheritable_property_sets(som_class)}
+        return pset_dict.get(name)
 
     @classmethod
     def is_name_in_ifc_psets(

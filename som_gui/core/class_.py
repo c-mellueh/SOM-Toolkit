@@ -133,6 +133,7 @@ def create_class(
     class_info: Type[tool.ClassInfo],
     project: Type[tool.Project],
     property_set: Type[tool.PropertySet],
+    ifc_schema:Type[tool.IfcSchema],
 
 ):
     name = data_dict["name"]
@@ -161,7 +162,14 @@ def create_class(
         class_tool.handle_property_issue(result)
         return
         # create identifier property_set
-    parent_pset,mode = property_set.search_for_parent(pset_name,None,ifc_mappings)
+    ifc_mappings = ifc_mappings[ifc_schema.get_newest_version(ifc_schema.get_active_versions())]
+
+    new_class = SOMcreator.SOMClass(name, project=proj)
+    parent_uuid = data_dict.get("parent_uuid")
+    if parent_uuid:
+        parent_class = proj.get_element_by_uuid(parent_uuid)
+        parent_class.add_child(new_class)
+    parent_pset,mode = property_set.search_for_parent(pset_name,new_class,ifc_mappings)
     if mode ==0:
         return
     elif mode in (1,2):
@@ -171,7 +179,6 @@ def create_class(
     else:
         pset = property_set.create_property_set(pset_name)
     
-    new_class = SOMcreator.SOMClass(name, project=proj)
     new_class.description = description
     new_class.add_property_set(pset)
     # create identifier property
@@ -185,8 +192,5 @@ def create_class(
     ident_property.project = proj
     class_info.add_plugin_infos_to_class(new_class, data_dict)
     class_tool.modify_class(new_class, data_dict)
-    parent_uuid = data_dict.get("parent_uuid")
-    if parent_uuid:
-        parent_class = proj.get_element_by_uuid(parent_uuid)
-        parent_class.add_child(new_class)
+
     class_tool.signaller.class_created.emit(new_class)
