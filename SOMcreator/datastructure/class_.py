@@ -4,6 +4,10 @@ from uuid import uuid4
 from typing import Iterator
 from .base import filterable, BaseClass
 import copy as cp
+from typing import TYPE_CHECKING
+
+from SOMcreator.datastructure import ifc_schema
+from SOMcreator.datastructure.ifc_schema import VERSION_TYPE
 
 
 class SOMClass(BaseClass):
@@ -12,7 +16,7 @@ class SOMClass(BaseClass):
         name: str,
         identifier_property: SOMcreator.SOMProperty | str | None = None,
         uuid: str | None = None,
-        ifc_mapping: set[str] | None = None,
+        ifc_mapping: dict[VERSION_TYPE, list[str]] | None = None,
         description: None | str = None,
         optional: None | bool = None,
         abbreviation: None | str = None,
@@ -25,8 +29,8 @@ class SOMClass(BaseClass):
         )
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self._abbreviation = "" if abbreviation is None else abbreviation
-        self._ifc_mapping: set[str] = (
-            {"IfcBuildingElementProxy"} if ifc_mapping is None else ifc_mapping
+        self._ifc_mapping: dict[VERSION_TYPE, list[str]] = (
+            dict() if ifc_mapping is None else ifc_mapping
         )
         self.uuid = str(uuid4()) if uuid is None else uuid
         self._ident_property = (
@@ -102,16 +106,30 @@ class SOMClass(BaseClass):
         self._abbreviation = value
 
     @property
-    def ifc_mapping(self) -> set[str]:
+    def ifc_mapping(self) -> dict[VERSION_TYPE, list[str]]:
         return self._ifc_mapping
 
     @ifc_mapping.setter
-    def ifc_mapping(self, value: set[str]):
-        value_set = set()
-        for item in value:  # filter empty Inputs
-            if not (item == "" or item is None):
-                value_set.add(item)
-        self._ifc_mapping = value_set
+    def ifc_mapping(self, mapping_dict: dict[VERSION_TYPE, list[str]]):
+        self._ifc_mapping = dict()
+
+        for version, values in mapping_dict.items():
+            self._ifc_mapping[version] = list()
+            classes = ifc_schema.get_all_classes(version)
+            for value in values:
+                if ifc_schema.PREDEFINED_SPLITTER in value:
+                    class_name, predefined_type = value.split(
+                        ifc_schema.PREDEFINED_SPLITTER
+                    )
+                else:
+                    class_name, predefined_type = value, None
+                if class_name not in classes:
+                    continue
+                if predefined_type:
+                    allowed_types = ifc_schema.get_predefined_types(class_name, version)
+                    if predefined_type not in allowed_types:
+                        value = class_name
+                self._ifc_mapping[version].append(value)
 
     def add_ifc_map(self, value: str) -> None:
         self._ifc_mapping.add(value)
