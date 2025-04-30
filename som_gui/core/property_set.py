@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTableWidgetItem
 from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
-
+import SOMcreator
 
 def add_property_set_button_pressed(
     main_window_tool: Type[tool.MainWindow],
@@ -31,7 +31,7 @@ def add_property_set_button_pressed(
     pset_names = property_set_tool.get_pset_name_suggestion(
         som_class,
         predefined_psets.get_property_sets(),
-        [newest_version],
+        newest_version,
     )
 
     completer = util.create_completer(pset_names)
@@ -46,29 +46,42 @@ def add_property_set_button_pressed(
         popup_tool.create_warning_popup(pset_existist_error.format(new_name))
         return
 
-    # Handle Inheritance
-    parent_pset = None
-    if predefined_psets.name_is_in_predefined_psets(new_name):
-        connect_result = popups.request_property_set_merge(new_name, 1)
-        if connect_result:
-            parent_pset = predefined_psets.get_pset_by_name(new_name)
-
-    elif property_set_tool.is_name_in_parent_classes(new_name, som_class):
-        connect_result = popups.request_property_set_merge(new_name, 2)
-        if connect_result:
-            parent_pset = property_set_tool.get_parent_by_name(new_name, som_class)
-
-    elif property_set_tool.is_name_in_ifc_psets(new_name, som_class, newest_version):
-        connect_result = popups.request_property_set_merge(new_name, 3)
-        if connect_result:
-            new_pset = property_set_tool.create_ifc_pset(new_name, newest_version)
-            som_class.add_property_set(new_pset)
-            repaint_pset_table(property_set_tool, main_window_tool)
-            return
-    property_set_tool.create_property_set(new_name, som_class, parent_pset)
-
+    parent,mode = property_set_tool.search_for_parent(new_name,som_class,newest_version)
+    if mode ==0:
+        return
+    elif mode in (1,2):
+        som_class.add_property_set(parent.create_child())
+    elif mode == 3:
+        som_class.add_property_set(parent)
+    if mode == 4:
+        property_set_tool.create_property_set(new_name,som_class)
     repaint_pset_table(property_set_tool, main_window_tool)
 
+
+def search_parent(pset_name:str,som_class:SOMcreator.SOMClass|None,allowed_ifc_psets:list[str],property_set_tool:Type[tool.PropertySet],predefined_psets:Type[tool.PredefinedPropertySet],popups:Type[tool.Popups],ifc_schema:Type[tool.IfcSchema]):
+    # Handle Inheritance
+    ifc_version = ifc_schema.get_newest_version(ifc_schema.get_active_versions())
+    parent_pset = None
+    if predefined_psets.name_is_in_predefined_psets(pset_name):
+        connect_result = popups.request_property_set_merge(pset_name, 1)
+        if connect_result:
+            parent_pset = predefined_psets.get_pset_by_name(pset_name)
+            return parent_pset,1
+        return None,0
+    elif som_class is not None and property_set_tool.is_name_in_parent_classes(pset_name, som_class):
+        connect_result = popups.request_property_set_merge(pset_name, 2)
+        if connect_result:
+            parent_pset = property_set_tool.get_parent_by_name(pset_name, som_class)
+            return parent_pset,2
+        return None,0
+    elif pset_name in allowed_ifc_psets:
+        connect_result = popups.request_property_set_merge(pset_name, 3)
+        if connect_result:
+            parent_pset = property_set_tool.create_ifc_pset(pset_name, ifc_version)
+            return parent_pset,3
+        return None,0
+    else:
+        return None,4
 
 def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
     pset = property_set.get_pset_from_item(item)

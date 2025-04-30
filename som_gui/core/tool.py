@@ -2844,8 +2844,6 @@ class PropertySet:
     ):
         pass
 
-    def search_for_parent(self, pset_name, predefined_psets, parent_psets):
-        pass
 
     def select_property_set(self, property_set):
         pass

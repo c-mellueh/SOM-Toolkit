@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from som_gui import tool
 from som_gui.core import property_set as core
-
+import SOMcreator
 if TYPE_CHECKING:
     from .ui import PsetTableWidget
 
@@ -50,3 +50,6 @@ def pset_table_context_menu_requested(pos):
 
 def retranslate_ui():
     pass
+
+def search_parent(pset_name:str,som_class:SOMcreator.SOMClass|None,allowed_ifc_psets:list[str],):
+    return core.search_parent(pset_name,som_class,allowed_ifc_psets,tool.PropertySet,tool.PredefinedPropertySet,tool.Popups,tool.IfcSchema)
