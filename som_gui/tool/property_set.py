@@ -348,14 +348,15 @@ class PropertySet(som_gui.core.tool.PropertySet):
         possible_pset_names.update(
             {p.name for p in cls.get_inheritable_property_sets(som_class)}
         )
-        possible_pset_names.update(cls.get_ifc_names(som_class, ifc_versions))
+        ifc_names = cls.get_ifc_names(som_class, ifc_versions)
+        possible_pset_names.update(ifc_names)
         existing_property_sets = [
             p.name for p in som_class.get_property_sets(filter=False)
         ]
         return possible_pset_names.difference(existing_property_sets)
 
     @classmethod
-    def get_ifc_names(cls, som_class, allowed_versions: ifc_schema.VERSION_TYPE):
+    def get_ifc_names(cls, som_class, allowed_versions: list[ifc_schema.VERSION_TYPE]):
         ifc_names = set()
         for version in allowed_versions:
             mappings = som_class.ifc_mapping[version]
@@ -380,30 +381,30 @@ class PropertySet(som_gui.core.tool.PropertySet):
         cls,
         name: str,
         som_class: SOMcreator.SOMClass,
-        ifc_versions: list[ifc_schema.VERSION_TYPE],
+        ifc_version: ifc_schema.VERSION_TYPE,
     ):
-        return name in cls.get_ifc_names(som_class, ifc_versions)
+        return name in cls.get_ifc_names(som_class, [ifc_version])
 
     @classmethod
-    def create_ifc_pset(cls, name: str, ifc_versions: list[ifc_schema.VERSION_TYPE]):
+    def create_ifc_pset(cls, name: str, ifc_version: list[ifc_schema.VERSION_TYPE]):
         existing_properties = set()
-        for version in ifc_versions:
-            if not ifc_schema.is_property_set_existing_in_version(name, version):
+
+        if not ifc_schema.is_property_set_existing_in_version(name, ifc_version):
+            return None
+        for property_name in ifc_schema.get_properties_by_pset_name(name, ifc_version):
+            if property_name in {p.name for p in existing_properties}:
                 continue
-            for property_name in ifc_schema.get_properties_by_pset_name(name, version):
-                if property_name in {p.name for p in existing_properties}:
-                    continue
-                property_name, description, datatype, values, unit = (
-                    ifc_schema.get_property_data(name, property_name, version)
-                )
-                prop = SOMcreator.SOMProperty(
-                    name=property_name,
-                    description=description,
-                    data_type=datatype,
-                    allowed_values=values,
-                    unit=unit,
-                )
-                existing_properties.add(prop)
+            property_name, description, datatype, values, unit = (
+                ifc_schema.get_property_data(name, property_name, ifc_version)
+            )
+            prop = SOMcreator.SOMProperty(
+                name=property_name,
+                description=description,
+                data_type=datatype,
+                allowed_values=values,
+                unit=unit,
+            )
+            existing_properties.add(prop)
 
         if not existing_properties:
             return None

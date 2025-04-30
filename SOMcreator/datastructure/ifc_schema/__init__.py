@@ -30,6 +30,15 @@ def get_properties():
     return IfcProperties
 
 
+def get_newest_version(versions:list[VERSION_TYPE]):
+    if IFC4_3 in versions:
+        return IFC4_3
+    if IFC4 in versions:
+        return IFC4
+    if IFC2X3 in versions:
+        return IFC2X3
+    return None
+
 def read_jsons(version: str):
     prop = get_properties()
     p = get_resource_folder_path()
@@ -63,6 +72,8 @@ def get_property_sets_of_class(
     parent_dict = get_parent_dict(version)
     property_dict = get_pset_class_dict(version)
     sets: set[str] = set()
+    if PREDEFINED_SPLITTER in class_name:
+        class_name,predefined_type = class_name.split(PREDEFINED_SPLITTER)
     for c in parent_dict.get(class_name, []):
         sets.update(set(property_dict.get(c, set())))
     if predefined_type is not None:

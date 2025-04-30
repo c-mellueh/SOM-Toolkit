@@ -27,11 +27,11 @@ def add_property_set_button_pressed(
         f"PropertySet", "PropertySet '{}' exists allready"
     )
     som_class = main_window_tool.get_active_class()
-    active_ifc_versions = ifc_schema.get_active_versions()
+    newest_version = ifc_schema.get_newest_version(ifc_schema.get_active_versions())
     pset_names = property_set_tool.get_pset_name_suggestion(
         som_class,
         predefined_psets.get_property_sets(),
-        active_ifc_versions,
+        [newest_version],
     )
 
     completer = util.create_completer(pset_names)
@@ -46,23 +46,27 @@ def add_property_set_button_pressed(
         popup_tool.create_warning_popup(pset_existist_error.format(new_name))
         return
 
+    # Handle Inheritance
     parent_pset = None
     if predefined_psets.name_is_in_predefined_psets(new_name):
-        connect_result = tool.Popups.request_property_set_merge(new_name, 1)
+        connect_result = popups.request_property_set_merge(new_name, 1)
         if connect_result:
             parent_pset = predefined_psets.get_pset_by_name(new_name)
+
     elif property_set_tool.is_name_in_parent_classes(new_name, som_class):
-        connect_result = tool.Popups.request_property_set_merge(new_name, 2)
+        connect_result = popups.request_property_set_merge(new_name, 2)
         if connect_result:
             parent_pset = property_set_tool.get_parent_by_name(new_name, som_class)
-    elif property_set_tool.is_name_in_ifc_psets(
-        new_name, som_class, active_ifc_versions
-    ):
-        new_pset = property_set_tool.create_ifc_pset(new_name, active_ifc_versions)
-        som_class.add_property_set(new_pset)
-        repaint_pset_table(property_set_tool, main_window_tool)
-        return
+
+    elif property_set_tool.is_name_in_ifc_psets(new_name, som_class, newest_version):
+        connect_result = popups.request_property_set_merge(new_name, 3)
+        if connect_result:
+            new_pset = property_set_tool.create_ifc_pset(new_name, newest_version)
+            som_class.add_property_set(new_pset)
+            repaint_pset_table(property_set_tool, main_window_tool)
+            return
     property_set_tool.create_property_set(new_name, som_class, parent_pset)
+
     repaint_pset_table(property_set_tool, main_window_tool)
 
 

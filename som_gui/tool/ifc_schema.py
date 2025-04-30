@@ -10,6 +10,7 @@ from SOMcreator.datastructure.ifc_schema import (
     VERSION_TYPE,
     read_jsons,
     get_property_sets_of_class,
+    get_newest_version
 )
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtCore import QCoreApplication, Qt
@@ -70,3 +71,7 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
     @classmethod
     def get_property_sets_of_class(cls,class_name, version):
         return get_property_sets_of_class(class_name, version)
+
+    @classmethod
+    def get_newest_version(cls,versions):
+        return get_newest_version(versions)
