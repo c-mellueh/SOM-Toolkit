@@ -21,10 +21,7 @@ def _write_class(element: SOMcreator.SOMClass) -> ClassDict:
     class_dict: ClassDict = dict()
     core.write_basics(class_dict, element)
 
-    if isinstance(element.ifc_mapping, set):
-        class_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
-    else:
-        class_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
+    class_dict[IFC_MAPPINGS] = element.ifc_mapping
 
     psets_dict = dict()
     for pset in element.get_property_sets(filter=False):

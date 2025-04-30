@@ -11,6 +11,7 @@ from SOMcreator.importer.som_json import property_set
 import SOMcreator
 from SOMcreator.importer.som_json import core
 import SOMcreator.importer.som_json
+from SOMcreator.datastructure.ifc_schema import IFC4, IFC4_3
 
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
@@ -27,9 +28,13 @@ def _load_class(
         proj, class_dict, identifier
     )
     ifc_mapping = class_dict[IFC_MAPPINGS]
+
+    # pre 2.14.1
     if isinstance(ifc_mapping, list):
         ifc_mapping = set(ifc_mapping)
 
+    if not isinstance(ifc_mapping, dict):
+        ifc_mapping = {IFC4_3: list(ifc_mapping), IFC4: list(ifc_mapping)}
     abbreviation = class_dict.get(ABBREVIATION)
 
     som_class = SOMcreator.SOMClass(
