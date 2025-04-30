@@ -32,6 +32,7 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
     def get_active_versions(
         cls,
     ):
+        
         return cls.get_properties().active_versions
 
     @classmethod
@@ -60,5 +61,4 @@ class IfcSchema(som_gui.core.tool.IfcSchema):
         )
         for mapping in existing_mappings:
             trigger.append_ifc_mapping(widget, mapping)
-        widget.ui.label_ifc_mapping.setText(version)
         return widget

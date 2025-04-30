@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget,
+    QFrame,
     QStyledItemDelegate,
     QLineEdit,
     QCompleter,
@@ -12,7 +12,7 @@ import SOMcreator
 from som_gui import tool
 from SOMcreator.datastructure import ifc_schema
 
-class MappingWidget(QWidget):
+class MappingWidget(QFrame):
     def __init__(self, version, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.version = version

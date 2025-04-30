@@ -5,11 +5,13 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 import logging
 
+IFC2X3_TYPE = Literal["IFC2x3"]
 IFC4_TYPE = Literal["IFC4"]
 IFC4_3_TYPE = Literal["IFC4_3"]
+IFC2X3 = get_args(IFC2X3_TYPE)[0]
 IFC4 = get_args(IFC4_TYPE)[0]
 IFC4_3 = get_args(IFC4_3_TYPE)[0]
-VERSION_TYPE = Literal[IFC4_TYPE, IFC4_3_TYPE]
+VERSION_TYPE = Literal[IFC2X3_TYPE, IFC4_TYPE, IFC4_3_TYPE]
 PREDEFINED_SPLITTER = "/"
 PSD = "psd"
 QTO = "qto"

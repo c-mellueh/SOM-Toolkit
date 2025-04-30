@@ -54,7 +54,8 @@ def create_class_info_widget(
 
     for row, version in enumerate(ifc_schema.get_active_versions()):
         widget = ifc_schema.create_mapping_widget(som_class, version)
-        dialog.ui.vertical_layout_ifc.insertWidget(row, widget)
+        dialog.ui.toolBox.addItem(widget,version)
+        #dialog.ui.vertical_layout_ifc.insertWidget(row, widget)
     if dialog.exec():
         active_class = som_class
         data_dict = class_info.generate_datadict()

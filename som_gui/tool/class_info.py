@@ -176,8 +176,8 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     def get_ifc_mappings(cls):
         ui = cls.get_ui()
         version_dict = dict()
-        for widget_row in range(ui.vertical_layout_ifc.count()):
-            widget: MappingWidget = ui.vertical_layout_ifc.itemAt(widget_row).widget()
+        for widget_row in range(ui.toolBox.count()):
+            widget: MappingWidget = ui.toolBox.widget(widget_row)
             tv = widget.ui.table_view
             version = widget.version
             model: QStandardItemModel = tv.model()
