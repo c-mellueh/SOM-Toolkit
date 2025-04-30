@@ -3,7 +3,10 @@ import logging
 
 def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        if dirpath.startswith("..\\..\\plugins\\"):
+        
+        if ".venv" in dirpath:
+            continue
+        if dirpath.startswith(".\\plugins\\"):
             logging.info(f"Skipping {dirpath}")
             continue
         for file in filenames:
@@ -17,11 +20,11 @@ def list_files_in_directory(root_dir):
                     continue
                 path = os.path.join(dirpath, file)
                 output_dict["files"].append(path)
-
+                print(path)
 
 # Example usage:
 output_dict = {"files": []}
-root_directory = "..\\.."
+root_directory = "."
 list_files_in_directory(root_directory)
 import json
 
