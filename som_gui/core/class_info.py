@@ -5,6 +5,7 @@ from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QPalette, QStandardItem
 from PySide6.QtWidgets import QLineEdit, QCompleter, QTableWidgetItem
+from SOMcreator.datastructure.ifc_schema import VERSIONS
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -51,11 +52,13 @@ def create_class_info_widget(
     if mode != 0:
         pset_names += list(som_class.get_properties())
     util.create_completer(pset_names, dialog.ui.combo_box_pset)
-
-    for row, version in enumerate(ifc_schema.get_active_versions()):
+    active_versions = ifc_schema.get_active_versions()
+    for row, version in enumerate(reversed(VERSIONS)):
+        if version not in active_versions:
+            continue
         widget = ifc_schema.create_mapping_widget(som_class, version)
-        dialog.ui.toolBox.addItem(widget,version)
-        #dialog.ui.vertical_layout_ifc.insertWidget(row, widget)
+        dialog.ui.toolBox.addItem(widget, version)
+        # dialog.ui.vertical_layout_ifc.insertWidget(row, widget)
     if dialog.exec():
         active_class = som_class
         data_dict = class_info.generate_datadict()
@@ -85,4 +88,3 @@ def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.Class
     else:
         class_info.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     class_info.oi_change_visibility_identifiers(group)
-
