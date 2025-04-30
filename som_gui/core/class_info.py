@@ -80,7 +80,10 @@ def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.Class
     else:
         class_info.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     class_info.oi_change_visibility_identifiers(group)
-
+    tw = class_info.get_ui().table_widget_ifc
+    width = tw.columnWidth(0)+tw.columnWidth(1)
+    tw.setColumnWidth(0,width/2-3)
+    #tw.setColumnWidth(1,width/2)
 
 def append_ifc_mapping(
     text: str,

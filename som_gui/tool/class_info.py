@@ -127,6 +127,9 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         tw.model().setHorizontalHeaderLabels([t1, t2])
         tw.setEditTriggers(tw.EditTrigger.AllEditTriggers)
         tw.setItemDelegate(Delegate(ifc_versions))
+        tw.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        hh = tw.horizontalHeader()
+        hh.setSectionResizeMode(hh.ResizeMode.Fixed)
         dl.setWindowTitle(title)
         return dl
 
