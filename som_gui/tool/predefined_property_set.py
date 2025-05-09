@@ -301,11 +301,11 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def name_is_in_predefined_psets(cls, name: str):
-        return name in cls.get_property_sets()
+        return name in [p.name for p in cls.get_property_sets()]
 
     @classmethod
     def get_pset_by_name(cls, name: str):
-        {p.name: p for p in cls.get_property_sets()}.get(name)
+        return {p.name: p for p in cls.get_property_sets()}.get(name)
 
 
 class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompare):
