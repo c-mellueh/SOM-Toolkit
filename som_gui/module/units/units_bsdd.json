@@ -42,7 +42,8 @@
     },
     {
         "Code": "px",
-        "Name": "pixel"
+        "Name": "pixel",
+        "QudtUri":"http://qudt.org/vocab/unit/PIXEL"
     },
     {
         "Code": "pf",
@@ -115,7 +116,7 @@
     {
         "Code": "g/kg",
         "Name": "gram per kilogram",
-        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-KG"
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-KiloGM"
     },
     {
         "Code": "rad",

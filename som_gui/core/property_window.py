@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeView
 import SOMcreator
 
-from som_gui.module.property_.ui import UnitComboBox
 from som_gui.module.property_window.constants import (
     SEPERATOR_SECTION,
     SEPERATOR_STATUS,

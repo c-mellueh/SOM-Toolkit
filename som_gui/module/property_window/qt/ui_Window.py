@@ -20,14 +20,14 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
     QLineEdit, QPushButton, QSizePolicy, QSplitter,
     QTextEdit, QVBoxLayout, QWidget)
 
-from som_gui.module.property_.ui import UnitComboBox
 from som_gui.module.property_window.ui import ValueView
+from som_gui.module.units.ui import UnitComboBox
 
 class Ui_PropertyWindow(object):
     def setupUi(self, PropertyWindow):
         if not PropertyWindow.objectName():
             PropertyWindow.setObjectName(u"PropertyWindow")
-        PropertyWindow.resize(649, 628)
+        PropertyWindow.resize(649, 631)
         self.verticalLayout = QVBoxLayout(PropertyWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout_3 = QVBoxLayout()

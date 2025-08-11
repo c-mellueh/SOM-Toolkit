@@ -18,9 +18,9 @@ TIME = "Time"
 
 def read_units():
     UNIT_APTH = os.path.join(os.path.dirname(__file__),"tables", "units_v1.json")
-    with open(UNIT_APTH, "r") as f:
-        units = json.load(f)
-    return {d["Name"]:d for d in units}
+    # with open(UNIT_APTH, "r") as f:
+    #     units = json.load(f)
+    return {}
 
 UNITS = read_units()
 

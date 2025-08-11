@@ -4,7 +4,8 @@ from typing import Callable, TYPE_CHECKING, TypedDict, Union, Sequence
 
 if TYPE_CHECKING:
     import SOMcreator
-    from .ui import PropertyWidget, UnitSettings
+    from .ui import PropertyWidget
+    from som_gui.module.units.ui import UnitSettings
 
     PP = SOMcreator.SOMClass | SOMcreator.SOMProperty | SOMcreator.SOMPropertySet
 

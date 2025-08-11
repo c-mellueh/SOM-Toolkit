@@ -35,14 +35,6 @@ class WordWrapHeaderView(QHeaderView):
         return rect.size() + text_margin_buffer
 
 
-class UnitSettings(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.ui = ui_UnitSettings.Ui_UnitSettings()
-        self.ui.setupUi(self)
-        property_module.trigger.unit_settings_created(self)
-
-
 class UnitComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
