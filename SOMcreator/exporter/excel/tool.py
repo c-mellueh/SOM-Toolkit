@@ -10,6 +10,8 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
 import SOMcreator
 
+from SOMcreator.datastructure.ifc_schema import IFC2X3,IFC4,IFC4_3
+
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
 IDENT_PROPERTY_NAME = "bauteilKlassifikation"
 NAME = "name"
@@ -80,8 +82,9 @@ class ExportExcel:
         return som_class.abbreviation or ""
 
     @classmethod
-    def _get_ifc_mapping(cls, som_class: SOMcreator.SOMClass):
-        return ";".join(som_class.ifc_mapping) or ""
+    def _get_ifc_mapping(cls, som_class: SOMcreator.SOMClass,version):
+        mapping = som_class.ifc_mapping.get(version,[])
+        return ";".join(mapping)
 
     @classmethod
     def get_root_parent(cls,som_class:SOMcreator.SOMClass) ->SOMcreator.SOMClass:
@@ -95,13 +98,15 @@ class ExportExcel:
     @classmethod
     def fill_main_sheet(cls, sheet: Worksheet,class_list:list[SOMcreator.SOMClass],cell_dict:dict) -> None:
         sheet.title = "Uebersicht"
-        titles = ["Kategorie","Name", "Identifier", "Abkürzung", "IfcMapping"]
+        titles = ["Kategorie","Name", "Identifier", "Abkürzung", "Ifc2X3", "Ifc4", "Ifc4.3"]
         getter_functions: list[Callable] = [
             lambda c:cls.get_root_parent(c).name,
             cls._get_name,
             cls._get_identifier,
             cls._get_abbreviation,
-            cls._get_ifc_mapping,
+            lambda c:cls._get_ifc_mapping(c,IFC2X3),
+            lambda c:cls._get_ifc_mapping(c,IFC4),
+            lambda c:cls._get_ifc_mapping(c,IFC4_3),
         ]
         for column, text in enumerate(titles, start=1):
             sheet.cell(1, column).value = text

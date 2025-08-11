@@ -37,7 +37,7 @@ def _build_specifications(
 ) -> None:
     xml_specifications = SubElement(xml_parent, ids_xsd.SPECIFICATIONS, nsmap=NSMAP)
 
-    for som_class, property_set_dict in required_data.items():
+    for som_class, property_set_dict in sorted(required_data.items(),key= lambda x:x[0].name):
         if som_class.identifier_property is None:
             continue
         if som_class.is_concept:
@@ -47,10 +47,10 @@ def _build_specifications(
 
 def _build_applicability(som_class: SOMcreator.SOMClass, xml_parent: Element) -> None:
     xml_applicability = SubElement(xml_parent, ids_xsd.APPLICABILITY, nsmap=NSMAP)
-    xml_applicability.set(xml_xsd.MINOCCURS, "1")
+    xml_applicability.set(xml_xsd.MINOCCURS, "0")
     xml_applicability.set(xml_xsd.MAXOCCURS, "unbounded")
     xml_property = SubElement(xml_applicability, ids_xsd.PROPERTY, nsmap=NSMAP)
-    xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.LABEL.upper())
+    xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.TEXT.upper())
     xml_property_set = SubElement(xml_property, ids_xsd.PROPERTYSET, nsmap=NSMAP)
     SubElement(xml_property_set, ids_xsd.SIMPLEVALUE).text = (
         som_class.identifier_property.property_set.name
@@ -78,7 +78,8 @@ def _build_property_requirement(
 ) -> None:
     xml_property = SubElement(xml_parent, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, som_property.data_type.upper())
-    xml_property.set(ids_xsd.ATTR_CARDINALITY, xml_xsd.VAL_REQUIRED)
+    cardinality = xml_xsd.VAL_OPTIONAL if som_property.is_optional() else xml_xsd.VAL_REQUIRED
+    xml_property.set(ids_xsd.ATTR_CARDINALITY, cardinality)
     xml_property_set = SubElement(xml_property, ids_xsd.PROPERTYSET)
     SubElement(xml_property_set, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = (
         som_property.property_set.name
@@ -127,9 +128,9 @@ def _build_specification(
 ) -> None:
     xml_specification = SubElement(xml_parent, ids_xsd.SPECIFICATION, nsmap=NSMAP)
     xml_specification.set(
-        ids_xsd.ATTR_NAME, f"Pruefregel {som_class.name} ({som_class.ident_value})"
+        ids_xsd.ATTR_NAME, f"{som_class.name} ({som_class.ident_value})"
     )
-    xml_specification.set(ids_xsd.ATTR_IFCVERSION, ids_xsd.VAL_IFC4)
+    xml_specification.set(ids_xsd.ATTR_IFCVERSION, ids_xsd.VAL_IFC4X3)
     xml_specification.set(
         ids_xsd.ATTR_DESCRIPTION, "Automatisch generierte Attributpruefregel"
     )
