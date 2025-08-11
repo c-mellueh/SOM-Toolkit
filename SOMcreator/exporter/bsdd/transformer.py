@@ -7,12 +7,22 @@ from SOMcreator.exporter import bsdd
 from SOMcreator.constants import value_constants,ifc_datatypes
 import logging
 import datetime
-
+import json
+import os
 STRING = "String"
 INTEGER = "Integer"
 BOOL = "Boolean"
 REAL = "Real"
 TIME = "Time"
+
+
+def read_units():
+    UNIT_APTH = os.path.join(os.path.dirname(__file__),"tables", "units_v1.json")
+    with open(UNIT_APTH, "r") as f:
+        units = json.load(f)
+    return {d["Name"]:d for d in units}
+
+UNITS = read_units()
 
 IFC_BSDD__PROPERTY_PATH = "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop"
 
@@ -23,6 +33,7 @@ DATATYPE_MAPPING = {
     value_constants.REAL: REAL,
     value_constants.DATE: TIME,
     ifc_datatypes.LENGTHMEASURE:REAL,
+    ifc_datatypes.MASSMEASURE:REAL
 
 }
 
@@ -31,6 +42,8 @@ PROPERTY_KIND_MAPPING = {
     value_constants.RANGE: "Range",
     value_constants.LIST: "List",
 }
+
+
 
 
 def transform_som_class_to_bsdd_class(
@@ -73,7 +86,12 @@ def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
     p = bsdd.Property(code, som_property.name)
     p.property = som_property
     p.Definition = som_property.description
-    p.DataType = DATATYPE_MAPPING[som_property.data_type]
+    p.DataType = DATATYPE_MAPPING.get(som_property.data_type) or STRING
+
+    if som_property.unit:
+        val = UNITS.get(som_property.unit)
+        if not val:
+            print(som_property.unit)
     if (
         som_property.value_type == value_constants.FORMAT
         and som_property.allowed_values
@@ -183,10 +201,18 @@ def _create_properties(
     return properties, class_properties
 
 
+def get_ifc_mappings(som_class: SOMcreator.SOMClass) -> list[str]:
+    ifc_mappings = set()
+    ifc_mappings.update(som_class.ifc_mapping.get("IFC4_3", ()))
+    ifc_mappings.update(som_class.ifc_mapping.get("IFC4", ()))
+    ifc_mappings.update(som_class.ifc_mapping.get("IFC2x3", ()))
+    
+    return [v.replace("/","") for v in ifc_mappings]
+
 def _create_class(som_class: SOMcreator.SOMClass, d: bsdd.Dictionary):
     c = bsdd.Class(d, str(som_class.ident_value), som_class.name, "Class")
     c.Definition = som_class.description
-    c.RelatedIfcEntityNamesList = list(som_class.ifc_mapping)
+    c.RelatedIfcEntityNamesList = get_ifc_mappings(som_class)
     c.CountriesOfUse = ["DE"]
     c.CountryOfOrigin = "DE"
     c.CreatorLanguageIsoCode = "de-DE"

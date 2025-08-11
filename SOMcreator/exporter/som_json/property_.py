@@ -7,7 +7,8 @@ from SOMcreator.datastructure.som_json import (
     DATA_TYPE,
     CHILD_INHERITS_VALUE,
     REVIT_MAPPING,
-    IGNORED_VALUES
+    IGNORED_VALUES,
+    UNIT
 )
 from typing import TYPE_CHECKING
 
@@ -24,4 +25,5 @@ def write(som_property: SOMcreator.SOMProperty) -> PropertyDict:
     property_dict[REVIT_MAPPING] = som_property.revit_name
     property_dict[VALUE] = som_property._own_values
     property_dict[IGNORED_VALUES] = som_property.ignored_values
+    property_dict[UNIT] = som_property.unit
     return property_dict

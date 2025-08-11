@@ -11,7 +11,8 @@ from SOMcreator.datastructure.som_json import (
     VALUE,
     VALUE_TYPE,
     PropertyDict,
-    IGNORED_VALUES
+    IGNORED_VALUES,
+    UNIT
 )
 
 
@@ -27,7 +28,7 @@ def load(
     value = property_dict[VALUE]
     value_type = property_dict[VALUE_TYPE]
     data_type = property_dict[DATA_TYPE]
-    
+    unit = property_dict.get(UNIT, None)
     # compatibility for Datatype import that uses XML-Datatypes such as xs:string
     if data_type in OLD_DATATYPE_DICT:
         data_type = OLD_DATATYPE_DICT[data_type]
@@ -47,6 +48,7 @@ def load(
         revit_mapping=revit_mapping,
         project=proj,
         filter_matrix=filter_matrix,
+        unit = unit,
     )
 
     #added on v.1.9.1
