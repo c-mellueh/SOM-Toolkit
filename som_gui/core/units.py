@@ -24,6 +24,7 @@ def fill_unit_settings(
     util: Type[tool.Util],
 ):
     units_tool.set_unit_settings_widget(widget)
+    units_tool.import_units()
 
     all_units = [un.capitalize() for un in unit_names]
     allowed_units = units_tool.get_allowed_units(appdata)

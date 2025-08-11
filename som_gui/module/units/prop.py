@@ -26,3 +26,5 @@ UNITS = {
 
 class UnitsProperties:
     unit_settings_widget: ui.UnitSettings | None = None
+    unit_dict = dict()
+    

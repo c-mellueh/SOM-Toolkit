@@ -7,12 +7,12 @@ from PySide6.QtCore import Qt
 import som_gui.core.tool
 import som_gui
 from som_gui.module.units import constants
-
+from som_gui.resources.data import UNIT_PATH
 if TYPE_CHECKING:
     from som_gui.module.units.prop import UnitsProperties
     from som_gui.module.units import ui
 from ifcopenshell.util.unit import unit_names, prefixes
-
+import json
 
 class Units(som_gui.core.tool.Units):
     @classmethod
@@ -68,3 +68,10 @@ class Units(som_gui.core.tool.Units):
     def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
         items = [list_widget.item(i) for i in range(list_widget.count())]
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
+
+    @classmethod
+    def import_units(cls):
+        prop = cls.get_properties()
+        with open(UNIT_PATH, "r") as f:
+            data = json.load(f)
+        prop.unit_dict = data   
