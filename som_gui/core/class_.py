@@ -32,7 +32,10 @@ def init(
         "ident_property_name", class_info.is_ident_property_valid
     )
     class_tool.add_class_creation_check("ident_value", class_info.is_identifier_unique)
-    class_tool.signaller.class_deleted.connect(lambda c: logging.debug(f"Class Deleted: {c}") )
+    class_tool.signaller.class_deleted.connect(
+        lambda c: logging.debug(f"Class Deleted: {c}")
+    )
+
 
 def modify_class(
     som_class: SOMcreator.SOMClass,
@@ -41,7 +44,7 @@ def modify_class(
     class_info: Type[tool.ClassInfo],
     property_set: Type[tool.PropertySet],
     main_window: Type[tool.MainWindow],
-    ifc_schema:Type[tool.IfcSchema],
+    ifc_schema: Type[tool.IfcSchema],
 ):
 
     data_dict = class_info.generate_datadict()
@@ -66,15 +69,19 @@ def modify_class(
         class_tool.handle_property_issue(result)
         return
     ifc_version = ifc_schema.get_newest_version(ifc_schema.get_active_versions())
-    ifc_mappings = property_set.get_ifc_names(som_class.ifc_mapping[ifc_version],ifc_version)
+    ifc_mappings = property_set.get_ifc_names(
+        som_class.ifc_mapping[ifc_version], ifc_version
+    )
     if not is_group and property_name and pset_name:
         pset = som_class.get_property_set_by_name(pset_name)
         if not pset:
             # create identifier property_set
-            parent,mode = property_set.search_for_parent(pset_name,som_class,ifc_mappings)
+            parent, mode = property_set.search_for_parent(
+                pset_name, som_class, ifc_mappings
+            )
             if mode == 0:
                 return
-            elif mode in (1,2):
+            elif mode in (1, 2):
                 pset = property_set.create_property_set(pset_name, som_class, parent)
             elif mode == 3:
                 pset = parent
@@ -125,7 +132,7 @@ def copy_class(
     new_class = cp.copy(som_class)
     class_tool.signaller.class_created.emit(new_class)
     class_tool.signaller.modify_class.emit(new_class, data_dict)
-    
+
 
 def create_class(
     data_dict: ClassDataDict,
@@ -133,8 +140,7 @@ def create_class(
     class_info: Type[tool.ClassInfo],
     project: Type[tool.Project],
     property_set: Type[tool.PropertySet],
-    ifc_schema:Type[tool.IfcSchema],
-
+    ifc_schema: Type[tool.IfcSchema],
 ):
     name = data_dict["name"]
     is_group = data_dict["is_group"]
@@ -164,23 +170,25 @@ def create_class(
         # create identifier property_set
     ifc_version = ifc_schema.get_newest_version(ifc_schema.get_active_versions())
     ifc_mappings = ifc_mappings[ifc_version]
-    allowed_ifc_psets = property_set.get_ifc_names(ifc_mappings,ifc_version)
+    allowed_ifc_psets = property_set.get_ifc_names(ifc_mappings, ifc_version)
 
     new_class = SOMcreator.SOMClass(name, project=proj)
     parent_uuid = data_dict.get("parent_uuid")
     if parent_uuid:
         parent_class = proj.get_element_by_uuid(parent_uuid)
         parent_class.add_child(new_class)
-    parent_pset,mode = property_set.search_for_parent(pset_name,new_class,allowed_ifc_psets)
-    if mode ==0:
+    parent_pset, mode = property_set.search_for_parent(
+        pset_name, new_class, allowed_ifc_psets
+    )
+    if mode == 0:
         return
-    elif mode in (1,2):
+    elif mode in (1, 2):
         pset = parent_pset.create_child()
     elif mode == 3:
         pset = parent_pset
     else:
         pset = property_set.create_property_set(pset_name)
-    
+
     new_class.description = description
     new_class.add_property_set(pset)
     # create identifier property

@@ -10,6 +10,7 @@ def register():
 def activate():
     trigger.activate()
 
+
 def deactivate():
     trigger.deactivate()
 

@@ -8,79 +8,136 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QCheckBox,
-    QDialogButtonBox, QHBoxLayout, QHeaderView, QLabel,
-    QLayout, QPushButton, QSizePolicy, QSplitter,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtCore import (
+    QCoreApplication,
+    QDate,
+    QDateTime,
+    QLocale,
+    QMetaObject,
+    QObject,
+    QPoint,
+    QRect,
+    QSize,
+    QTime,
+    QUrl,
+    Qt,
+)
+from PySide6.QtGui import (
+    QBrush,
+    QColor,
+    QConicalGradient,
+    QCursor,
+    QFont,
+    QFontDatabase,
+    QGradient,
+    QIcon,
+    QImage,
+    QKeySequence,
+    QLinearGradient,
+    QPainter,
+    QPalette,
+    QPixmap,
+    QRadialGradient,
+    QTransform,
+)
+from PySide6.QtWidgets import (
+    QAbstractButton,
+    QAbstractItemView,
+    QApplication,
+    QCheckBox,
+    QDialogButtonBox,
+    QHBoxLayout,
+    QHeaderView,
+    QLabel,
+    QLayout,
+    QPushButton,
+    QSizePolicy,
+    QSplitter,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
-from som_gui.module.property_import.ui import (IfcTypeComboBox, PropertySetTable, PropertyTable, SOMTypeComboBox,
-    ValueTable)
+from som_gui.module.property_import.ui import (
+    IfcTypeComboBox,
+    PropertySetTable,
+    PropertyTable,
+    SOMTypeComboBox,
+    ValueTable,
+)
+
 
 class Ui_PropertyImport(object):
     def setupUi(self, PropertyImport):
         if not PropertyImport.objectName():
-            PropertyImport.setObjectName(u"PropertyImport")
+            PropertyImport.setObjectName("PropertyImport")
         PropertyImport.resize(1383, 831)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy = QSizePolicy(
+            QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding
+        )
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(PropertyImport.sizePolicy().hasHeightForWidth())
         PropertyImport.setSizePolicy(sizePolicy)
         PropertyImport.setMinimumSize(QSize(0, 0))
         self.main_layout = QVBoxLayout(PropertyImport)
-        self.main_layout.setObjectName(u"main_layout")
+        self.main_layout.setObjectName("main_layout")
         self.main_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         self.horizontal_layout_buttons = QHBoxLayout()
-        self.horizontal_layout_buttons.setObjectName(u"horizontal_layout_buttons")
-        self.horizontal_layout_buttons.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        self.horizontal_layout_buttons.setObjectName("horizontal_layout_buttons")
+        self.horizontal_layout_buttons.setSizeConstraint(
+            QLayout.SizeConstraint.SetDefaultConstraint
+        )
         self.combo_box_ifc_type = IfcTypeComboBox(PropertyImport)
-        self.combo_box_ifc_type.setObjectName(u"combo_box_ifc_type")
+        self.combo_box_ifc_type.setObjectName("combo_box_ifc_type")
 
         self.horizontal_layout_buttons.addWidget(self.combo_box_ifc_type)
 
         self.combo_box_identifier = SOMTypeComboBox(PropertyImport)
-        self.combo_box_identifier.setObjectName(u"combo_box_identifier")
+        self.combo_box_identifier.setObjectName("combo_box_identifier")
 
         self.horizontal_layout_buttons.addWidget(self.combo_box_identifier)
 
         self.label_class_count = QLabel(PropertyImport)
-        self.label_class_count.setObjectName(u"label_class_count")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        self.label_class_count.setObjectName("label_class_count")
+        sizePolicy1 = QSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
+        )
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.label_class_count.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.label_class_count.sizePolicy().hasHeightForWidth()
+        )
         self.label_class_count.setSizePolicy(sizePolicy1)
         self.label_class_count.setMinimumSize(QSize(0, 24))
         self.label_class_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontal_layout_buttons.addWidget(self.label_class_count)
 
-
         self.main_layout.addLayout(self.horizontal_layout_buttons)
 
         self.splitter_tables = QSplitter(PropertyImport)
-        self.splitter_tables.setObjectName(u"splitter_tables")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
+        self.splitter_tables.setObjectName("splitter_tables")
+        sizePolicy2 = QSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding
+        )
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.splitter_tables.sizePolicy().hasHeightForWidth())
+        sizePolicy2.setHeightForWidth(
+            self.splitter_tables.sizePolicy().hasHeightForWidth()
+        )
         self.splitter_tables.setSizePolicy(sizePolicy2)
         self.splitter_tables.setOrientation(Qt.Orientation.Horizontal)
         self.verticalLayoutWidget_3 = QWidget(self.splitter_tables)
-        self.verticalLayoutWidget_3.setObjectName(u"verticalLayoutWidget_3")
+        self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
         self.vertical_layout_pset = QVBoxLayout(self.verticalLayoutWidget_3)
-        self.vertical_layout_pset.setObjectName(u"vertical_layout_pset")
+        self.vertical_layout_pset.setObjectName("vertical_layout_pset")
         self.vertical_layout_pset.setContentsMargins(0, 0, 0, 0)
         self.label_proeprty_sets = QLabel(self.verticalLayoutWidget_3)
-        self.label_proeprty_sets.setObjectName(u"label_proeprty_sets")
-        sizePolicy1.setHeightForWidth(self.label_proeprty_sets.sizePolicy().hasHeightForWidth())
+        self.label_proeprty_sets.setObjectName("label_proeprty_sets")
+        sizePolicy1.setHeightForWidth(
+            self.label_proeprty_sets.sizePolicy().hasHeightForWidth()
+        )
         self.label_proeprty_sets.setSizePolicy(sizePolicy1)
         self.label_proeprty_sets.setMinimumSize(QSize(0, 24))
         self.label_proeprty_sets.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -88,21 +145,37 @@ class Ui_PropertyImport(object):
         self.vertical_layout_pset.addWidget(self.label_proeprty_sets)
 
         self.table_widget_property_set = PropertySetTable(self.verticalLayoutWidget_3)
-        self.table_widget_property_set.setObjectName(u"table_widget_property_set")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        self.table_widget_property_set.setObjectName("table_widget_property_set")
+        sizePolicy3 = QSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.table_widget_property_set.sizePolicy().hasHeightForWidth())
+        sizePolicy3.setHeightForWidth(
+            self.table_widget_property_set.sizePolicy().hasHeightForWidth()
+        )
         self.table_widget_property_set.setSizePolicy(sizePolicy3)
-        self.table_widget_property_set.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.table_widget_property_set.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.table_widget_property_set.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_widget_property_set.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.table_widget_property_set.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_widget_property_set.setVerticalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAsNeeded
+        )
+        self.table_widget_property_set.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        self.table_widget_property_set.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.table_widget_property_set.setSelectionMode(
+            QAbstractItemView.SelectionMode.SingleSelection
+        )
+        self.table_widget_property_set.setSelectionBehavior(
+            QAbstractItemView.SelectionBehavior.SelectRows
+        )
         self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_property_set.horizontalHeader().setDefaultSectionSize(39)
         self.table_widget_property_set.horizontalHeader().setHighlightSections(True)
-        self.table_widget_property_set.horizontalHeader().setProperty(u"showSortIndicator", False)
+        self.table_widget_property_set.horizontalHeader().setProperty(
+            "showSortIndicator", False
+        )
         self.table_widget_property_set.horizontalHeader().setStretchLastSection(True)
         self.table_widget_property_set.verticalHeader().setVisible(False)
         self.table_widget_property_set.verticalHeader().setHighlightSections(False)
@@ -111,13 +184,15 @@ class Ui_PropertyImport(object):
 
         self.splitter_tables.addWidget(self.verticalLayoutWidget_3)
         self.verticalLayoutWidget_2 = QWidget(self.splitter_tables)
-        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
+        self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.vertical_layout_property = QVBoxLayout(self.verticalLayoutWidget_2)
-        self.vertical_layout_property.setObjectName(u"vertical_layout_property")
+        self.vertical_layout_property.setObjectName("vertical_layout_property")
         self.vertical_layout_property.setContentsMargins(0, 0, 0, 0)
         self.label_properties = QLabel(self.verticalLayoutWidget_2)
-        self.label_properties.setObjectName(u"label_properties")
-        sizePolicy1.setHeightForWidth(self.label_properties.sizePolicy().hasHeightForWidth())
+        self.label_properties.setObjectName("label_properties")
+        sizePolicy1.setHeightForWidth(
+            self.label_properties.sizePolicy().hasHeightForWidth()
+        )
         self.label_properties.setSizePolicy(sizePolicy1)
         self.label_properties.setMinimumSize(QSize(0, 24))
         self.label_properties.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -125,18 +200,28 @@ class Ui_PropertyImport(object):
         self.vertical_layout_property.addWidget(self.label_properties)
 
         self.table_widget_property = PropertyTable(self.verticalLayoutWidget_2)
-        self.table_widget_property.setObjectName(u"table_widget_property")
-        sizePolicy3.setHeightForWidth(self.table_widget_property.sizePolicy().hasHeightForWidth())
+        self.table_widget_property.setObjectName("table_widget_property")
+        sizePolicy3.setHeightForWidth(
+            self.table_widget_property.sizePolicy().hasHeightForWidth()
+        )
         self.table_widget_property.setSizePolicy(sizePolicy3)
         self.table_widget_property.setAutoScroll(False)
-        self.table_widget_property.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_widget_property.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.table_widget_property.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_widget_property.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.table_widget_property.setSelectionMode(
+            QAbstractItemView.SelectionMode.SingleSelection
+        )
+        self.table_widget_property.setSelectionBehavior(
+            QAbstractItemView.SelectionBehavior.SelectRows
+        )
         self.table_widget_property.horizontalHeader().setCascadingSectionResizes(True)
         self.table_widget_property.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_property.horizontalHeader().setDefaultSectionSize(50)
         self.table_widget_property.horizontalHeader().setHighlightSections(True)
-        self.table_widget_property.horizontalHeader().setProperty(u"showSortIndicator", False)
+        self.table_widget_property.horizontalHeader().setProperty(
+            "showSortIndicator", False
+        )
         self.table_widget_property.horizontalHeader().setStretchLastSection(True)
         self.table_widget_property.verticalHeader().setVisible(False)
 
@@ -144,15 +229,15 @@ class Ui_PropertyImport(object):
 
         self.splitter_tables.addWidget(self.verticalLayoutWidget_2)
         self.verticalLayoutWidget = QWidget(self.splitter_tables)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.vertical_layout_value = QVBoxLayout(self.verticalLayoutWidget)
-        self.vertical_layout_value.setObjectName(u"vertical_layout_value")
+        self.vertical_layout_value.setObjectName("vertical_layout_value")
         self.vertical_layout_value.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.horizontalLayout_2.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         self.check_box_values = QCheckBox(self.verticalLayoutWidget)
-        self.check_box_values.setObjectName(u"check_box_values")
+        self.check_box_values.setObjectName("check_box_values")
         self.check_box_values.setEnabled(True)
         self.check_box_values.setMinimumSize(QSize(0, 24))
         self.check_box_values.setMaximumSize(QSize(16777215, 24))
@@ -162,7 +247,7 @@ class Ui_PropertyImport(object):
         self.horizontalLayout_2.addWidget(self.check_box_values)
 
         self.label_value = QLabel(self.verticalLayoutWidget)
-        self.label_value.setObjectName(u"label_value")
+        self.label_value.setObjectName("label_value")
         sizePolicy1.setHeightForWidth(self.label_value.sizePolicy().hasHeightForWidth())
         self.label_value.setSizePolicy(sizePolicy1)
         self.label_value.setMinimumSize(QSize(0, 24))
@@ -170,17 +255,24 @@ class Ui_PropertyImport(object):
 
         self.horizontalLayout_2.addWidget(self.label_value)
 
-
         self.vertical_layout_value.addLayout(self.horizontalLayout_2)
 
         self.table_widget_value = ValueTable(self.verticalLayoutWidget)
-        self.table_widget_value.setObjectName(u"table_widget_value")
-        sizePolicy2.setHeightForWidth(self.table_widget_value.sizePolicy().hasHeightForWidth())
+        self.table_widget_value.setObjectName("table_widget_value")
+        sizePolicy2.setHeightForWidth(
+            self.table_widget_value.sizePolicy().hasHeightForWidth()
+        )
         self.table_widget_value.setSizePolicy(sizePolicy2)
-        self.table_widget_value.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_widget_value.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.table_widget_value.setSelectionBehavior(
+            QAbstractItemView.SelectionBehavior.SelectRows
+        )
         self.table_widget_value.horizontalHeader().setMinimumSectionSize(1)
-        self.table_widget_value.horizontalHeader().setProperty(u"showSortIndicator", False)
+        self.table_widget_value.horizontalHeader().setProperty(
+            "showSortIndicator", False
+        )
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
         self.table_widget_value.verticalHeader().setVisible(False)
 
@@ -191,16 +283,18 @@ class Ui_PropertyImport(object):
         self.main_layout.addWidget(self.splitter_tables)
 
         self.horzontal_layout_action_buttons = QHBoxLayout()
-        self.horzontal_layout_action_buttons.setObjectName(u"horzontal_layout_action_buttons")
+        self.horzontal_layout_action_buttons.setObjectName(
+            "horzontal_layout_action_buttons"
+        )
         self.button_settings = QPushButton(PropertyImport)
-        self.button_settings.setObjectName(u"button_settings")
+        self.button_settings.setObjectName("button_settings")
         self.button_settings.setMinimumSize(QSize(24, 24))
         self.button_settings.setMaximumSize(QSize(24, 24))
 
         self.horzontal_layout_action_buttons.addWidget(self.button_settings)
 
         self.button_download = QPushButton(PropertyImport)
-        self.button_download.setObjectName(u"button_download")
+        self.button_download.setObjectName("button_download")
         self.button_download.setMaximumSize(QSize(24, 24))
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSave))
         self.button_download.setIcon(icon)
@@ -208,28 +302,41 @@ class Ui_PropertyImport(object):
         self.horzontal_layout_action_buttons.addWidget(self.button_download)
 
         self.buttonBox = QDialogButtonBox(PropertyImport)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setStandardButtons(
+            QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok
+        )
 
         self.horzontal_layout_action_buttons.addWidget(self.buttonBox)
 
-
         self.main_layout.addLayout(self.horzontal_layout_action_buttons)
-
 
         self.retranslateUi(PropertyImport)
 
         QMetaObject.connectSlotsByName(PropertyImport)
+
     # setupUi
 
     def retranslateUi(self, PropertyImport):
-        PropertyImport.setWindowTitle(QCoreApplication.translate("PropertyImport", u"Form", None))
-        self.label_class_count.setText(QCoreApplication.translate("PropertyImport", u"Count", None))
-        self.label_proeprty_sets.setText(QCoreApplication.translate("PropertyImport", u"PropertySets", None))
-        self.label_properties.setText(QCoreApplication.translate("PropertyImport", u"Properties", None))
-        self.check_box_values.setText(QCoreApplication.translate("PropertyImport", u"All", None))
-        self.label_value.setText(QCoreApplication.translate("PropertyImport", u"Values", None))
+        PropertyImport.setWindowTitle(
+            QCoreApplication.translate("PropertyImport", "Form", None)
+        )
+        self.label_class_count.setText(
+            QCoreApplication.translate("PropertyImport", "Count", None)
+        )
+        self.label_proeprty_sets.setText(
+            QCoreApplication.translate("PropertyImport", "PropertySets", None)
+        )
+        self.label_properties.setText(
+            QCoreApplication.translate("PropertyImport", "Properties", None)
+        )
+        self.check_box_values.setText(
+            QCoreApplication.translate("PropertyImport", "All", None)
+        )
+        self.label_value.setText(
+            QCoreApplication.translate("PropertyImport", "Values", None)
+        )
         self.button_settings.setText("")
         self.button_download.setText("")
-    # retranslateUi
 
+    # retranslateUi

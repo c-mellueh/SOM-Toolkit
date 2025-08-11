@@ -49,13 +49,12 @@ def set_language(
     app = main_window.get_app()
     language.load_main_translations(app, code)
     language.retranslate_main_ui()
-    
+
     active_plugins = [
         n for n in plugings.get_available_plugins() if plugings.is_plugin_active(n)
     ]
     language.load_plugin_translations(active_plugins, app, code)
     language.retranslate_plugins(active_plugins)
-
 
 
 def retranslate_ui(language: Type[tool.Language]):

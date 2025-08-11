@@ -21,7 +21,7 @@ def retranslate_ui(table=None):
 
 
 def connect_table(table: PropertyTable):
-    core.connect_table(table,tool.PropertyTable)
+    core.connect_table(table, tool.PropertyTable)
     table.customContextMenuRequested.connect(
         lambda pos: core.create_context_menu(table, pos, tool.PropertyTable, tool.Util)
     )
@@ -31,11 +31,11 @@ def connect_table(table: PropertyTable):
 
 
 def drop_event(event, table):
-    core.drop_event(event, table, tool.PropertyTable, tool.Property,tool.PropertySet)
+    core.drop_event(event, table, tool.PropertyTable, tool.Property, tool.PropertySet)
 
 
 def create_mime_data(items: list[QTableWidgetItem], mime_data):
-    return core.create_mime_data(items, mime_data, tool.PropertyTable,tool.Property)
+    return core.create_mime_data(items, mime_data, tool.PropertyTable, tool.Property)
 
 
 def on_new_project():

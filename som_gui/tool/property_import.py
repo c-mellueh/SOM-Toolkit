@@ -137,7 +137,9 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
             combobox.removeItem(combobox.findData(som_class, Qt.ItemDataRole.UserRole))
 
         for som_class in add_items:
-            combobox.addItem(f"{som_class.name} ({som_class.ident_value})", userData=som_class)
+            combobox.addItem(
+                f"{som_class.name} ({som_class.ident_value})", userData=som_class
+            )
 
         if combobox.findText(all_keyword) == -1:
             combobox.addItem(all_keyword, userData=all_keyword)
@@ -1221,10 +1223,10 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def are_entities_with_identifiers_existing(cls) ->bool:
+    def are_entities_with_identifiers_existing(cls) -> bool:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        query =         query = f"SELECT DISTINCT {IDENTIFIER} FROM {ENTITY_TABLE_NAME}"
+        query = query = f"SELECT DISTINCT {IDENTIFIER} FROM {ENTITY_TABLE_NAME}"
         cursor.execute(query)
         rows = cursor.fetchall()
-        return bool([x for x in rows if len(x[0])!=0])
+        return bool([x for x in rows if len(x[0]) != 0])

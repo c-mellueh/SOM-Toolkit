@@ -30,6 +30,7 @@ for m in pkgutil.iter_modules(module.__path__):
     path = f"som_gui.module.{m.name}"
     modules.append((m.name, importlib.import_module(path)))
 
+
 def register():
     """
     registers the Properties of each Module

@@ -12,18 +12,20 @@ import SOMcreator
 
 
 def connect():
-    core.connect_signals(tool.ClassTree,tool.Class)
+    core.connect_signals(tool.ClassTree, tool.Class)
     pass
 
-def connect_new_class_tree(tree:ui.ClassView):
-    core.connect_new_class_tree(tree,tool.ClassTree,tool.Class)
+
+def connect_new_class_tree(tree: ui.ClassView):
+    core.connect_new_class_tree(tree, tool.ClassTree, tool.Class)
+
 
 def search_class(tree: ui.ClassView):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
 
 
 def on_new_project():
-    core.update_class_trees(tool.ClassTree,tool.Project)
+    core.update_class_trees(tool.ClassTree, tool.Project)
 
 
 def retranslate_ui():
@@ -35,7 +37,8 @@ def create_mime_data(items: list[QTreeWidgetItem], mime_data):
 
 
 def group_selection(tree: ui.ClassView):
-    core.create_group(tree, tool.ClassTree,tool.Class, tool.Project)
+    core.create_group(tree, tool.ClassTree, tool.Class, tool.Project)
 
-def create_context_menu(tree,pos):
-    core.create_context_menu(tree,pos,tool.ClassTree)
+
+def create_context_menu(tree, pos):
+    core.create_context_menu(tree, pos, tool.ClassTree)

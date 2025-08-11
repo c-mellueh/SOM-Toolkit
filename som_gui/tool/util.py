@@ -7,7 +7,7 @@ import tempfile
 from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QAction, QKeySequence, QShortcut,QPalette,QBrush
+from PySide6.QtGui import QAction, QKeySequence, QShortcut, QPalette, QBrush
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QListWidget,
     QCompleter,
-    QApplication
+    QApplication,
 )
 
 import som_gui.core.tool
@@ -398,17 +398,17 @@ class Util(som_gui.core.tool.Util):
         return QBrush(palette.color(QPalette.ColorRole.PlaceholderText))
         if cls.user_is_using_darkmode():
             return QBrush(Qt.GlobalColor.lightGray)
-        else: # Light mode
+        else:  # Light mode
             return QBrush(Qt.GlobalColor.darkGray)
-    
+
     @classmethod
     def get_standard_text_brush(cls):
         palette = QApplication.palette()
         return QBrush(palette.color(QPalette.ColorRole.Text))
-    
+
     @classmethod
-    def insert_tab_order(cls,previous_widget:QWidget,inserted_widget:QWidget):
+    def insert_tab_order(cls, previous_widget: QWidget, inserted_widget: QWidget):
         old_element = previous_widget.nextInFocusChain()
         window = previous_widget.window()
-        window.setTabOrder(previous_widget,inserted_widget)
-        window.setTabOrder(inserted_widget,old_element)
+        window.setTabOrder(previous_widget, inserted_widget)
+        window.setTabOrder(inserted_widget, old_element)

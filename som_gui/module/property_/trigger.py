@@ -11,8 +11,10 @@ def connect():
     core.add_compare_widget(tool.PropertyCompare, tool.CompareWindow)
     core.connect_signals(tool.Property)
 
-def create_empty_property(property_set:SOMcreator.SOMPropertySet):
-    core.create_empty_property(property_set,tool.Property,tool.Util,tool.Project)
+
+def create_empty_property(property_set: SOMcreator.SOMPropertySet):
+    core.create_empty_property(property_set, tool.Property, tool.Util, tool.Project)
+
 
 def init_property_compare(
     project_0: SOMcreator.SOMProject, project_1: SOMcreator.SOMProject

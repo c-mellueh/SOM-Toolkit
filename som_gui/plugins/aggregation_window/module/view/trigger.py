@@ -61,7 +61,13 @@ def key_release_event(event) -> None:
 
 def add_class_to_scene(som_class, scene=None, parent_node=None, pos=None):
     return core.add_class_to_scene(
-        som_class, scene, parent_node, pos, aw_tool.View, aw_tool.Connection, aw_tool.Node
+        som_class,
+        scene,
+        parent_node,
+        pos,
+        aw_tool.View,
+        aw_tool.Connection,
+        aw_tool.Node,
     )
 
 

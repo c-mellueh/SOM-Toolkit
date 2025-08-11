@@ -20,6 +20,7 @@ class PropertyImportResultWindow(QWidget):
         trigger.window_closed()
         return super().closeEvent(event)
 
+
 class PropertySetTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

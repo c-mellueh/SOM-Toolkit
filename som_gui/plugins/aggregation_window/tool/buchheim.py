@@ -13,6 +13,7 @@ from som_gui.plugins.aggregation_window import tool as aw_tool
 X_MARGIN = 20
 Y_MARGIN = 65
 
+
 class Buchheim:
     @classmethod
     def get_properties(cls) -> BuchheimProperties:
@@ -23,7 +24,7 @@ class Buchheim:
         v.thread = None
         v._lmost_sibling = None
         v.mod = 0
-        v.change= 0
+        v.change = 0
         v.shift = 0
         v.ancestor = v
         v.number = None
@@ -31,40 +32,42 @@ class Buchheim:
         v.number = number
         for index, w in enumerate(cls.children(v)):
             cls.intialize(w, depth + 1, index + 1)
-    
-   
+
     @classmethod
     def buchheim(cls, v: node_ui.NodeProxy):
-        tree = cls.firstwalk(v,0)
+        tree = cls.firstwalk(v, 0)
         cls.second_walk(tree)
         return tree
 
-
     @classmethod
-    def firstwalk(cls, v: node_ui.NodeProxy,depth):
+    def firstwalk(cls, v: node_ui.NodeProxy, depth):
         while depth >= len(cls.get_properties().height_list):
-            cls.get_properties().height_list.append(0.)
-        cls.get_properties().height_list[depth] = max(cls.get_properties().height_list[depth],cls.height(v))
-        
-        if len(cls.children(v)) == 0: #no children exist
-            if cls.get_lmost_sibling(v): #if sibling exist move next to sibling with X_MARGIN
+            cls.get_properties().height_list.append(0.0)
+        cls.get_properties().height_list[depth] = max(
+            cls.get_properties().height_list[depth], cls.height(v)
+        )
+
+        if len(cls.children(v)) == 0:  # no children exist
+            if cls.get_lmost_sibling(
+                v
+            ):  # if sibling exist move next to sibling with X_MARGIN
                 lbrother = cls.lbrother(v)
-                cls.set_x(v, cls.x(lbrother) + cls.width(lbrother)+X_MARGIN)
+                cls.set_x(v, cls.x(lbrother) + cls.width(lbrother) + X_MARGIN)
             else:
                 cls.set_x(v, 0.0)
 
         else:
-            default_ancestor = cls.children(v)[0]#elektrotechnik
+            default_ancestor = cls.children(v)[0]  # elektrotechnik
             for w in cls.children(v):
-                cls.firstwalk(w,depth+1)
+                cls.firstwalk(w, depth + 1)
                 default_ancestor = cls.apportion(w, default_ancestor)
-            c1  = cls.x(cls.children(v)[0])
+            c1 = cls.x(cls.children(v)[0])
             c2 = cls.x(cls.children(v)[-1])
-            midpoint = ( c1+ c2) / 2
+            midpoint = (c1 + c2) / 2
 
             w = cls.lbrother(v)
             if w:
-                cls.set_x(v, cls.x(w) + cls.width(w)+X_MARGIN)
+                cls.set_x(v, cls.x(w) + cls.width(w) + X_MARGIN)
 
                 v.mod = cls.x(v) - midpoint
             else:
@@ -75,13 +78,12 @@ class Buchheim:
     def second_walk(cls, v: node_ui.NodeProxy, m=0, depth=0):
         cls.set_x(v, cls.x(v) + m)
         height_list = cls.get_properties().height_list
-        cls.set_y(v, sum(height_list[:depth])+Y_MARGIN*depth)
+        cls.set_y(v, sum(height_list[:depth]) + Y_MARGIN * depth)
         for w in cls.children(v):
             cls.second_walk(w, m + v.mod, depth + 1)
 
     @classmethod
-    def apportion(
-        cls, v: node_ui.NodeProxy, default_ancestor: node_ui.NodeProxy):
+    def apportion(cls, v: node_ui.NodeProxy, default_ancestor: node_ui.NodeProxy):
         w = cls.lbrother(v)
         if w is None:
             return default_ancestor
@@ -99,7 +101,9 @@ class Buchheim:
             vol = cls.left(vol)
             vor = cls.right(vor)
             vor.ancestor = v
-            shift = cls.x(vil) + sil - (cls.x(vir) + sir) + cls.width(vil)+X_MARGIN*2
+            shift = (
+                cls.x(vil) + sil - (cls.x(vir) + sir) + cls.width(vil) + X_MARGIN * 2
+            )
             if shift > 0:
                 cls.move_subtree(cls.ancestor(vil, v, default_ancestor), v, shift)
                 sir = sir + shift
@@ -139,7 +143,7 @@ class Buchheim:
             return default_ancestor
 
     @classmethod
-    def rearrange(cls,root_node:node_ui.NodeProxy,base_pos:QPointF):
+    def rearrange(cls, root_node: node_ui.NodeProxy, base_pos: QPointF):
         def ra(v):
             x, y = cls.pos(v)
             x = base_pos.x() + x
@@ -147,9 +151,9 @@ class Buchheim:
             aw_tool.Node.set_node_pos(v, QPointF(x, y))
             for child in cls.children(v):
                 ra(child)
+
         ra(root_node)
-    
-    
+
     # NodeProxy getter functions
 
     @classmethod

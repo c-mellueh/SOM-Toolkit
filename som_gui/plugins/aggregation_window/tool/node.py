@@ -459,7 +459,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
             )
             id_texts = cls.split_text(id_text, "_", max_width)
             return [base_text] + id_texts
-        undef = [f"{aggregation.name}",f"{property_name}: undefined"]
+        undef = [f"{aggregation.name}", f"{property_name}: undefined"]
         som_class = aggregation.som_class
         pset = som_class.get_property_set_by_name(pset_name)
         if pset is None:
@@ -471,7 +471,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         if len(som_property.allowed_values) == 0:
             return undef
         return [
-            f"{aggregation.name}",f"{property_name}: {som_property.allowed_values[0]}"
+            f"{aggregation.name}",
+            f"{property_name}: {som_property.allowed_values[0]}",
         ]
 
     @classmethod

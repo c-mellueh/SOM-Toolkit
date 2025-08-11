@@ -1,6 +1,7 @@
 from . import prop, trigger, ui
 import som_gui
 
+
 def register():
     som_gui.ClassInfoProperties = prop.ClassInfoProperties
 

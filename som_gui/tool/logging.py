@@ -24,7 +24,7 @@ from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
 
 
 class CustomFormatter(logging.Formatter):
-    def __init__(self, fmt=None, datefmt=None, style='%'):
+    def __init__(self, fmt=None, datefmt=None, style="%"):
         super().__init__(fmt, datefmt, style)
 
     def format(self, record: logging.LogRecord):
@@ -33,7 +33,7 @@ class CustomFormatter(logging.Formatter):
         module_func = f"{path_name}.{record.module}.{record.funcName}"
         # Ensure the combined string is 50 characters long
         if len(module_func) > 50:
-            module_func = module_func[:47] + '...'
+            module_func = module_func[:47] + "..."
         else:
             module_func = module_func.ljust(50)
 
@@ -68,7 +68,9 @@ class Logging(som_gui.core.tool.Logging):
     def show_popup(cls, record: logging.LogRecord, message):
         level_no = record.levelno
         # find path of error
-        identifier = f"{record.pathname}.{record.module}.{record.funcName}.{record.lineno}"
+        identifier = (
+            f"{record.pathname}.{record.module}.{record.funcName}.{record.lineno}"
+        )
         # if this error was set to be ignored, don't show popup
         if identifier in cls.get_properties().ignore_texts:
             return
@@ -78,7 +80,11 @@ class Logging(som_gui.core.tool.Logging):
             (QMessageBox.Icon.Warning, "Warning"),
             (QMessageBox.Icon.Critical, "Error"),
         ]
-        icon, level = states[0] if level_no < logging.WARNING else states[1] if level_no < logging.ERROR else states[2]
+        icon, level = (
+            states[0]
+            if level_no < logging.WARNING
+            else states[1] if level_no < logging.ERROR else states[2]
+        )
         msg_box.setIcon(icon)
         cb = QCheckBox("nicht erneut anzeigen")
         msg_box.setCheckBox(cb)
@@ -188,7 +194,7 @@ class Logging(som_gui.core.tool.Logging):
 
     @classmethod
     def show_exception_popup(cls, exctype, value, tb):
-        error_message = ''.join(traceback.format_exception(exctype, value, tb))
+        error_message = "".join(traceback.format_exception(exctype, value, tb))
         logging.error(error_message)
 
     @classmethod

@@ -57,7 +57,9 @@ def check_entities(
 ):
     main_property_value = modelcheck.get_ident_value(entity)
     main_property_value = "" if main_property_value is None else main_property_value
-    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
+    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(
+        main_property_value
+    )
     if not modelcheck_plugin.entity_is_in_group(entity) and class_rep.aggregations:
         modelcheck_plugin.no_group_issue(entity)
 

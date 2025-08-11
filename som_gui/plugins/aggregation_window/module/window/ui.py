@@ -9,6 +9,7 @@ from . import trigger
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs) -> None:
         from .qt.ui_Window import Ui_Aggregation
+
         super().__init__(*args, **kwargs)
         self.ui = Ui_Aggregation()
         self.ui.setupUi(self)

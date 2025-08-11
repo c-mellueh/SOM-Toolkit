@@ -9,7 +9,8 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_ import ui
 
-def connect_signals(property_tool:Type[tool.Property]):
+
+def connect_signals(property_tool: Type[tool.Property]):
     property_tool.connect_signals()
 
 
@@ -49,14 +50,24 @@ def add_basic_property_data(property_tool: Type[tool.Property]):
         "unit", lambda a: a.unit, lambda v, a: setattr(a, "unit", v)
     )
 
-def create_empty_property(pset:SOMcreator.SOMPropertySet,property_tool: Type[tool.Property],util:Type[tool.Util],project:Type[tool.Project]):
+
+def create_empty_property(
+    pset: SOMcreator.SOMPropertySet,
+    property_tool: Type[tool.Property],
+    util: Type[tool.Util],
+    project: Type[tool.Project],
+):
     if not pset:
         return
-    property_names = [p.name for p in pset.get_properties(filter =False)]
-    name = util.get_new_name(QCoreApplication.translate("Property","New Property"),property_names)
-    som_property = SOMcreator.SOMProperty(pset,name)
+    property_names = [p.name for p in pset.get_properties(filter=False)]
+    name = util.get_new_name(
+        QCoreApplication.translate("Property", "New Property"), property_names
+    )
+    som_property = SOMcreator.SOMProperty(pset, name)
     som_property.project = project.get()
     property_tool.signaller.property_created.emit(som_property)
+
+
 # Property Compare
 
 

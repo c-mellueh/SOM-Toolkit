@@ -28,7 +28,7 @@ class ModelcheckWindowProperties:
     ifc_import_runners: list[IfcImportRunner] = list()
     initial_paint = True
     class_tree: ClassTree = None
-    class_tree_model: QStandardItemModel|None = None
+    class_tree_model: QStandardItemModel | None = None
     class_tree_selection_model: QItemSelectionModel = None
     property_set_tree: PsetTree = None
     pset_tree_model: QStandardItemModel = None

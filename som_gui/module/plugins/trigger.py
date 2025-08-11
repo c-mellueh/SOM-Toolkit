@@ -6,8 +6,11 @@ from . import ui
 
 
 def connect():
-    tool.Settings.add_page_to_toolbox(ui.SettingsWidget, "pagePlugins",
-                                      lambda: core.settings_accepted(tool.Plugins, tool.Popups))
+    tool.Settings.add_page_to_toolbox(
+        ui.SettingsWidget,
+        "pagePlugins",
+        lambda: core.settings_accepted(tool.Plugins, tool.Popups),
+    )
 
 
 def on_new_project():

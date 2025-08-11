@@ -16,7 +16,12 @@ def connect():
     core.add_compare_widget(
         tool.PredefinedPropertySetCompare, tool.PropertyCompare, tool.CompareWindow
     )
-    core.connect_signals(tool.PredefinedPropertySet,tool.Property,tool.PropertyTable,tool.PropertyWindow)
+    core.connect_signals(
+        tool.PredefinedPropertySet,
+        tool.Property,
+        tool.PropertyTable,
+        tool.PropertyWindow,
+    )
 
 
 def open_window():
@@ -50,9 +55,8 @@ def rename_property_set(item):
 
 
 def class_context_menu_requested(pos):
-        core.class_context_menu(
-            pos, tool.PredefinedPropertySet, tool.PropertySet
-        )
+    core.class_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet)
+
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
 
@@ -63,6 +67,7 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.edit_stopped.connect(
         lambda: core.name_edit_stopped(tool.PredefinedPropertySet)
     )
+
 
 def edit_name(text, index):
     property_set_core.rename_pset_by_editor(text, index, tool.PropertySet)

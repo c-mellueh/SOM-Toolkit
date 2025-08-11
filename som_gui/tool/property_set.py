@@ -295,14 +295,16 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def search_for_parent(
         cls,
-        pset_name,som_class:SOMcreator.SOMClass|None = None, allowed_ifc_psets:list[str] = None
-    ) -> tuple[SOMcreator.SOMPropertySet,int]:
+        pset_name,
+        som_class: SOMcreator.SOMClass | None = None,
+        allowed_ifc_psets: list[str] = None,
+    ) -> tuple[SOMcreator.SOMPropertySet, int]:
         """
         If a new PropertySet should be created this function checks if an existing Pset with the same name exists in a parent Class, the Predefined Psets or the IFC-Specification
         returns the parent pset and the mode 0-> No parent Found, 1-> Predefined Pset 2-> Parent Class 3-> IfcSchema
         param: ifc_mappings = allowed
         """
-        return trigger.search_parent(pset_name,som_class,allowed_ifc_psets)
+        return trigger.search_parent(pset_name, som_class, allowed_ifc_psets)
 
     @classmethod
     def remove_property_by_name(
@@ -330,7 +332,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         possible_pset_names.update(
             {p.name for p in cls.get_inheritable_property_sets(som_class)}
         )
-        
+
         ifc_names = cls.get_ifc_names(som_class.ifc_mapping[ifc_version], ifc_version)
         possible_pset_names.update(ifc_names)
         existing_property_sets = [
@@ -339,12 +341,14 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return possible_pset_names.difference(existing_property_sets)
 
     @classmethod
-    def get_ifc_names(cls, class_ifc_mappings:list[str], ifc_version:ifc_schema.VERSION_TYPE):
+    def get_ifc_names(
+        cls, class_ifc_mappings: list[str], ifc_version: ifc_schema.VERSION_TYPE
+    ):
         ifc_names = set()
         for mapping in class_ifc_mappings:
             ifc_names.update(
-                    ifc_schema.get_property_sets_of_class(mapping, ifc_version)
-                )
+                ifc_schema.get_property_sets_of_class(mapping, ifc_version)
+            )
         return ifc_names
 
     @classmethod
@@ -365,7 +369,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
         som_class: SOMcreator.SOMClass,
         ifc_version: ifc_schema.VERSION_TYPE,
     ):
-        return name in cls.get_ifc_names( som_class.ifc_mapping[ifc_version], ifc_version)
+        return name in cls.get_ifc_names(
+            som_class.ifc_mapping[ifc_version], ifc_version
+        )
 
     @classmethod
     def create_ifc_pset(cls, name: str, ifc_version: list[ifc_schema.VERSION_TYPE]):

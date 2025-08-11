@@ -1,6 +1,5 @@
-
 from __future__ import annotations
-from typing import TYPE_CHECKING,Type
+from typing import TYPE_CHECKING, Type
 import logging
 from som_gui import tool
 from PySide6.QtWidgets import QListWidget
@@ -8,10 +7,12 @@ from PySide6.QtCore import Qt
 import som_gui.core.tool
 import som_gui
 from som_gui.module.units import constants
+
 if TYPE_CHECKING:
     from som_gui.module.units.prop import UnitsProperties
     from som_gui.module.units import ui
 from ifcopenshell.util.unit import unit_names, prefixes
+
 
 class Units(som_gui.core.tool.Units):
     @classmethod
@@ -62,7 +63,6 @@ class Units(som_gui.core.tool.Units):
         if allowed_prefixes is None:
             allowed_prefixes = list(all_prefixes)
         return allowed_prefixes
-    
 
     @classmethod
     def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:

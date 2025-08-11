@@ -45,12 +45,12 @@ def get_download_icon() -> QIcon:
 
 ICON_PATH = os.path.dirname(__file__)
 ICON_DICT = {
-    "icon":     "icon.ico",
-    "link":     "link.png",
-    "reload":   "reload.svg",
-    "search":   "search.png",
+    "icon": "icon.ico",
+    "link": "link.png",
+    "reload": "reload.svg",
+    "search": "search.png",
     "settings": "setting.png",
-    "add":      "add.png",
-    "switch":   "switch.png",
-    "download": "download.png"
+    "add": "add.png",
+    "switch": "switch.png",
+    "download": "download.png",
 }

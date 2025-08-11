@@ -2,6 +2,7 @@ from __future__ import annotations
 from PySide6.QtGui import QStandardItemModel
 from typing import TYPE_CHECKING, Type
 import logging
+
 if TYPE_CHECKING:
     from som_gui import tool
 from ifcopenshell.util.unit import unit_names, prefixes
@@ -38,15 +39,11 @@ def fill_unit_settings(
     )
 
 
-def unit_settings_accepted(
-    units_tool: Type[tool.Units], appdata: Type[tool.Appdata]
-):
+def unit_settings_accepted(units_tool: Type[tool.Units], appdata: Type[tool.Appdata]):
     widget = units_tool.get_unit_settings_widget()
     if not widget:
         return
-    allowed_units = units_tool.get_checked_texts_from_list_widget(
-        widget.ui.list_units
-    )
+    allowed_units = units_tool.get_checked_texts_from_list_widget(widget.ui.list_units)
     appdata.set_setting(UNITS_SECTION, ALLOWED_UNITS, allowed_units)
 
     allowed_prefixes = units_tool.get_checked_texts_from_list_widget(

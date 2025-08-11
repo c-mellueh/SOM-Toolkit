@@ -19,6 +19,7 @@ from som_gui import tool
 from PySide6.QtCore import QSortFilterProxyModel
 from . import trigger
 
+
 class ClassView(QTreeView):
     update_requested = Signal()
     mouse_moved = Signal(QMouseEvent, QObject)
@@ -34,7 +35,7 @@ class ClassView(QTreeView):
         trigger.connect_new_class_tree(self)
 
     def enterEvent(self, event):
-        #self.update_requested.emit()
+        # self.update_requested.emit()
         return super().enterEvent(event)
 
     # for Typehints
@@ -74,12 +75,14 @@ class ClassView(QTreeView):
     def dropEvent(self, event):
         self.item_dropped.emit(event)
 
-   
+
 class ClassModel(QAbstractItemModel):
     reset_required = Signal(str)
-    
+
     def __init__(self, *args, **kwargs):
-        self.root_classes = list(self.project.get_root_classes()) if self.project else list()
+        self.root_classes = (
+            list(self.project.get_root_classes()) if self.project else list()
+        )
         # We use this function because project.get_root_classes() takes too long to call every time
         # (name getter, value_getter, value_setter,role)
         self.columns: list[tuple[callable, callable, callable, Qt.ItemDataRole]] = (
@@ -94,12 +97,11 @@ class ClassModel(QAbstractItemModel):
         super().__init__(*args, **kwargs)
         self.reset_required.connect(self.reset)
 
-
     @property
     def project(self):
         return tool.Project.get()
 
-    def reset(self,source:str):
+    def reset(self, source: str):
         logging.info(f"{source} -> Reset Class Model {self}")
         self.beginResetModel()
         self.root_classes = list(self.project.get_root_classes())
@@ -138,7 +140,7 @@ class ClassModel(QAbstractItemModel):
         column = index.column()
         if column >= len(self.columns):
             return flags
-        
+
         role = self.columns[column][3]
         if role == Qt.ItemDataRole.CheckStateRole:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
@@ -205,8 +207,8 @@ class ClassModel(QAbstractItemModel):
             setter_func(som_class, value)
         return True
 
-    def index(self, row: int, column: int, parent= QModelIndex()):
-        #logging.debug(f"request Index {row}:{column} {parent}")
+    def index(self, row: int, column: int, parent=QModelIndex()):
+        # logging.debug(f"request Index {row}:{column} {parent}")
         if not parent.isValid():
             if row >= len(list(self.root_classes)):
                 if not self.root_classes:
@@ -270,7 +272,7 @@ class ClassModel(QAbstractItemModel):
         logging.debug(f"Insert Row {parent} {row}")
         self.endInsertRows()
         return True
-    
+
     def removeColumn(self, column: int, parent=QModelIndex()):
         self.beginRemoveColumns(parent, column, column)
         self.columns.pop(column)
@@ -331,4 +333,4 @@ class ClassModel(QAbstractItemModel):
         self.endMoveRows()
 
     def mimeData(self, indexes):
-         return trigger.create_mime_data(indexes,super().mimeData(indexes))
+        return trigger.create_mime_data(indexes, super().mimeData(indexes))

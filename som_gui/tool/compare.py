@@ -11,8 +11,10 @@ from som_gui.module.compare import trigger
 from som_gui.module.compare import ui
 
 if TYPE_CHECKING:
-    from som_gui.module.compare.prop import CompareWindowProperties, \
-        CompareProjectSelectProperties
+    from som_gui.module.compare.prop import (
+        CompareWindowProperties,
+        CompareProjectSelectProperties,
+    )
 
 
 class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
@@ -134,7 +136,9 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
         widgets = cls.get_properties().widgets
         init_functions = cls.get_properties().init_functions
         tab_widget = cls.get_tabwidget()
-        for name_getter, widget_getter, init_func in zip(names, widgets, init_functions):
+        for name_getter, widget_getter, init_func in zip(
+            names, widgets, init_functions
+        ):
             tab_widget.addTab(widget_getter(), QIcon(), name_getter())
             init_func(project0, project1)
 

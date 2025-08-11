@@ -2,6 +2,7 @@ import logging
 import os
 import argparse
 
+
 def to_camel_case(snake_str):
     return "".join(x.capitalize() for x in snake_str.lower().split("_"))
 
@@ -138,14 +139,17 @@ def main(name: str):
     create_module(name)
     update_tools()
 
+
 # Create the parser
-parser = argparse.ArgumentParser(description='Script to run a module with a name argument')
+parser = argparse.ArgumentParser(
+    description="Script to run a module with a name argument"
+)
 
 # Add the "name" argument
-parser.add_argument('name', type=str, help='Name of the module to run')
+parser.add_argument("name", type=str, help="Name of the module to run")
 
 # Parse the arguments
 args = parser.parse_args()
 if __name__ == "__main__":
     main(args.name)
-    #you need to add module to tool.__init__.py by hand
+    # you need to add module to tool.__init__.py by hand

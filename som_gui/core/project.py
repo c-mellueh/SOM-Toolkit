@@ -16,7 +16,9 @@ if TYPE_CHECKING:
     from som_gui.module.project import ui
 
 
-def create_main_menu_actions(project: Type[tool.Project], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    project: Type[tool.Project], main_window: Type[tool.MainWindow]
+):
     from som_gui.module.project import trigger
 
     action = main_window.add_action("menuFile", "new", trigger.new_clicked)
@@ -31,7 +33,9 @@ def create_main_menu_actions(project: Type[tool.Project], main_window: Type[tool
     action = main_window.add_action("menuFile", "save_project", trigger.save)
     project.set_action("save_project", action)
 
-    action = main_window.add_action("menuFile", "save_as_clicked", trigger.save_as_clicked)
+    action = main_window.add_action(
+        "menuFile", "save_as_clicked", trigger.save_as_clicked
+    )
     project.set_action("save_as_clicked", action)
 
 
@@ -60,8 +64,12 @@ def retranslate_ui(project: Type[tool.Project]):
         widget.ui.retranslateUi(widget)
 
 
-def save(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
-         main_window: Type[tool.MainWindow]):
+def save(
+    project_tool: Type[Project],
+    popup_tool: Type[Popups],
+    appdata: Type[Appdata],
+    main_window: Type[tool.MainWindow],
+):
     save_path = appdata.get_path(SAVE_PATH)
     if not os.path.exists(save_path) or not save_path.endswith("json"):
         save_as(project_tool, popup_tool, appdata, main_window)
@@ -69,8 +77,12 @@ def save(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Ap
         save_project(save_path, project_tool, appdata)
 
 
-def save_as(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
-            main_window: Type[tool.MainWindow]):
+def save_as(
+    project_tool: Type[Project],
+    popup_tool: Type[Popups],
+    appdata: Type[Appdata],
+    main_window: Type[tool.MainWindow],
+):
     path = appdata.get_path(SAVE_PATH)
     title = QCoreApplication.translate("Project", "Save Project")
     path = popup_tool.get_save_path(FILETYPE, main_window.get(), path, title)
@@ -78,8 +90,13 @@ def save_as(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type
         save_project(path, project_tool, appdata)
 
 
-def open_file_clicked(project_tool: Type[Project], appdata: Type[Appdata], main_window: Type[tool.MainWindow],
-                      popups: Type[tool.Popups],plugins:Type[tool.Plugins]):
+def open_file_clicked(
+    project_tool: Type[Project],
+    appdata: Type[Appdata],
+    main_window: Type[tool.MainWindow],
+    popups: Type[tool.Popups],
+    plugins: Type[tool.Plugins],
+):
     path = appdata.get_path(OPEN_PATH)
     title = QCoreApplication.translate("Project", "Open Project")
     path = popups.get_open_path(FILETYPE, main_window.get(), path, title)
@@ -122,7 +139,7 @@ def create_project(project_tool: Type[Project]):
     project_tool.create_project()
 
 
-def open_project(path, project_tool: Type[Project],plugins:Type[tool.Plugins]):
+def open_project(path, project_tool: Type[Project], plugins: Type[tool.Plugins]):
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
@@ -131,8 +148,13 @@ def open_project(path, project_tool: Type[Project],plugins:Type[tool.Plugins]):
     return proj
 
 
-def add_project(project_tool: Type[Project], appdata: Type[tool.Appdata], popups: Type[tool.Popups],
-                main_window: Type[tool.MainWindow], util: Type[tool.Util]):
+def add_project(
+    project_tool: Type[Project],
+    appdata: Type[tool.Appdata],
+    popups: Type[tool.Popups],
+    main_window: Type[tool.MainWindow],
+    util: Type[tool.Util],
+):
     path = appdata.get_path(OPEN_PATH)
     title = QCoreApplication.translate("Project", "Open Project")
     path = popups.get_open_path(FILETYPE, main_window.get(), path, title)
@@ -140,7 +162,9 @@ def add_project(project_tool: Type[Project], appdata: Type[tool.Appdata], popups
         return
     p1 = project_tool.get()
     p2 = project_tool.load_project(path)
-    title = util.get_window_title(QCoreApplication.translate('MergeDialog', 'Merge Project'))
+    title = util.get_window_title(
+        QCoreApplication.translate("MergeDialog", "Merge Project")
+    )
 
     project_tool.merge_projects(title, p1, p2)
 
@@ -156,7 +180,9 @@ def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Proj
     widget.ui.le_author_mail.setText(proj.author)
 
 
-def settings_path_created(widget: ui.SettingsPath, project: Type[tool.Project], appdata: Type[tool.Appdata]):
+def settings_path_created(
+    widget: ui.SettingsPath, project: Type[tool.Project], appdata: Type[tool.Appdata]
+):
     project.set_settings_path_widget(widget)
     proj = project.get()
     path = proj.path if "path" in dir(proj) else ""

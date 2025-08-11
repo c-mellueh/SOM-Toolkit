@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import property_set as core
 import SOMcreator
+
 if TYPE_CHECKING:
     from .ui import PsetTableWidget
 
@@ -26,7 +27,7 @@ def connect():
             tool.PredefinedPropertySet,
             tool.IfcSchema,
             tool.Util,
-            tool.Popups
+            tool.Popups,
         )
     )
     table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))
@@ -45,11 +46,24 @@ def repaint_event():
 
 
 def pset_table_context_menu_requested(pos):
-    core.pset_table_context_menu(pos, tool.PropertySet,tool.Class)
+    core.pset_table_context_menu(pos, tool.PropertySet, tool.Class)
 
 
 def retranslate_ui():
     pass
 
-def search_parent(pset_name:str,som_class:SOMcreator.SOMClass|None,allowed_ifc_psets:list[str],):
-    return core.search_parent(pset_name,som_class,allowed_ifc_psets,tool.PropertySet,tool.PredefinedPropertySet,tool.Popups,tool.IfcSchema)
+
+def search_parent(
+    pset_name: str,
+    som_class: SOMcreator.SOMClass | None,
+    allowed_ifc_psets: list[str],
+):
+    return core.search_parent(
+        pset_name,
+        som_class,
+        allowed_ifc_psets,
+        tool.PropertySet,
+        tool.PredefinedPropertySet,
+        tool.Popups,
+        tool.IfcSchema,
+    )

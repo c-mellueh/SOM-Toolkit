@@ -227,7 +227,7 @@ def export_desite_abbreviation(
 def create_settings_ui(
     exports: Type[tool.Exports], appdata: Type[tool.Appdata]
 ) -> QWidget:
-    
+
     widget = exports.create_settings_widget([n[0] for n in names])
     for row, (name, path_name) in enumerate(names):
         layout: QGridLayout = widget.layout()

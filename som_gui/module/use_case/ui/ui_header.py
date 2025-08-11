@@ -320,6 +320,7 @@ class CustomHeaderModel(QAbstractTableModel):
     RowSpanRole = Qt.ItemDataRole.UserRole + 2
     base_height = 25
     base_width = 25
+
     def __init__(
         self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
     ):
@@ -328,7 +329,7 @@ class CustomHeaderModel(QAbstractTableModel):
         self.proj = proj
         self.data_dict = dict()
         self.size_hint_dict = dict()
-    
+
     @property
     def column_overlap(self):
         return len(self.first_columns)
@@ -463,11 +464,32 @@ class EditableHeader(QHeaderView):
         self.editor.setText(
             self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole)
         )
-        x = self.sectionViewportPosition(logicalIndex) if self.orientation() == Qt.Orientation.Horizontal else 0
-        y = 0  if self.orientation() == Qt.Orientation.Horizontal else self.sectionViewportPosition(logicalIndex)
-        height = self.height() if self.orientation() == Qt.Orientation.Horizontal else self.sectionSize(logicalIndex)
-        width = self.sectionSize(logicalIndex) if self.orientation() == Qt.Orientation.Horizontal else self.height()
-        self.editor.setGeometry(         x,y,            width,            height,        )
+        x = (
+            self.sectionViewportPosition(logicalIndex)
+            if self.orientation() == Qt.Orientation.Horizontal
+            else 0
+        )
+        y = (
+            0
+            if self.orientation() == Qt.Orientation.Horizontal
+            else self.sectionViewportPosition(logicalIndex)
+        )
+        height = (
+            self.height()
+            if self.orientation() == Qt.Orientation.Horizontal
+            else self.sectionSize(logicalIndex)
+        )
+        width = (
+            self.sectionSize(logicalIndex)
+            if self.orientation() == Qt.Orientation.Horizontal
+            else self.height()
+        )
+        self.editor.setGeometry(
+            x,
+            y,
+            width,
+            height,
+        )
         self.editor.setFocus()
         self.editor.selectAll()
         self.editor.show()

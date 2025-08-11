@@ -181,4 +181,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def _build_tree(cls) -> dict[SOMcreator.SOMClass, SOMcreator.SOMClass]:
-        return {som_class: som_class.parent for som_class in tool.Project.get().get_classes(filter=False)}
+        return {
+            som_class: som_class.parent
+            for som_class in tool.Project.get().get_classes(filter=False)
+        }

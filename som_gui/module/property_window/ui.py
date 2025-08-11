@@ -16,8 +16,10 @@ from . import trigger
 from som_gui import tool
 from .qt.ui_SplitterSettings import Ui_SplitterSettings
 
+
 class PropertyWindow(QWidget):
     closed = Signal()
+
     def __init__(self, som_property: SOMcreator.SOMProperty, *args, **kwargs):
         from .qt.ui_Window import Ui_PropertyWindow
 
@@ -46,7 +48,6 @@ class ValueView(QTableView):
     def model(self) -> SortModel:
         return super().model()
 
-
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_V and (event.modifiers() & Qt.ControlModifier):
             trigger.paste_clipboard(self)
@@ -54,6 +55,7 @@ class ValueView(QTableView):
             trigger.copy_table_content(self)
         else:
             return super().keyPressEvent(event)
+
 
 class ValueModel(QAbstractTableModel):
 
@@ -177,8 +179,8 @@ class SortModel(QSortFilterProxyModel):
 
 
 class SplitterSettings(QWidget):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.ui = Ui_SplitterSettings()
         self.ui.setupUi(self)
         trigger.splitter_settings_created(self)

@@ -555,4 +555,3 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def get_existing_scene_names(cls) -> list[str]:
         return cls.get_properties().scene_name_list
-

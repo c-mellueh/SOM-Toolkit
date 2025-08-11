@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Callable, TYPE_CHECKING, TextIO, Union, Type, Sequence, TypeVar
 
-from PySide6.QtCore import QModelIndex, Qt,QObject,Signal,QCoreApplication
+from PySide6.QtCore import QModelIndex, Qt, QObject, Signal, QCoreApplication
 from PySide6.QtGui import QBrush, QColor, QPalette
 from PySide6.QtWidgets import (
     QTableWidget,
@@ -36,11 +36,15 @@ style_list = [
     ["#840002", [0]],  # red         ->  Data was deleted
 ]
 
+
 class Signaller(QObject):
     empty_property_requested = Signal(SOMcreator.SOMPropertySet)
     property_created = Signal(SOMcreator.SOMProperty)
+
+
 class Property(som_gui.core.tool.Property):
     signaller = Signaller()
+
     @classmethod
     def get_properties(cls) -> PropertyProperties:
         return som_gui.PropertyProperties  # type: ignore
@@ -48,7 +52,7 @@ class Property(som_gui.core.tool.Property):
     @classmethod
     def connect_signals(cls):
         cls.signaller.empty_property_requested.connect(trigger.create_empty_property)
-        
+
     @classmethod
     def add_property_data_value(
         cls, name: str, getter: Callable, setter: Callable
@@ -105,10 +109,6 @@ class Property(som_gui.core.tool.Property):
         som_property = SOMcreator.SOMProperty()
         cls.set_data_by_dict(som_property, property_data)
         return som_property
-
-
-
-
 
 
 class PropertyCompare(som_gui.core.tool.PropertyCompare):
@@ -223,7 +223,9 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         :return:
         """
         # Create Match Dictionaries
-        psets_1 = list(class_1.get_property_sets(filter=False)) if class_1 is not None else []
+        psets_1 = (
+            list(class_1.get_property_sets(filter=False)) if class_1 is not None else []
+        )
         property_set_uuid_dict1 = cls.generate_uuid_dict(psets_1)
         property_set_name_dict1 = cls.generate_name_dict(psets_1)
 
@@ -502,7 +504,9 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
                 item = QTreeWidgetItem()
                 cls.add_class_to_item(som_class, item, 1)
                 parent.addChild(item)
-            cls.add_missing_classes_to_tree(tree, list(som_class.get_children(filter=False)))
+            cls.add_missing_classes_to_tree(
+                tree, list(som_class.get_children(filter=False))
+            )
 
     @classmethod
     def clear_tree(cls, tree: QTreeWidget):
@@ -890,7 +894,9 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         project_0 = cls.get_project(0)
         class_dict = cls.get_class_dict()
 
-        for class_0 in sorted(project_0.get_classes(filter=False), key=lambda x: x.name):
+        for class_0 in sorted(
+            project_0.get_classes(filter=False), key=lambda x: x.name
+        ):
             class_1 = class_dict[class_0]
             if cls.are_classes_identical(class_0, class_1):
                 continue
@@ -1054,7 +1060,10 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     def get_ident_dict(cls, index=1) -> dict:
         if cls.get_properties().ident_dicts[index] is None:
             project = cls.get_project(index)
-            d = {som_class.ident_value: som_class for som_class in project.get_classes(filter=False)}
+            d = {
+                som_class.ident_value: som_class
+                for som_class in project.get_classes(filter=False)
+            }
             cls.get_properties().ident_dicts[index] = d
         return cls.get_properties().ident_dicts[index]
 
@@ -1077,11 +1086,15 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return cls.get_properties().class_dict
 
     @classmethod
-    def set_class_item_relation(cls, som_class: SOMcreator.SOMClass, item: QTreeWidgetItem):
+    def set_class_item_relation(
+        cls, som_class: SOMcreator.SOMClass, item: QTreeWidgetItem
+    ):
         cls.get_properties().class_tree_item_dict[som_class] = item
 
     @classmethod
-    def get_item_from_class(cls, som_class: SOMcreator.SOMClass) -> QTreeWidgetItem | None:
+    def get_item_from_class(
+        cls, som_class: SOMcreator.SOMClass
+    ) -> QTreeWidgetItem | None:
         return cls.get_properties().class_tree_item_dict.get(som_class)
 
     @classmethod

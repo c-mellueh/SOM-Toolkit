@@ -5,13 +5,13 @@ from som_gui.module.units import trigger
 from .qt import ui_UnitSettings
 
 
-
 class UnitSettings(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ui = ui_UnitSettings.Ui_UnitSettings()
         self.ui.setupUi(self)
         trigger.unit_settings_created(self)
+
 
 class UnitComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
