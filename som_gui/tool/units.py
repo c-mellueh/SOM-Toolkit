@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QListWidget,QTreeView
 from PySide6.QtCore import Qt
 import som_gui.core.tool
 import som_gui
+import os
 from som_gui.module.units import constants
 from som_gui.resources.data import UNIT_PATH
 if TYPE_CHECKING:
@@ -87,3 +88,25 @@ class Units(som_gui.core.tool.Units):
         with open(path,"w") as file:
             json.dump(data_dict,file)
         cls.get_properties().unit_dict = data_dict
+    
+    @classmethod
+    def get_units_dict(cls):
+        from som_gui import tool
+        if cls.get_properties().unit_dict:
+            return cls.get_properties().unit_dict
+    
+        appdata_folder = tool.Appdata.get_appdata_folder()
+        appdata_path  = os.path.join(appdata_folder,"units.json")
+        if os.path.exists(appdata_path):
+            unit_dict = cls.load_units(appdata_path)
+        else:
+            unit_dict = cls.load_units(UNIT_PATH)
+        return unit_dict
+    
+    @classmethod
+    def uri_to_code(cls,uri):
+        from SOMcreator.templates import UNITS_DICT
+        element =  UNITS_DICT.get(uri)
+        if not element:
+            return ""
+        return element.get("Code","")

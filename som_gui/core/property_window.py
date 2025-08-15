@@ -89,9 +89,9 @@ def connect_window(
     widget_ui.combo_value_type.currentIndexChanged.connect(
         lambda i: property_window.set_valuetype(som_property, get_valuetype_text())
     )
-    widget_ui.combo_unit.currentIndexChanged.connect(
-        lambda i: property_window.set_unit(som_property, get_unit_text())
-    )
+    # widget_ui.combo_unit.currentIndexChanged.connect(
+    #     lambda i: property_window.set_unit(som_property, get_unit_text())
+    # )
 
     widget_ui.description.textChanged.connect(
         lambda: property_window.set_description(som_property, get_description_text())
@@ -118,13 +118,14 @@ def update_window(
     window: ui.PropertyWindow,
     property_window: Type[tool.PropertyWindow],
     util: Type[tool.Util],
+    units:Type[tool.Units]
 ):
     som_property = property_window.get_property_from_window(window)
     ui = window.ui
     ui.lineEdit_name.setText(som_property.name)
     ui.combo_data_type.setCurrentText(som_property.data_type)
     ui.combo_value_type.setCurrentText(som_property.value_type)
-    ui.combo_unit.setCurrentText(som_property.unit or "")
+    ui.combo_unit.setCurrentText(units.uri_to_code(som_property.unit))
     ui.description.setText(som_property.description)
     property_window.set_comboboxes_enabled(not som_property.is_child, window)
     inherits_values_checkstate = util.bool_to_checkstate(

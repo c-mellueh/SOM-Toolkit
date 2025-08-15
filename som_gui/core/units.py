@@ -25,12 +25,7 @@ def fill_unit_settings(
     util: Type[tool.Util],
 ):
     units_tool.set_unit_settings_widget(widget)
-    appdata_folder = appdata.get_appdata_folder()
-    appdata_path  = os.path.join(appdata_folder,"units.json")
-    if os.path.exists(appdata_path):
-        unit_dict = units_tool.load_units(appdata_path)
-    else:
-        unit_dict = units_tool.load_units(UNIT_PATH)
+    unit_dict = units_tool.get_units_dict()
     model = ui.SettingsItemModel(unit_dict)
     widget.ui.unit_tree.setModel(model)
 
@@ -48,17 +43,23 @@ def update_unit_combobox(
     cb: ui.UnitComboBox, units_tool: Type[tool.Units], appdata: Type[tool.Appdata]
 ):
     logging.debug(f"Update unit combobox")
-    model: QStandardItemModel = cb.mod
-    tree_view = cb.tree_view
-    allowed_units = units_tool.get_allowed_units(appdata)
-    allowed_prefixes = units_tool.get_allowed_unit_prefixes(appdata)
-    for row in range(model.rowCount()):
-        item = model.item(row)
-        index = item.index()
-        hide_item = item.text() not in allowed_units
-        tree_view.setRowHidden(row, index.parent(), hide_item)
+    # model: QStandardItemModel = cb.mod
+    # tree_view = cb.tree_view
+    # allowed_units = units_tool.get_allowed_units(appdata)
+    # allowed_prefixes = units_tool.get_allowed_unit_prefixes(appdata)
+    # for row in range(model.rowCount()):
+    #     item = model.item(row)
+    #     index = item.index()
+    #     hide_item = item.text() not in allowed_units
+    #     tree_view.setRowHidden(row, index.parent(), hide_item)
 
-        for child_row in range(item.rowCount()):
-            child_item = item.child(child_row)
-            hide_item = child_item.text() not in allowed_prefixes
-            tree_view.setRowHidden(child_row, index, hide_item)
+    #     for child_row in range(item.rowCount()):
+    #         child_item = item.child(child_row)
+    #         hide_item = child_item.text() not in allowed_prefixes
+    #         tree_view.setRowHidden(child_row, index, hide_item)
+
+def update_current_unit(widget,data_dict,units:Type[tool.Units],property_window:Type[tool.PropertyWindow]):
+    uri = data_dict["QudtUri"]
+    som_property = property_window.get_property_from_window(widget)
+    som_property.unit = uri
+    print(som_property.unit)

@@ -29,3 +29,6 @@ def repaint_unit_combobox(cb: ui.UnitComboBox):
 
 def unit_settings_created(widget: ui.UnitSettings):
     core.fill_unit_settings(widget, tool.Units, tool.Appdata, tool.Util)
+
+def update_current_unit(widget,data_dict):
+    core.update_current_unit(widget,data_dict,tool.Units,tool.PropertyWindow)

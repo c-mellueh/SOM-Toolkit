@@ -256,10 +256,10 @@ class SOMProperty(BaseClass):
         if not value:
             self._unit = None
             return
-        name = get_unit_name_universal(value)
-        if not name:
-            logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
-            return
+        # name = get_unit_name_universal(value)
+        # if not name:
+        #     logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
+        #     return
         self._unit = value
 
         if self.is_parent:

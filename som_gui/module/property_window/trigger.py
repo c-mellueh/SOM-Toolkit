@@ -34,11 +34,11 @@ def property_info_requested(som_property: SOMcreator.SOMProperty):
 def window_created(window: ui.PropertyWindow):
     core.init_window(window, tool.PropertyWindow, tool.Util)
     core.connect_window(window, tool.PropertyWindow, tool.Util)
-    core.update_window(window, tool.PropertyWindow, tool.Util)
+    core.update_window(window, tool.PropertyWindow, tool.Util,tool.Units)
 
 
 def update_window(window: ui.PropertyWindow):
-    core.update_window(window, tool.PropertyWindow, tool.Util)
+    core.update_window(window, tool.PropertyWindow, tool.Util,tool.Units)
 
 
 def value_context_menu_request(pos, table_view: ui.ValueView):

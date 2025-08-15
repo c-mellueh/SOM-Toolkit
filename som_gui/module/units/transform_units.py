@@ -178,7 +178,7 @@ def sort_by_multiplier(data_dict):
         sort_by_multiplier(element["children"])
 
 if __name__ == "__main__":
-    INPUT = r".\units_bsdd.json"         # your input units (list of dicts with QudtUri)
+    INPUT = r"..\..\..\SOMcreator\templates\units_bsdd.json"         # your input units (list of dicts with QudtUri)
     OUTPUT = r"..\..\resources\data\units_internal.json"
 
     with open(INPUT, "r", encoding="utf-8") as f:
