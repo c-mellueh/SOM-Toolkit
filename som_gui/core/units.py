@@ -2,12 +2,13 @@ from __future__ import annotations
 from PySide6.QtGui import QStandardItemModel
 from typing import TYPE_CHECKING, Type
 import logging
-
+import os
 if TYPE_CHECKING:
     from som_gui import tool
 from ifcopenshell.util.unit import unit_names, prefixes
 
 from som_gui.module.units import ui
+from som_gui.resources.data import UNIT_PATH
 from som_gui.module.units.constants import (
     ALLOWED_PREFIXES,
     ALLOWED_UNITS,
@@ -24,33 +25,23 @@ def fill_unit_settings(
     util: Type[tool.Util],
 ):
     units_tool.set_unit_settings_widget(widget)
-    units_tool.import_units()
-
-    all_units = [un.capitalize() for un in unit_names]
-    allowed_units = units_tool.get_allowed_units(appdata)
-    util.fill_list_widget_with_checkstate(
-        widget.ui.list_units, allowed_units, all_units
-    )
-
-    all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
-    allowed_prefixes = units_tool.get_allowed_unit_prefixes(appdata)
-
-    util.fill_list_widget_with_checkstate(
-        widget.ui.list_prefixes, allowed_prefixes, all_prefixes
-    )
-
+    appdata_folder = appdata.get_appdata_folder()
+    appdata_path  = os.path.join(appdata_folder,"units.json")
+    if os.path.exists(appdata_path):
+        unit_dict = units_tool.load_units(appdata_path)
+    else:
+        unit_dict = units_tool.load_units(UNIT_PATH)
+    model = ui.SettingsItemModel(unit_dict)
+    widget.ui.unit_tree.setModel(model)
 
 def unit_settings_accepted(units_tool: Type[tool.Units], appdata: Type[tool.Appdata]):
     widget = units_tool.get_unit_settings_widget()
     if not widget:
         return
-    allowed_units = units_tool.get_checked_texts_from_list_widget(widget.ui.list_units)
-    appdata.set_setting(UNITS_SECTION, ALLOWED_UNITS, allowed_units)
-
-    allowed_prefixes = units_tool.get_checked_texts_from_list_widget(
-        widget.ui.list_prefixes
-    )
-    appdata.set_setting(UNITS_SECTION, ALLOWED_PREFIXES, allowed_prefixes)
+    unit_data = units_tool.get_unit_settings_widget().ui.unit_tree.model().data_dict
+    appdata_folder = appdata.get_appdata_folder()
+    appdata_path  = os.path.join(appdata_folder,"units.json")
+    units_tool.update_units(unit_data,appdata_path)
 
 
 def update_unit_combobox(

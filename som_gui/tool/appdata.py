@@ -70,8 +70,11 @@ class Appdata(som_gui.core.tool.Appdata):
         return config
 
     @classmethod
+    def get_appdata_folder(cls):
+        return appdirs.user_config_dir(som_gui.__name__)
+    @classmethod
     def get_ini_path(cls):
-        return os.path.join(appdirs.user_config_dir(som_gui.__name__), "config.ini")
+        return os.path.join(cls.get_appdata_folder(), "config.ini")
 
     @classmethod
     def get_path(cls, value: str) -> str | list | set:

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 import logging
 from som_gui import tool
-from PySide6.QtWidgets import QListWidget
+from PySide6.QtWidgets import QListWidget,QTreeView
 from PySide6.QtCore import Qt
 import som_gui.core.tool
 import som_gui
@@ -64,14 +64,26 @@ class Units(som_gui.core.tool.Units):
             allowed_prefixes = list(all_prefixes)
         return allowed_prefixes
 
-    @classmethod
-    def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
-        items = [list_widget.item(i) for i in range(list_widget.count())]
-        return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
     @classmethod
-    def import_units(cls):
+    def load_units(cls,path):
         prop = cls.get_properties()
-        with open(UNIT_PATH, "r") as f:
+        with open(path, "r") as f:
             data = json.load(f)
-        prop.unit_dict = data   
+        prop.unit_dict = data 
+        return prop.unit_dict
+    
+    @classmethod
+    def update_units(cls,data_dict,path):
+        def remove_parent_key(d):
+            for element in d:
+                for un in element["units"]:
+                    if "parent" in un: 
+                        un.pop("parent")
+                element["children"] = remove_parent_key(element["children"] )
+            return d
+
+        data_dict = remove_parent_key(data_dict)
+        with open(path,"w") as file:
+            json.dump(data_dict,file)
+        cls.get_properties().unit_dict = data_dict
