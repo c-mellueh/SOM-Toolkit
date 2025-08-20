@@ -17,7 +17,6 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         result = trigger.close_event(event)
 
-
     def paintEvent(self, event):
         super().paintEvent(event)
         trigger.paint_event()

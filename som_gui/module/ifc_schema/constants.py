@@ -5,7 +5,5 @@ from SOMcreator.datastructure.ifc_schema import (
     IFC4,
     IFC4_3,
     VERSION_TYPE,
-    PREDEFINED_SPLITTER
+    PREDEFINED_SPLITTER,
 )
-
-

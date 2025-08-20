@@ -5,10 +5,10 @@ def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for file in filenames:
             if (
-                    file.endswith(".py")
-                    or file.endswith(".ts")
-                    or file.endswith(".qrc")
-                    or file.endswith(".ui")
+                file.endswith(".py")
+                or file.endswith(".ts")
+                or file.endswith(".qrc")
+                or file.endswith(".ui")
             ):
                 if dirpath.endswith("\qt") and file.endswith(".py"):
                     continue

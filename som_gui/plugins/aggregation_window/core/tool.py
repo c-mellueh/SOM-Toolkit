@@ -1,17 +1,17 @@
-class GroupingWindow():
+class GroupingWindow:
     pass
 
 
-class Aggregation():
+class Aggregation:
     pass
 
 
-class Window():
+class Window:
     def create_window(self):
         pass
 
 
-class View():
+class View:
     def create_view(self):
         pass
 
@@ -23,7 +23,7 @@ class Node:
     pass
 
 
-class Connection():
+class Connection:
     pass
 
 

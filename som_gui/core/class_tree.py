@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication, QMimeData,Qt,QModelIndex
+from PySide6.QtCore import QCoreApplication, QMimeData, Qt, QModelIndex
 from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeView
 
@@ -20,20 +20,33 @@ from som_gui.module.class_tree import ui
 
 import uuid
 
-def update_class_trees(class_tree:Type[tool.ClassTree],project:Type[tool.Project]):
+
+def update_class_trees(class_tree: Type[tool.ClassTree], project: Type[tool.Project]):
     for tree in class_tree.get_trees():
         class_tree.reset_tree(tree)
 
-def connect_signals(class_tree: Type[tool.ClassTree],class_tool:Type[tool.Class]) -> None:
+
+def connect_signals(
+    class_tree: Type[tool.ClassTree], class_tool: Type[tool.Class]
+) -> None:
     class_tree.connect_trigger()
     class_tree.signaller.request_class_deletion.connect(class_tool.delete_class)
 
-def connect_new_class_tree(tree:ui.ClassView,class_tree:Type[tool.ClassTree],class_tool:Type[tool.Class]):
-    class_tool.signaller.class_deleted.connect(lambda c:class_tree.remove_row_by_class(tree,c))
-    class_tool.signaller.class_created.connect(lambda c:class_tree.insert_row_by_class(tree,c))
+
+def connect_new_class_tree(
+    tree: ui.ClassView, class_tree: Type[tool.ClassTree], class_tool: Type[tool.Class]
+):
+    class_tool.signaller.class_deleted.connect(
+        lambda c: class_tree.remove_row_by_class(tree, c)
+    )
+    class_tool.signaller.class_created.connect(
+        lambda c: class_tree.insert_row_by_class(tree, c)
+    )
+
 
 def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
     return
+
 
 def create_mime_data(
     indexes: QModelIndex, mime_data: QMimeData, class_tree: Type[tool.ClassTree]
@@ -59,12 +72,12 @@ def search_class(
 def create_group(
     tree: ui.ClassView,
     class_tree: Type[tool.ClassTree],
-    class_tool:Type[tool.Class],
+    class_tool: Type[tool.Class],
     project: Type[tool.Project],
 ):
-    
-    #TODO: aktualisieren
-    
+
+    # TODO: aktualisieren
+
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
@@ -73,7 +86,7 @@ def create_group(
     is_allowed = class_tool.check_class_creation_input(d)
     if not is_allowed:
         return
-    som_class = class_tool.create_class(d,None,None)
+    som_class = class_tool.create_class(d, None, None)
     som_class.project = project.get()
     selected_classes = set(class_tree.get_selected_classes(tree))
     class_tree.group_classes(som_class, selected_classes)

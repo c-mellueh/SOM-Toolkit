@@ -14,7 +14,7 @@ def connect_signals(
     predefined_property_set: Type[tool.PredefinedPropertySet],
     property_tool: Type[tool.Property],
     property_table: Type[tool.PropertyTable],
-    property_window:Type[tool.PropertyWindow],
+    property_window: Type[tool.PropertyWindow],
 ):
     predefined_property_set.connect_signals()
     predefined_property_set.signaller.new_property_requested.connect(

@@ -10,7 +10,9 @@ class PsetTableWidget(QTableWidget):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.customContextMenuRequested.connect(property_set.trigger.pset_table_context_menu_requested)
+        self.customContextMenuRequested.connect(
+            property_set.trigger.pset_table_context_menu_requested
+        )
         self.setItemDelegate(LineEditDelegate(self))
 
     def paintEvent(self, event):
@@ -23,6 +25,7 @@ class PsetTableWidget(QTableWidget):
 
 class LineEditDelegate(QStyledItemDelegate):
     """Stops updating Table Enties"""
+
     edit_started = Signal(QModelIndex)
     edit_stopped = Signal(QModelIndex)
 

@@ -6,8 +6,9 @@ from som_gui.module.language import ui
 
 
 def connect():
-    tool.Settings.add_page_to_toolbox(ui.SettingsWidget, "pageGeneral",
-                                      lambda: core.settings_accepted(tool.Language))
+    tool.Settings.add_page_to_toolbox(
+        ui.SettingsWidget, "pageGeneral", lambda: core.settings_accepted(tool.Language)
+    )
 
 
 def settings_widget_created(widget: ui.SettingsWidget):
@@ -23,4 +24,6 @@ def retranslate_ui():
 
 
 def set_language(language_code: str | None):
-    core.set_language(language_code, tool.Language, tool.Appdata, tool.MainWindow, tool.Plugins)
+    core.set_language(
+        language_code, tool.Language, tool.Appdata, tool.MainWindow, tool.Plugins
+    )

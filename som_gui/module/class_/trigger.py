@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 def connect():
-    core.init(tool.Class,tool.ClassInfo,tool.MainWindow)
+    core.init(tool.Class, tool.ClassInfo, tool.MainWindow)
 
 
 def retranslate_ui():
@@ -33,7 +33,7 @@ def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
         tool.ClassInfo,
         tool.PropertySet,
         tool.MainWindow,
-        tool.IfcSchema
+        tool.IfcSchema,
     )
 
 

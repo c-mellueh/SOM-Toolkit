@@ -227,13 +227,16 @@ class ClassInfo:
     def add_plugin_infos_to_class(self, som_class, data_dict):
         pass
 
+    def append_ifc_lineedit(self, line_edit):
+        pass
+
     def are_plugin_requirements_met(self, som_class, data_dict):
         pass
 
     def connect_dialog(self, dialog, predefined_psets):
         pass
 
-    def create_dialog(self, title):
+    def create_dialog(self, title, ifc_versions):
         pass
 
     def create_ifc_completer(
@@ -257,6 +260,11 @@ class ClassInfo:
         pass
 
     def get_dialog(
+        self,
+    ):
+        pass
+
+    def get_ifc_lineedits(
         self,
     ):
         pass
@@ -717,10 +725,6 @@ class FilterCompare:
         pass
 
 
-class IfcSchema:
-    pass
-
-
 class IfcImporter:
     def add_progress_bar(self, widget, progress_bar):
         pass
@@ -781,6 +785,33 @@ class IfcImporter:
         pass
 
     def set_status(self, runner, status):
+        pass
+
+
+class IfcSchema:
+    def create_mapping_widget(self, som_class, version):
+        pass
+
+    def get_active_versions(
+        self,
+    ):
+        pass
+
+    def get_newest_version(self, versions):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_sets_of_class(self, class_name, version):
+        pass
+
+    def read_jsons(self, version):
+        pass
+
+    def set_active_versions(self, versions):
         pass
 
 
@@ -1870,6 +1901,9 @@ class PredefinedPropertySet:
     ):
         pass
 
+    def get_pset_by_name(self, name):
+        pass
+
     def get_pset_list_widget(
         self,
     ):
@@ -1893,6 +1927,9 @@ class PredefinedPropertySet:
     def is_edit_mode_active(
         self,
     ):
+        pass
+
+    def name_is_in_predefined_psets(self, name):
         pass
 
     def remove_property_sets_from_list_widget(self, property_sets, list_widget):
@@ -2770,6 +2807,9 @@ class PropertySet:
     def create_context_menu(self, global_pos, function_list):
         pass
 
+    def create_ifc_pset(self, name, ifc_version):
+        pass
+
     def create_property_set(self, name, som_class, parent):
         pass
 
@@ -2786,7 +2826,13 @@ class PropertySet:
     def get_existing_psets_in_table(self, table):
         pass
 
+    def get_ifc_names(self, class_ifc_mappings, ifc_version):
+        pass
+
     def get_inheritable_property_sets(self, som_class):
+        pass
+
+    def get_parent_by_name(self, name, som_class):
         pass
 
     def get_properties(
@@ -2812,6 +2858,9 @@ class PropertySet:
     def get_pset_from_item(self, item):
         pass
 
+    def get_pset_name_suggestion(self, som_class, predefined_psets, ifc_version):
+        pass
+
     def get_row_from_pset(self, property_set):
         pass
 
@@ -2823,6 +2872,12 @@ class PropertySet:
     def get_table(
         self,
     ):
+        pass
+
+    def is_name_in_ifc_psets(self, name, som_class, ifc_version):
+        pass
+
+    def is_name_in_parent_classes(self, name, som_class):
         pass
 
     def is_pset_existing(self, pset_name, active_class):
@@ -2844,6 +2899,8 @@ class PropertySet:
     ):
         pass
 
+    def search_for_parent(self, pset_name, som_class, allowed_ifc_psets):
+        pass
 
     def select_property_set(self, property_set):
         pass
@@ -2863,9 +2920,6 @@ class PropertySet:
     def trigger_table_repaint(
         self,
     ):
-        pass
-
-    def update_completer(self, som_class):
         pass
 
     def update_property_set_table(self, table):
@@ -3260,6 +3314,10 @@ class Settings:
 
     def set_widget(self, widget):
         pass
+
+
+class Units:
+    pass
 
 
 class UseCase:

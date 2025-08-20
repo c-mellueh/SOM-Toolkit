@@ -7,6 +7,6 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QAction
 
 
-class ModelcheckExternalProperties():
+class ModelcheckExternalProperties:
     window: ModelcheckExternalWindow = None
     actions: dict[str, QAction] = dict()

@@ -177,10 +177,12 @@ class Class(som_gui.core.tool.Class):
     def inherit_property_set_to_all_children(
         cls, som_class: SOMcreator.SOMClass, property_set: SOMcreator.SOMPropertySet
     ):
-        def iter_children(sc:SOMcreator.SOMClass):
+        def iter_children(sc: SOMcreator.SOMClass):
             for child_class in sc.get_children(filter=False):
                 child_class: SOMcreator.SOMClass
-                pset_dict = {p.name: p for p in child_class.get_property_sets(filter=False)}
+                pset_dict = {
+                    p.name: p for p in child_class.get_property_sets(filter=False)
+                }
                 child_pset = pset_dict.get(property_set.name)
                 if child_pset is None:
                     child_pset = property_set.create_child()
@@ -193,4 +195,5 @@ class Class(som_gui.core.tool.Class):
                     else:
                         new_property.parent = som_property
                 iter_children(child_class)
+
         iter_children(som_class)

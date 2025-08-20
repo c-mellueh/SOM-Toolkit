@@ -23,7 +23,7 @@ def paint_dictionary():
     core.update_dictionary(tool.Bsdd, tool.Project)
 
 
-def dict_property_changed(value, property_name:str):
+def dict_property_changed(value, property_name: str):
     core.update_dictionary_property(value, property_name, tool.Bsdd)
 
 

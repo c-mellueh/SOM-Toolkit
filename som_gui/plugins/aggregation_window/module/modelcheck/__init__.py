@@ -6,8 +6,10 @@ def register():
     som_gui.AggregationModelcheckProperties = prop.AggregationModelcheckProperties()
     pass
 
+
 def activate():
     trigger.activate()
+
 
 def deactivate():
     trigger.deactivate()

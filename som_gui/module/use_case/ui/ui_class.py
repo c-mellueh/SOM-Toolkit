@@ -7,18 +7,22 @@ from PySide6.QtCore import (
     QModelIndex,
     Qt,
     Signal,
-    QObject
+    QObject,
 )
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 import SOMcreator
 from som_gui import tool
+
 if TYPE_CHECKING:
     from .ui_header import CustomHeaderView
+
+
 class ClassView(QTreeView):
     update_requested = Signal()
-    mouse_moved = Signal(QMouseEvent,QObject)
-    mouse_released = Signal(QMouseEvent,QObject)
+    mouse_moved = Signal(QMouseEvent, QObject)
+    mouse_released = Signal(QMouseEvent, QObject)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -43,14 +47,15 @@ class ClassView(QTreeView):
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
-        self.mouse_moved.emit(event,self)
+        self.mouse_moved.emit(event, self)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        self.mouse_released.emit(event,self)
+        self.mouse_released.emit(event, self)
 
     def header(self) -> CustomHeaderView:
         return super().header()
+
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
@@ -160,7 +165,7 @@ class ClassModel(QAbstractItemModel):
 
     def index(self, row: int, column: int, parent: QModelIndex):
         if not parent.isValid():
-            if row >= len(self.root_classes) or row <0:
+            if row >= len(self.root_classes) or row < 0:
                 logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
                 return QModelIndex()
@@ -203,7 +208,6 @@ class ClassModel(QAbstractItemModel):
         if parent_index.column() > self.fixed_column_count:
             return parent_index.siblingAtColumn(0)
         return parent_index
-
 
 
 class ClassFilterModel(QSortFilterProxyModel):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>649</width>
-    <height>628</height>
+    <height>631</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -239,7 +239,7 @@
   <customwidget>
    <class>UnitComboBox</class>
    <extends>QComboBox</extends>
-   <header>som_gui.module.property_.ui</header>
+   <header>som_gui.module.units.ui</header>
   </customwidget>
   <customwidget>
    <class>ValueView</class>

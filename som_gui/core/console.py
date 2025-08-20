@@ -8,7 +8,9 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def create_console_trigger(main_menu: Type[tool.MainWindow], console: Type[tool.Console]):
+def create_console_trigger(
+    main_menu: Type[tool.MainWindow], console: Type[tool.Console]
+):
     status_bar = main_menu.get_statusbar()
     button = QPushButton("C")
     button.setMaximumWidth(24)

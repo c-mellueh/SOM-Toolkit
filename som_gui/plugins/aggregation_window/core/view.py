@@ -217,7 +217,9 @@ def mouse_release_event(
             view.create_connection_by_pos(connection.get_draw_node())
             connection.delete_draw_connection()
         else:
-            som_class = search.search_class(list(project.get().get_classes(filter=True)))
+            som_class = search.search_class(
+                list(project.get().get_classes(filter=True))
+            )
             if som_class is not None:
                 view.create_child_node(connection.get_draw_node(), som_class)
 
@@ -260,9 +262,9 @@ def context_menu_requested(
     selected_nodes = scene.selectedItems()
     view_text = QCoreApplication.translate("Aggregation", "View")
     reset_zoom = QCoreApplication.translate("Aggregation", "Reset Zoom")
-    print_view = QCoreApplication.translate("Aggregation", "Print View")
+    export_view = QCoreApplication.translate("Aggregation", "Export View")
     menu_list.append([f"{view_text}/{reset_zoom}", view.autofit_view])
-    menu_list.append([f"{view_text}/{print_view}", lambda: view.print_scene(scene)])
+    menu_list.append([f"{view_text}/{export_view}", lambda: view.export_scene(scene)])
 
     if len(selected_nodes) > 1:
         layout = QCoreApplication.translate("Aggregation", "Layout")
@@ -394,8 +396,8 @@ def rearange(
     root_y_pos = [n.pos().y() for n in root_nodes]
     root_mid_x = (min(root_x_pos) + max(root_x_pos)) / 2
     root_mid_y = (min(root_y_pos) + max(root_y_pos)) / 2
-    min_x = max(min(n.pos().x() for n in all_nodes),500.)
-    min_y = max(min(n.pos().y() for n in all_nodes),500.)
+    min_x = max(min(n.pos().x() for n in all_nodes), 500.0)
+    min_y = max(min(n.pos().y() for n in all_nodes), 500.0)
 
     # position helper node in the center of all root_nodes
     node.set_node_pos(helper_node, QPointF(root_mid_x, root_mid_y))
@@ -411,6 +413,7 @@ def rearange(
     helper_node.deleteLater()
     helper_class.delete()
     view.autofit_view()
+
 
 def add_node_at_pos(
     pos,

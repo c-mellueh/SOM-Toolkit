@@ -215,9 +215,10 @@ def request_scene_rename(
     update_combo_box(window, view)
     window.get_combo_box().setCurrentText(new_name)
 
-def reset(window:Type[aw_tool.Window]):
+
+def reset(window: Type[aw_tool.Window]):
     logging.info("Reset Aggregation Window")
     active_window = window.get_window()
     if active_window:
         active_window.close()
-    window.set_window(None)    
+    window.set_window(None)

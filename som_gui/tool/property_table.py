@@ -24,6 +24,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.resources.icons import get_link_icon
 from som_gui.module.property_table.constants import MIME_DATA_KEY
 from som_gui.module.property_table import trigger
+
 if TYPE_CHECKING:
     from som_gui.module.property_table.prop import PropertyTableProperties
 from som_gui.module.property_table import ui
@@ -35,6 +36,7 @@ import pickle
 class Signaller(QObject):
     property_info_requested = Signal(SOMcreator.SOMProperty)
     translation_requested = Signal(ui.PropertyTable)
+
 
 class PropertyTable(som_gui.core.tool.PropertyTable):
     signaller = Signaller()
@@ -51,6 +53,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             )
         )
         cls.signaller.translation_requested.connect(trigger.retranslate_ui)
+
     @classmethod
     def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
         """
@@ -436,6 +439,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls, table: QTableWidget
     ) -> SOMcreator.SOMPropertySet | None:
         return table.property_set
+
     @classmethod
     def get_row_index_from_property(
         cls, som_property: SOMcreator.SOMProperty, table: QTableWidget
@@ -519,6 +523,6 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         return property_dicts
 
     @classmethod
-    def refresh_table(cls,table:ui.PropertyTable):
+    def refresh_table(cls, table: ui.PropertyTable):
         if table:
             table.repaint()

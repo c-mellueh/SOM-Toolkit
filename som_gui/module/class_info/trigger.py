@@ -35,4 +35,3 @@ def create_class_info_widget(mode: int, som_class: SOMcreator.SOMClass | None):
         tool.IfcSchema,
         tool.Util,
     )
-

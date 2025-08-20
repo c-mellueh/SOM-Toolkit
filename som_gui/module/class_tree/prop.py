@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import Callable, TypedDict,TYPE_CHECKING
+from typing import Callable, TypedDict, TYPE_CHECKING
 from PySide6.QtGui import QAction
 import SOMcreator
 
 if TYPE_CHECKING:
     from . import ui
+
 
 class ContextMenuDict(TypedDict):
     name_getter: Callable
@@ -16,5 +17,4 @@ class ContextMenuDict(TypedDict):
 
 class ClassTreeProperties:
     existing_trees = set()
-    context_menu_list:  dict[ui.ClassView,list[ContextMenuDict]] = dict()
-
+    context_menu_list: dict[ui.ClassView, list[ContextMenuDict]] = dict()

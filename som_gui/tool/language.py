@@ -64,7 +64,7 @@ class Language(som_gui.core.tool.Language):
         som_gui.retranslate_ui()
 
     @classmethod
-    def retranslate_plugins(cls,plugin_names:list[str]):
+    def retranslate_plugins(cls, plugin_names: list[str]):
         for plugin_names in plugin_names:
             module = importlib.import_module(f"som_gui.plugins.{plugin_names}")
             module.retranslate_ui()

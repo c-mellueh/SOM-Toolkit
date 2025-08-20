@@ -16,22 +16,22 @@ if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 FACTOR_DICT = {
-    "EXA":   10 ^ 18,
-    "PETA":  10 ^ 15,
-    "TERA":  10 ^ 12,
-    "GIGA":  10 ^ 9,
-    "MEGA":  10 ^ 6,
-    "KILO":  10 ^ 3,
+    "EXA": 10 ^ 18,
+    "PETA": 10 ^ 15,
+    "TERA": 10 ^ 12,
+    "GIGA": 10 ^ 9,
+    "MEGA": 10 ^ 6,
+    "KILO": 10 ^ 3,
     "HECTO": 10 ^ 2,
-    "DECA":  10,
-    "DECI":  10 ^ -1,
+    "DECA": 10,
+    "DECI": 10 ^ -1,
     "CENTI": 10 ^ -2,
     "MILLI": 10 ^ -3,
     "MICRO": 10 ^ -6,
-    "NANO":  10 ^ -9,
-    "PICO":  10 ^ -12,
+    "NANO": 10 ^ -9,
+    "PICO": 10 ^ -12,
     "FEMTO": 10 ^ -15,
-    "ATTO":  10 ^ -18,
+    "ATTO": 10 ^ -18,
 }
 
 
@@ -90,7 +90,9 @@ class Move:
     @classmethod
     def set_coordinate_values(cls, values: tuple[float, float, float]):
         widget_ui = cls.get_widget().ui
-        widget_ui.dsb_x.setValue(values[0]), widget_ui.dsb_y.setValue(values[1]), widget_ui.dsb_z.setValue(values[2])
+        widget_ui.dsb_x.setValue(values[0]), widget_ui.dsb_y.setValue(
+            values[1]
+        ), widget_ui.dsb_z.setValue(values[2])
 
     @classmethod
     def connect_runner(cls, runner: IfcImportRunner):
@@ -121,14 +123,21 @@ class Move:
             status_label.setText(status_text)
 
     @classmethod
-    def move_ifc(cls, ifc: ifcopenshell.file, export_path: str, coordinates: tuple[float, float, float]):
+    def move_ifc(
+        cls,
+        ifc: ifcopenshell.file,
+        export_path: str,
+        coordinates: tuple[float, float, float],
+    ):
 
         projects = ifc.by_type("IfcProject")
         if len(projects) > 1:
             logging.error(f"IfcProject Count in IFC > 1 -> Abort")
             return
         project: ifcopenshell.entity_instance = projects[0]
-        length_units = [u for u in project.UnitsInContext.Units if u.UnitType == "LENGTHUNIT"]
+        length_units = [
+            u for u in project.UnitsInContext.Units if u.UnitType == "LENGTHUNIT"
+        ]
         if len(length_units) > 1:
             logging.error(f"LengthUnit Count in IFC > 1 -> Abort")
             return
@@ -140,13 +149,23 @@ class Move:
         if length_unit.Prefix is not None:
             factor = 1 / FACTOR_DICT[length_unit.Prefix]
         logging.info(f"MoveFactor = {factor}")
-        sites = [x for xs in [aggregation.RelatedObjects for aggregation in project.IsDecomposedBy] for x in xs]
+        sites = [
+            x
+            for xs in [
+                aggregation.RelatedObjects for aggregation in project.IsDecomposedBy
+            ]
+            for x in xs
+        ]
         for site in sites:
             old_placement = site.ObjectPlacement
             if old_placement.PlacementRelTo:
-                logging.warning(f"Siteplacement {old_placement} references to different placement")
+                logging.warning(
+                    f"Siteplacement {old_placement} references to different placement"
+                )
             old_coordinates = old_placement.RelativePlacement.Location.Coordinates
-            new_coordinates = [o + n * factor for o, n in zip(old_coordinates, coordinates)]
+            new_coordinates = [
+                o + n * factor for o, n in zip(old_coordinates, coordinates)
+            ]
             logging.info(f"New Site coordinates = {new_coordinates}")
             point = ifc.create_entity("IfcCartesianPoint", Coordinates=new_coordinates)
             axis_placement = ifc.create_entity("IfcAxis2Placement3D", Location=point)

@@ -6,8 +6,11 @@ from som_gui.module.project import ui
 def connect():
     core.create_main_menu_actions(tool.Project, tool.MainWindow)
 
-    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "pageGeneral",
-                                      lambda: core.settings_accepted(tool.Project, tool.Appdata))
+    tool.Settings.add_page_to_toolbox(
+        ui.SettingsGeneral,
+        "pageGeneral",
+        lambda: core.settings_accepted(tool.Project, tool.Appdata),
+    )
     tool.Settings.add_page_to_toolbox(ui.SettingsPath, "pageProject", lambda: None)
 
 
@@ -16,11 +19,15 @@ def new_clicked():
 
 
 def open_clicked():
-    core.open_file_clicked(tool.Project, tool.Appdata, tool.MainWindow, tool.Popups,tool.Plugins)
+    core.open_file_clicked(
+        tool.Project, tool.Appdata, tool.MainWindow, tool.Popups, tool.Plugins
+    )
 
 
 def add_clicked():
-    core.add_project(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow, tool.Util)
+    core.add_project(
+        tool.Project, tool.Appdata, tool.Popups, tool.MainWindow, tool.Util
+    )
 
 
 def save():

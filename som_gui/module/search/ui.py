@@ -13,7 +13,9 @@ class SearchDialog(QDialog):
         self.setWindowIcon(get_icon())
         self.search_mode = None
         self.return_value = None
-        self.ui.tableWidget.itemDoubleClicked.connect(lambda _:trigger.item_double_clicked(self))
+        self.ui.tableWidget.itemDoubleClicked.connect(
+            lambda _: trigger.item_double_clicked(self)
+        )
 
     def paintEvent(self, event):
         super().paintEvent(event)

@@ -23,6 +23,7 @@ from PySide6.QtCore import QCoreApplication
 if TYPE_CHECKING:
     from som_gui.module.class_info import ui as ui_class_info
 
+
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def get_properties(cls) -> AggregationProperties:
@@ -57,7 +58,9 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             cls.oi_set_abbrev_value_color(QPalette().color(QPalette.Text).name())
 
     @classmethod
-    def test_abbreviation(cls, abbreviation: str, som_class: SOMcreator.SOMClass) -> int:
+    def test_abbreviation(
+        cls, abbreviation: str, som_class: SOMcreator.SOMClass
+    ) -> int:
         ignore_text = som_class.abbreviation if som_class is not None else None
         if tool.ClassInfo.get_mode() == 2:
             ignore_text = None
@@ -101,12 +104,11 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         som_class.abbreviation = abbreviation
 
     @classmethod
-    def create_ci_line_edit(cls,dialog:ui_class_info.ClassInfoDialog):
+    def create_ci_line_edit(cls, dialog: ui_class_info.ClassInfoDialog):
         le = ui_aggregation.ClassInfoLineEdit(dialog)
         cls.get_properties().class_info_line_edit = le
-        tool.Util.insert_tab_order(dialog.ui.line_edit_name,le)
+        tool.Util.insert_tab_order(dialog.ui.line_edit_name, le)
         return cls.get_properties().class_info_line_edit
-    
 
     @classmethod
     def get_ci_text(cls):

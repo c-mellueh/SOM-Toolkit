@@ -12,13 +12,17 @@ if TYPE_CHECKING:
 
 
 class Connection(QGraphicsPathItem):
-    def __init__(self, top_node: NodeProxy, bottom_node: NodeProxy, connection_type: int):
+    def __init__(
+        self, top_node: NodeProxy, bottom_node: NodeProxy, connection_type: int
+    ):
         super().__init__()
         self.top_node: NodeProxy | None = top_node
         self.bottom_node: NodeProxy | None = bottom_node
         self.connection_type = connection_type
         self.setPen(QPen(QPalette().text().color()))
 
-    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, *args, **kwargs):
+    def paint(
+        self, painter: QPainter, option: QStyleOptionGraphicsItem, *args, **kwargs
+    ):
         trigger.paint_connection(self)
         super().paint(painter, option, *args, **kwargs)

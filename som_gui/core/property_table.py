@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import QCoreApplication, QMimeData, Qt, QByteArray
 from PySide6.QtWidgets import QApplication
 import SOMcreator
+from SOMcreator.util.units import uri_to_code
 import pickle
 
 if TYPE_CHECKING:
@@ -39,7 +40,7 @@ def init_context_menu(property_table: Type[tool.PropertyTable]):
     )
 
 
-def init_property_columns(property_table: Type[tool.PropertyTable]):
+def init_property_columns(property_table: Type[tool.PropertyTable],units:Type[tool.Units]):
     """
     Defines all property columns associated with an property table. This can be expanded by plugins
     :param property_table:
@@ -57,7 +58,7 @@ def init_property_columns(property_table: Type[tool.PropertyTable]):
     property_table.add_column_to_table("Name", lambda a: a.name)
     property_table.add_column_to_table("Datatype", lambda a: a.data_type)
     property_table.add_column_to_table("Valuetype", lambda a: a.value_type)
-    property_table.add_column_to_table("Unit", lambda a: a.unit)
+    property_table.add_column_to_table("Unit", lambda a: uri_to_code(a.unit))
     property_table.add_column_to_table("Value", lambda a: a.allowed_values)
     property_table.add_column_to_table(
         "Optional", lambda a: a.is_optional(ignore_hirarchy=True)
@@ -226,4 +227,3 @@ def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
     # update rows
     for row in range(table.rowCount()):
         property_table.update_row(table, row)
-

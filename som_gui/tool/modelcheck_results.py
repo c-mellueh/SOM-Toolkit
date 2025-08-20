@@ -36,12 +36,13 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
             QCoreApplication.translate("Modelcheck", "Property"),
             QCoreApplication.translate("Modelcheck", "Value"),
             QCoreApplication.translate("Modelcheck", "File"),
-
         ]
         return header
 
     @classmethod
-    def last_modelcheck_finished(cls, ):
+    def last_modelcheck_finished(
+        cls,
+    ):
         trigger.last_modelcheck_finished(tool.Modelcheck.get_database_path())
 
     @classmethod
@@ -49,16 +50,22 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
         max_widths = cls.get_max_width(worksheet)
         dim_holder = DimensionHolder(worksheet=worksheet)
         for col in range(worksheet.min_column, worksheet.max_column + 1):
-            dim_holder[get_column_letter(col)] = ColumnDimension(worksheet, min=col, max=col,
-                                                                 width=max_widths[col - 1] * 1.1)
+            dim_holder[get_column_letter(col)] = ColumnDimension(
+                worksheet, min=col, max=col, width=max_widths[col - 1] * 1.1
+            )
         worksheet.column_dimensions = dim_holder
 
     @classmethod
     def create_table(cls, worksheet: Worksheet, last_cell: Cell):
         table_zone = f"A1:{last_cell.coordinate}"
         tab = Table(displayName="Issues", ref=table_zone)
-        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
-                               showRowStripes=True, showColumnStripes=True)
+        style = TableStyleInfo(
+            name="TableStyleMedium9",
+            showFirstColumn=False,
+            showLastColumn=False,
+            showRowStripes=True,
+            showColumnStripes=True,
+        )
         tab.tableStyleInfo = style
         worksheet.add_table(tab)
 
@@ -106,8 +113,9 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT i.creation_date, e.GUID,e.ifc_type,i.short_description,i.issue_type,e.Name,e.bauteilKlassifikation,'
-            'i.PropertySet,i.Attribut,i.Value, e.datei   FROM issues AS i JOIN entities e on i.GUID = e.GUID')
+            "SELECT i.creation_date, e.GUID,e.ifc_type,i.short_description,i.issue_type,e.Name,e.bauteilKlassifikation,"
+            "i.PropertySet,i.Attribut,i.Value, e.datei   FROM issues AS i JOIN entities e on i.GUID = e.GUID"
+        )
         conn.commit()
         query = cursor.fetchall()
         return query

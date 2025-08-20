@@ -26,10 +26,13 @@ if TYPE_CHECKING:
     from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
     from som_gui.module.property_table import ui as ui_property_table
 
+
 class Signaller(QObject):
     change_active_class = Signal(SOMcreator.SOMClass)
     class_info_requested = Signal(SOMcreator.SOMClass)
     new_property_requested = Signal(SOMcreator.SOMPropertySet)
+
+
 class MainWindow(som_gui.core.tool.MainWindow):
     signaller = Signaller()
 
@@ -172,7 +175,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_properties().application
 
     @classmethod
-    def get_property_table(cls) ->ui_property_table.PropertyTable:
+    def get_property_table(cls) -> ui_property_table.PropertyTable:
         return cls.get_ui().table_property
 
     @classmethod
@@ -205,7 +208,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         tree.class_double_clicked.connect(cls.signaller.class_info_requested.emit)
         tree.selected_class_changed.connect(cls.signaller.change_active_class.emit)
         tree.item_dropped.connect(trigger.class_tree_item_dropped)
-    
+
     @classmethod
     def get_active_property_set(cls):
         som_class = cls.get_active_class()
@@ -214,7 +217,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         table = cls.get_property_set_table_widget()
         pset = tool.PropertySet.get_active_property_set()
         return pset
-    
+
     @classmethod
     def request_new_property(cls):
         pset = cls.get_active_property_set()

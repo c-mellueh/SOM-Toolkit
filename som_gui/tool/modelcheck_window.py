@@ -310,7 +310,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             parent_item.child(row_index, col)
             for col in range(parent_item.columnCount())
         ]
-        som_class:SOMcreator.SOMClass = items[0].data(CLASS_REFERENCE)
+        som_class: SOMcreator.SOMClass = items[0].data(CLASS_REFERENCE)
         texts = [som_class.name, som_class.ident_value]
 
         for column, text in enumerate(texts):

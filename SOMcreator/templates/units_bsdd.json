@@ -1,0 +1,2927 @@
+[
+    {
+        "Code": "N",
+        "name": "newton",
+        "QudtUri": "http://qudt.org/vocab/unit/N"
+    },
+    {
+        "Code": "mm",
+        "name": "millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM"
+    },
+    {
+        "Code": "dB",
+        "name": "decibel",
+        "Symbol": "dB",
+        "QudtUri": "http://qudt.org/vocab/unit/DeciB"
+    },
+    {
+        "Code": "K",
+        "name": "kelvin degrees",
+        "QudtUri": "http://qudt.org/vocab/unit/K"
+    },
+    {
+        "Code": "\u00B0C",
+        "name": "celsius degrees",
+        "QudtUri": "http://qudt.org/vocab/unit/DEG_C"
+    },
+    {
+        "Code": "N/m",
+        "name": "newton per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/N-PER-M"
+    },
+    {
+        "Code": "J",
+        "name": "joule",
+        "QudtUri": "http://qudt.org/vocab/unit/J"
+    },
+    {
+        "Code": "H",
+        "name": "henry",
+        "QudtUri": "http://qudt.org/vocab/unit/H"
+    },
+    {
+        "Code": "px",
+        "name": "pixel",
+        "QudtUri": "http://qudt.org/vocab/unit/PIXEL"
+    },
+    {
+        "Code": "pf",
+        "name": "power factor"
+    },
+    {
+        "Code": "pH",
+        "name": "ph"
+    },
+    {
+        "Code": "%RH",
+        "name": "percent relative humidity"
+    },
+    {
+        "Code": "gH\u2082O/kgAir",
+        "name": "grams of water per kilogram dry air"
+    },
+    {
+        "Code": "V/K",
+        "name": "volt per degree kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/V-PER-K"
+    },
+    {
+        "Code": "\u00B0daysC",
+        "name": "degree days celsius"
+    },
+    {
+        "Code": "\u00B0daysF",
+        "name": "degree days fahrenheit"
+    },
+    {
+        "Code": "%obsc/ft",
+        "name": "percent obscuration per foot"
+    },
+    {
+        "Code": "%obsc/m",
+        "name": "percent obscuration per metre"
+    },
+    {
+        "Code": "psi/\u00B0F",
+        "name": "psi per degree fahrenheit"
+    },
+    {
+        "Code": "m\u00B2/N",
+        "name": "square metre per newton",
+        "QudtUri": "http://qudt.org/vocab/unit/M2-PER-N"
+    },
+    {
+        "Code": "dBmV",
+        "name": "db millivolt"
+    },
+    {
+        "Code": "dB\u00B5V",
+        "name": "db microvolt"
+    },
+    {
+        "Code": "ppu",
+        "name": "parts per unit"
+    },
+    {
+        "Code": "ppm",
+        "name": "parts per million",
+        "QudtUri": "http://qudt.org/vocab/unit/PPM"
+    },
+    {
+        "Code": "ppb",
+        "name": "parts per billion",
+        "QudtUri": "http://qudt.org/vocab/unit/PPB"
+    },
+    {
+        "Code": "g/kg",
+        "name": "gram per kilogram",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-KiloGM"
+    },
+    {
+        "Code": "rad",
+        "name": "radian",
+        "QudtUri": "http://qudt.org/vocab/unit/RAD"
+    },
+    {
+        "Code": "deg",
+        "name": "degrees angular",
+        "QudtUri": "http://qudt.org/vocab/unit/DEG"
+    },
+    {
+        "Code": "degPh",
+        "name": "degrees phase"
+    },
+    {
+        "Code": "sr",
+        "name": "steradian",
+        "QudtUri": "http://qudt.org/vocab/unit/SR"
+    },
+    {
+        "Code": "ntu",
+        "name": "nephelometric turbidity unit",
+        "QudtUri": "http://qudt.org/vocab/unit/NTU"
+    },
+    {
+        "Code": "fnu",
+        "name": "formazin nephelometric unit"
+    },
+    {
+        "Code": "PUE",
+        "name": "power usage effectiveness"
+    },
+    {
+        "Code": "DCIE",
+        "name": "data center infrastructure efficiency"
+    },
+    {
+        "Code": "AFN",
+        "name": "afghani",
+        "Symbol": "Af",
+        "QudtUri": "http://qudt.org/vocab/unit/AFN"
+    },
+    {
+        "Code": "DZD",
+        "name": "algerian dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/DZD"
+    },
+    {
+        "Code": "ARS",
+        "name": "argentine peso",
+        "QudtUri": "http://qudt.org/vocab/unit/ARS"
+    },
+    {
+        "Code": "AMD",
+        "name": "armenian dram",
+        "Symbol": "\u0534",
+        "QudtUri": "http://qudt.org/vocab/unit/AMD"
+    },
+    {
+        "Code": "AWG",
+        "name": "aruban guilder florin",
+        "Symbol": "\u0192",
+        "QudtUri": "http://qudt.org/vocab/unit/AWG"
+    },
+    {
+        "Code": "AUD",
+        "name": "australian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/AUD"
+    },
+    {
+        "Code": "AZN",
+        "name": "azerbaijanian manat",
+        "Symbol": "\u043C\u0430\u043D",
+        "QudtUri": "http://qudt.org/vocab/unit/AZN"
+    },
+    {
+        "Code": "BSD",
+        "name": "bahamian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/BSD"
+    },
+    {
+        "Code": "BHD",
+        "name": "bahraini dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/BHD"
+    },
+    {
+        "Code": "THB",
+        "name": "baht",
+        "Symbol": "\u0E3F",
+        "QudtUri": "http://qudt.org/vocab/unit/THB"
+    },
+    {
+        "Code": "PAB",
+        "name": "balboa",
+        "QudtUri": "http://qudt.org/vocab/unit/PAB"
+    },
+    {
+        "Code": "BBD",
+        "name": "barbados dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/BBD"
+    },
+    {
+        "Code": "BYR",
+        "name": "belarussian ruble",
+        "Symbol": "Br",
+        "QudtUri": "http://qudt.org/vocab/unit/BYR"
+    },
+    {
+        "Code": "BZD",
+        "name": "belize dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/BeilzeDollar"
+    },
+    {
+        "Code": "BMD",
+        "name": "bermudian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/BermudaDollar"
+    },
+    {
+        "Code": "VEF",
+        "name": "bolivar fuerte"
+    },
+    {
+        "Code": "BOB",
+        "name": "boliviano",
+        "QudtUri": "http://qudt.org/vocab/unit/Boliviano"
+    },
+    {
+        "Code": "BRL",
+        "name": "brazilian real",
+        "Symbol": "R$",
+        "QudtUri": "http://qudt.org/vocab/unit/BrazilianReal"
+    },
+    {
+        "Code": "BND",
+        "name": "brunei dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/BruneiDollar"
+    },
+    {
+        "Code": "BGN",
+        "name": "bulgarian lev",
+        "Symbol": "\u043B\u0432",
+        "QudtUri": "http://qudt.org/vocab/unit/BulgarianLev"
+    },
+    {
+        "Code": "BIF",
+        "name": "burundi franc",
+        "QudtUri": "http://qudt.org/vocab/unit/BurundianFranc"
+    },
+    {
+        "Code": "CAD",
+        "name": "canadian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/CAD"
+    },
+    {
+        "Code": "CVE",
+        "name": "cape verde escudo",
+        "QudtUri": "http://qudt.org/vocab/unit/CapeVerdeEscudo"
+    },
+    {
+        "Code": "KYD",
+        "name": "cayman islands dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/CaymanIslandsDollar"
+    },
+    {
+        "Code": "GHS",
+        "name": "cedi (ghana)",
+        "Symbol": "\u20B5",
+        "QudtUri": "http://qudt.org/vocab/unit/Cedi"
+    },
+    {
+        "Code": "XAF",
+        "name": "cfa franc bceao",
+        "QudtUri": "http://qudt.org/vocab/unit/XAF"
+    },
+    {
+        "Code": "XPF",
+        "name": "cfp franc",
+        "QudtUri": "http://qudt.org/vocab/unit/XPF"
+    },
+    {
+        "Code": "CLP",
+        "name": "chilean peso",
+        "QudtUri": "http://qudt.org/vocab/unit/ChileanPeso"
+    },
+    {
+        "Code": "CNY",
+        "name": "chinese yuan",
+        "Symbol": "\u5143"
+    },
+    {
+        "Code": "CDF",
+        "name": "congolese franc",
+        "QudtUri": "http://qudt.org/vocab/unit/FrancCongolais"
+    },
+    {
+        "Code": "NIO",
+        "name": "cordoba oro",
+        "Symbol": "C$",
+        "QudtUri": "http://qudt.org/vocab/unit/CordobaOro"
+    },
+    {
+        "Code": "CRC",
+        "name": "costa rican colon",
+        "Symbol": "\u20A1",
+        "QudtUri": "http://qudt.org/vocab/unit/CostaRicanColon"
+    },
+    {
+        "Code": "HRK",
+        "name": "croatian kuna",
+        "Symbol": "Kn",
+        "QudtUri": "http://qudt.org/vocab/unit/CroatianKuna"
+    },
+    {
+        "Code": "CUP",
+        "name": "cuban peso",
+        "QudtUri": "http://qudt.org/vocab/unit/CubanPeso"
+    },
+    {
+        "Code": "CZK",
+        "name": "czech koruna",
+        "Symbol": "K\u010D",
+        "QudtUri": "http://qudt.org/vocab/unit/CzechKoruna"
+    },
+    {
+        "Code": "GMD",
+        "name": "dalasi",
+        "QudtUri": "http://qudt.org/vocab/unit/Dalasi"
+    },
+    {
+        "Code": "DKK",
+        "name": "danish krone",
+        "Symbol": "kr",
+        "QudtUri": "http://qudt.org/vocab/unit/DansihKrone"
+    },
+    {
+        "Code": "MKD",
+        "name": "denar",
+        "Symbol": "\u0434\u0435\u043D",
+        "QudtUri": "http://qudt.org/vocab/unit/Denar"
+    },
+    {
+        "Code": "DJF",
+        "name": "djibouti franc",
+        "QudtUri": "http://qudt.org/vocab/unit/DjiboutiFranc"
+    },
+    {
+        "Code": "STD",
+        "name": "dobra",
+        "Symbol": "Db",
+        "QudtUri": "http://qudt.org/vocab/unit/Dobra"
+    },
+    {
+        "Code": "DOP",
+        "name": "dominican peso",
+        "QudtUri": "http://qudt.org/vocab/unit/DominicanPeso"
+    },
+    {
+        "Code": "VND",
+        "name": "dong",
+        "Symbol": "\u20AB",
+        "QudtUri": "http://qudt.org/vocab/unit/VietnameseDong"
+    },
+    {
+        "Code": "XCD",
+        "name": "east caribbean dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/EastCaribbeanDollar"
+    },
+    {
+        "Code": "EGP",
+        "name": "egyptian pound",
+        "QudtUri": "http://qudt.org/vocab/unit/EgyptianPound"
+    },
+    {
+        "Code": "ETB",
+        "name": "ethiopian birr",
+        "QudtUri": "http://qudt.org/vocab/unit/EthiopianBirr"
+    },
+    {
+        "Code": "EUR",
+        "name": "euro",
+        "Symbol": "\u20AC",
+        "QudtUri": "http://qudt.org/vocab/unit/Euro"
+    },
+    {
+        "Code": "FKP",
+        "name": "falkland islands pound",
+        "QudtUri": "http://qudt.org/vocab/unit/FalklandIslandsPound"
+    },
+    {
+        "Code": "FJD",
+        "name": "fiji dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/FijiDollar"
+    },
+    {
+        "Code": "HUF",
+        "name": "forint",
+        "QudtUri": "http://qudt.org/vocab/unit/Forint"
+    },
+    {
+        "Code": "GIP",
+        "name": "gibraltar pound",
+        "QudtUri": "http://qudt.org/vocab/unit/GibraltarPound"
+    },
+    {
+        "Code": "HTG",
+        "name": "gourde",
+        "QudtUri": "http://qudt.org/vocab/unit/HaitiGourde"
+    },
+    {
+        "Code": "PYG",
+        "name": "guarani",
+        "Symbol": "\u20B2",
+        "QudtUri": "http://qudt.org/vocab/unit/Guarani"
+    },
+    {
+        "Code": "GNF",
+        "name": "guinea franc",
+        "QudtUri": "http://qudt.org/vocab/unit/GuineaFranc"
+    },
+    {
+        "Code": "GYD",
+        "name": "guyana dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/GuyanaDollar"
+    },
+    {
+        "Code": "HKD",
+        "name": "hong kong dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/HongKongDollar"
+    },
+    {
+        "Code": "UAH",
+        "name": "hryvnia",
+        "Symbol": "\u20B4",
+        "QudtUri": "http://qudt.org/vocab/unit/Hryvnia"
+    },
+    {
+        "Code": "ISK",
+        "name": "iceland krona",
+        "Symbol": "Kr",
+        "QudtUri": "http://qudt.org/vocab/unit/IcelandKrona"
+    },
+    {
+        "Code": "INR",
+        "name": "indian rupee",
+        "Symbol": "\u20B9",
+        "QudtUri": "http://qudt.org/vocab/unit/IndianRupee"
+    },
+    {
+        "Code": "IRR",
+        "name": "iranian rial",
+        "QudtUri": "http://qudt.org/vocab/unit/IranianRial"
+    },
+    {
+        "Code": "IQD",
+        "name": "iraqi dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/IraqiDinar"
+    },
+    {
+        "Code": "JMD",
+        "name": "jamaican dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/JamaicanDollar"
+    },
+    {
+        "Code": "JOD",
+        "name": "jordanian dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/JordanianDinar"
+    },
+    {
+        "Code": "KES",
+        "name": "kenyan shilling",
+        "Symbol": "Sh",
+        "QudtUri": "http://qudt.org/vocab/unit/KenyanShilling"
+    },
+    {
+        "Code": "PGK",
+        "name": "kina",
+        "QudtUri": "http://qudt.org/vocab/unit/Kina"
+    },
+    {
+        "Code": "LAK",
+        "name": "kip",
+        "Symbol": "\u20AD"
+    },
+    {
+        "Code": "BAM",
+        "name": "konvertibilna marka",
+        "Symbol": "KM"
+    },
+    {
+        "Code": "KWD",
+        "name": "kuwaiti dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/KuwaitiDinar"
+    },
+    {
+        "Code": "MWK",
+        "name": "kwacha",
+        "Symbol": "MK"
+    },
+    {
+        "Code": "AOA",
+        "name": "kwanza",
+        "Symbol": "Kz",
+        "QudtUri": "http://qudt.org/vocab/unit/Kwanza"
+    },
+    {
+        "Code": "MMK",
+        "name": "kyat",
+        "QudtUri": "http://qudt.org/vocab/unit/Kyat"
+    },
+    {
+        "Code": "GEL",
+        "name": "lari",
+        "Symbol": "\u10DA",
+        "QudtUri": "http://qudt.org/vocab/unit/Lari"
+    },
+    {
+        "Code": "LBP",
+        "name": "lebanese pound",
+        "QudtUri": "http://qudt.org/vocab/unit/LebanesePound"
+    },
+    {
+        "Code": "ALL",
+        "name": "lek",
+        "QudtUri": "http://qudt.org/vocab/unit/Lek"
+    },
+    {
+        "Code": "HNL",
+        "name": "lempira",
+        "QudtUri": "http://qudt.org/vocab/unit/Lempira"
+    },
+    {
+        "Code": "SLL",
+        "name": "leone",
+        "Symbol": "Le",
+        "QudtUri": "http://qudt.org/vocab/unit/Leone"
+    },
+    {
+        "Code": "RON",
+        "name": "romanian new leu",
+        "QudtUri": "http://qudt.org/vocab/unit/RomanianNeLeu"
+    },
+    {
+        "Code": "LRD",
+        "name": "liberian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/LiberianDollar"
+    },
+    {
+        "Code": "LYD",
+        "name": "libyan dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/LibyanDinar"
+    },
+    {
+        "Code": "SZL",
+        "name": "lilangeni",
+        "QudtUri": "http://qudt.org/vocab/unit/Lilangeni"
+    },
+    {
+        "Code": "LSL",
+        "name": "loti",
+        "QudtUri": "http://qudt.org/vocab/unit/Loti"
+    },
+    {
+        "Code": "MGA",
+        "name": "malagasy ariary",
+        "QudtUri": "http://qudt.org/vocab/unit/MalagasyAriary"
+    },
+    {
+        "Code": "MYR",
+        "name": "malaysian ringgit",
+        "Symbol": "RM",
+        "QudtUri": "http://qudt.org/vocab/unit/MalaysianRinggit"
+    },
+    {
+        "Code": "TMT",
+        "name": "manat",
+        "QudtUri": "http://qudt.org/vocab/unit/Manat"
+    },
+    {
+        "Code": "MUR",
+        "name": "mauritius rupee",
+        "QudtUri": "http://qudt.org/vocab/unit/MauritiusRupee"
+    },
+    {
+        "Code": "MZN",
+        "name": "metical",
+        "Symbol": "MTn"
+    },
+    {
+        "Code": "MXN",
+        "name": "mexican peso",
+        "QudtUri": "http://qudt.org/vocab/unit/MexicanPeso"
+    },
+    {
+        "Code": "MDL",
+        "name": "moldavian leu",
+        "QudtUri": "http://qudt.org/vocab/unit/MoldovanLeu"
+    },
+    {
+        "Code": "MAD",
+        "name": "moroccan dirham",
+        "QudtUri": "http://qudt.org/vocab/unit/MoroccanDirham"
+    },
+    {
+        "Code": "NGN",
+        "name": "naira",
+        "Symbol": "\u20A6",
+        "QudtUri": "http://qudt.org/vocab/unit/Naira"
+    },
+    {
+        "Code": "ERN",
+        "name": "nakfa",
+        "Symbol": "Nfk",
+        "QudtUri": "http://qudt.org/vocab/unit/Nakfa"
+    },
+    {
+        "Code": "NAD",
+        "name": "namibian dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/NamibianDollar"
+    },
+    {
+        "Code": "NPR",
+        "name": "nepalese rupee",
+        "QudtUri": "http://qudt.org/vocab/unit/NepaleseRupee"
+    },
+    {
+        "Code": "ILS",
+        "name": "new israeli shekel",
+        "Symbol": "\u20AA",
+        "QudtUri": "http://qudt.org/vocab/unit/NewIsraeliShekel"
+    },
+    {
+        "Code": "NZD",
+        "name": "new zealand dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/NewZealandDollar"
+    },
+    {
+        "Code": "BTN",
+        "name": "ngultrum",
+        "QudtUri": "http://qudt.org/vocab/unit/Ngultrum"
+    },
+    {
+        "Code": "KPW",
+        "name": "north korean won",
+        "QudtUri": "http://qudt.org/vocab/unit/NorthKoreanWon"
+    },
+    {
+        "Code": "NOK",
+        "name": "norwegian krone",
+        "QudtUri": "http://qudt.org/vocab/unit/NorwegianKrone"
+    },
+    {
+        "Code": "PEN",
+        "name": "nuevo sol",
+        "QudtUri": "http://qudt.org/vocab/unit/NuevoSol"
+    },
+    {
+        "Code": "MRO",
+        "name": "ouguiya",
+        "Symbol": "UM"
+    },
+    {
+        "Code": "PKR",
+        "name": "pakistan rupee",
+        "Symbol": "\u20A8",
+        "QudtUri": "http://qudt.org/vocab/unit/PakistanRupee"
+    },
+    {
+        "Code": "MOP",
+        "name": "pataca",
+        "QudtUri": "http://qudt.org/vocab/unit/Pataca"
+    },
+    {
+        "Code": "UYU",
+        "name": "peso uruguayo",
+        "QudtUri": "http://qudt.org/vocab/unit/UruguayPeso"
+    },
+    {
+        "Code": "PHP",
+        "name": "philippine peso",
+        "Symbol": "\u20B1",
+        "QudtUri": "http://qudt.org/vocab/unit/PhilippinePeso"
+    },
+    {
+        "Code": "GBP",
+        "name": "pound sterling",
+        "Symbol": "\u00A3",
+        "QudtUri": "http://qudt.org/vocab/unit/PoundSterling"
+    },
+    {
+        "Code": "BWP",
+        "name": "pula",
+        "QudtUri": "http://qudt.org/vocab/unit/Pula"
+    },
+    {
+        "Code": "PLN",
+        "name": "pzloty",
+        "Symbol": "z\u0142"
+    },
+    {
+        "Code": "QAR",
+        "name": "qatari rial"
+    },
+    {
+        "Code": "GTQ",
+        "name": "quetzal"
+    },
+    {
+        "Code": "ZAR",
+        "name": "rand",
+        "QudtUri": "http://qudt.org/vocab/unit/SouthAfricanRand"
+    },
+    {
+        "Code": "OMR",
+        "name": "rial omani",
+        "QudtUri": "http://qudt.org/vocab/unit/OmaniRial"
+    },
+    {
+        "Code": "KHR",
+        "name": "riel",
+        "QudtUri": "http://qudt.org/vocab/unit/Riel"
+    },
+    {
+        "Code": "MVR",
+        "name": "rufiyaa",
+        "QudtUri": "http://qudt.org/vocab/unit/Rufiyaa"
+    },
+    {
+        "Code": "IDR",
+        "name": "rupiah",
+        "Symbol": "Rp",
+        "QudtUri": "http://qudt.org/vocab/unit/Rupiah"
+    },
+    {
+        "Code": "RUB",
+        "name": "russian ruble",
+        "QudtUri": "http://qudt.org/vocab/unit/RussianRuble"
+    },
+    {
+        "Code": "RWF",
+        "name": "rwanda franc",
+        "QudtUri": "http://qudt.org/vocab/unit/RwandaFranc"
+    },
+    {
+        "Code": "SHP",
+        "name": "saint helena pound",
+        "QudtUri": "http://qudt.org/vocab/unit/SaintHelenaPound"
+    },
+    {
+        "Code": "SAR",
+        "name": "saudi riyal",
+        "QudtUri": "http://qudt.org/vocab/unit/SaudiRyal"
+    },
+    {
+        "Code": "RSD",
+        "name": "serbian dinar",
+        "Symbol": "din",
+        "QudtUri": "http://qudt.org/vocab/unit/SerbianDinar"
+    },
+    {
+        "Code": "SCR",
+        "name": "seychelles rupee",
+        "QudtUri": "http://qudt.org/vocab/unit/SeychellesRupee"
+    },
+    {
+        "Code": "SGD",
+        "name": "singapore dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/SingaporeDollar"
+    },
+    {
+        "Code": "SBD",
+        "name": "solomon islands dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/SolomonIslandsDollar"
+    },
+    {
+        "Code": "KGS",
+        "name": "som"
+    },
+    {
+        "Code": "SOS",
+        "name": "somali shilling",
+        "QudtUri": "http://qudt.org/vocab/unit/SomaliShilling"
+    },
+    {
+        "Code": "TJS",
+        "name": "somoni",
+        "Symbol": "SM",
+        "QudtUri": "http://qudt.org/vocab/unit/Somoni"
+    },
+    {
+        "Code": "KRW",
+        "name": "south korean won",
+        "Symbol": "\u20A9",
+        "QudtUri": "http://qudt.org/vocab/unit/SouthKoreanWon"
+    },
+    {
+        "Code": "LKR",
+        "name": "sri lanka rupee",
+        "Symbol": "Rs",
+        "QudtUri": "http://qudt.org/vocab/unit/SriLankaRupee"
+    },
+    {
+        "Code": "SDG",
+        "name": "sudanese pound",
+        "QudtUri": "http://qudt.org/vocab/unit/SudanesePound"
+    },
+    {
+        "Code": "SRD",
+        "name": "surinam dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/SurinamDollar"
+    },
+    {
+        "Code": "SEK",
+        "name": "swedish krona",
+        "QudtUri": "http://qudt.org/vocab/unit/SwedishKrona"
+    },
+    {
+        "Code": "CHF",
+        "name": "swiss franc",
+        "Symbol": "SFr",
+        "QudtUri": "http://qudt.org/vocab/unit/SwissFranc"
+    },
+    {
+        "Code": "SYP",
+        "name": "syrian pound",
+        "QudtUri": "http://qudt.org/vocab/unit/SyrianPound"
+    },
+    {
+        "Code": "TWD",
+        "name": "taiwan dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/NewTaiwanDollar"
+    },
+    {
+        "Code": "BDT",
+        "name": "taka",
+        "Symbol": "\u09F3",
+        "QudtUri": "http://qudt.org/vocab/unit/BDT"
+    },
+    {
+        "Code": "WST",
+        "name": "tala"
+    },
+    {
+        "Code": "TZS",
+        "name": "tanzanian shilling",
+        "QudtUri": "http://qudt.org/vocab/unit/TanzanianShilling"
+    },
+    {
+        "Code": "KZT",
+        "name": "tenge",
+        "Symbol": "\u3012",
+        "QudtUri": "http://qudt.org/vocab/unit/Tenge"
+    },
+    {
+        "Code": "TTD",
+        "name": "trinidad and tobago dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/TrinidadAndTobagoDollar"
+    },
+    {
+        "Code": "MNT",
+        "name": "tugrik",
+        "Symbol": "\u20AE"
+    },
+    {
+        "Code": "TND",
+        "name": "tunisian dinar",
+        "QudtUri": "http://qudt.org/vocab/unit/TunisianDollar"
+    },
+    {
+        "Code": "TRY",
+        "name": "turkish lira",
+        "Symbol": "\u20A4",
+        "QudtUri": "http://qudt.org/vocab/unit/NewTurkishLira"
+    },
+    {
+        "Code": "AED",
+        "name": "uae dirham"
+    },
+    {
+        "Code": "UGX",
+        "name": "uganda shilling",
+        "QudtUri": "http://qudt.org/vocab/unit/UgandaShilling"
+    },
+    {
+        "Code": "USD",
+        "name": "us dollar",
+        "Symbol": "$",
+        "QudtUri": "http://qudt.org/vocab/unit/USDollar"
+    },
+    {
+        "Code": "UZS",
+        "name": "uzbekistan som",
+        "QudtUri": "http://qudt.org/vocab/unit/UzbekistanSom"
+    },
+    {
+        "Code": "VUV",
+        "name": "vatu",
+        "Symbol": "Vt",
+        "QudtUri": "http://qudt.org/vocab/unit/Vatu"
+    },
+    {
+        "Code": "YER",
+        "name": "yemeni rial",
+        "QudtUri": "http://qudt.org/vocab/unit/YemeniRial"
+    },
+    {
+        "Code": "JPY",
+        "name": "yen",
+        "Symbol": "\u00A5",
+        "QudtUri": "http://qudt.org/vocab/unit/JapaneseYen"
+    },
+    {
+        "Code": "ZMW",
+        "name": "zambian kwacha",
+        "Symbol": "ZK",
+        "QudtUri": "http://qudt.org/vocab/unit/ZambianKwacha"
+    },
+    {
+        "Code": "ZWL",
+        "name": "zimbabwe dollar",
+        "QudtUri": "http://qudt.org/vocab/unit/ZimbabweDollar"
+    },
+    {
+        "Code": "m/s\u00B2",
+        "name": "metre per square second",
+        "QudtUri": "http://qudt.org/vocab/unit/M-PER-SEC2"
+    },
+    {
+        "Code": "rad/s\u00B2",
+        "name": "radian per square second",
+        "QudtUri": "http://qudt.org/vocab/unit/RAD-PER-SEC2"
+    },
+    {
+        "Code": "Js",
+        "name": "joule second",
+        "QudtUri": "http://qudt.org/vocab/unit/J-SEC"
+    },
+    {
+        "Code": "rad/s",
+        "name": "radian per second",
+        "QudtUri": "http://qudt.org/vocab/unit/RAD-PER-SEC"
+    },
+    {
+        "Code": "rpm",
+        "name": "revolution per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/REV-PER-MIN"
+    },
+    {
+        "Code": "m\u00B2",
+        "name": "square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/M2"
+    },
+    {
+        "Code": "mm\u00B2",
+        "name": "square millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM2"
+    },
+    {
+        "Code": "cm\u00B2",
+        "name": "square centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiM2"
+    },
+    {
+        "Code": "km\u00B2",
+        "name": "square kilometre"
+    },
+    {
+        "Code": "in\u00B2",
+        "name": "square inch",
+        "QudtUri": "http://qudt.org/vocab/unit/IN2"
+    },
+    {
+        "Code": "ft\u00B2",
+        "name": "square foot",
+        "QudtUri": "http://qudt.org/vocab/unit/FT2"
+    },
+    {
+        "Code": "yd\u00B2",
+        "name": "square yard",
+        "QudtUri": "http://qudt.org/vocab/unit/YD2"
+    },
+    {
+        "Code": "mile\u00B2",
+        "name": "square mile",
+        "QudtUri": "http://qudt.org/vocab/unit/MI2"
+    },
+    {
+        "Code": "acre",
+        "name": "acre",
+        "QudtUri": "http://qudt.org/vocab/unit/AC"
+    },
+    {
+        "Code": "F",
+        "name": "farad",
+        "QudtUri": "http://qudt.org/vocab/unit/FARAD"
+    },
+    {
+        "Code": "COP",
+        "name": "coefficient of performance"
+    },
+    {
+        "Code": "kg/m\u00B3",
+        "name": "kilogram per cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-M3"
+    },
+    {
+        "Code": "\u00B5g/m\u00B3",
+        "name": "micrograms per cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroGM-PER-M3"
+    },
+    {
+        "Code": "C",
+        "name": "coulomb",
+        "QudtUri": "http://qudt.org/vocab/unit/C"
+    },
+    {
+        "Code": "Ah",
+        "name": "ampere hour",
+        "QudtUri": "http://qudt.org/vocab/unit/A-HR"
+    },
+    {
+        "Code": "S",
+        "name": "siemens",
+        "QudtUri": "http://qudt.org/vocab/unit/S"
+    },
+    {
+        "Code": "A",
+        "name": "ampere",
+        "QudtUri": "http://qudt.org/vocab/unit/A"
+    },
+    {
+        "Code": "mA",
+        "name": "milliampere",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliA"
+    },
+    {
+        "Code": "A/m\u00B2",
+        "name": "ampere per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-M2"
+    },
+    {
+        "Code": "V/m",
+        "name": "volt per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/V-PER-M"
+    },
+    {
+        "Code": "Volt",
+        "name": "volt",
+        "Symbol": "V",
+        "QudtUri": "http://qudt.org/vocab/unit/V"
+    },
+    {
+        "Code": "mV",
+        "name": "millivolt",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliV"
+    },
+    {
+        "Code": "kV",
+        "name": "kilovolt",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloV"
+    },
+    {
+        "Code": "MV",
+        "name": "megavolt",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaV"
+    },
+    {
+        "Code": "M\u03A9",
+        "name": "megaohm",
+        "Symbol": "M\u2126",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaOHM"
+    },
+    {
+        "Code": "m\u03A9",
+        "name": "milliohm",
+        "Symbol": "m\u2126"
+    },
+    {
+        "Code": "S/m",
+        "name": "siemens per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/S-PER-M"
+    },
+    {
+        "Code": "kJ",
+        "name": "kilojoule",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloJ"
+    },
+    {
+        "Code": "Wh",
+        "name": "watt hour",
+        "QudtUri": "http://qudt.org/vocab/unit/W-HR"
+    },
+    {
+        "Code": "kWh",
+        "name": "kilowatt hour",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloW-HR"
+    },
+    {
+        "Code": "MWh",
+        "name": "megawatt hour",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaW-HR"
+    },
+    {
+        "Code": "BTU",
+        "name": "british thermal unit",
+        "QudtUri": "http://qudt.org/vocab/unit/BTU_IT"
+    },
+    {
+        "Code": "kBTU",
+        "name": "kilobtu"
+    },
+    {
+        "Code": "MBTU",
+        "name": "megabtu",
+        "Symbol": "MMBTU"
+    },
+    {
+        "Code": "hph",
+        "name": "horsepower hour"
+    },
+    {
+        "Code": "cal",
+        "name": "calorie",
+        "QudtUri": "http://qudt.org/vocab/unit/CAL_IT"
+    },
+    {
+        "Code": "therm",
+        "name": "therm"
+    },
+    {
+        "Code": "tonrefh",
+        "name": "tons refrigeration hour"
+    },
+    {
+        "Code": "MJ",
+        "name": "megajoule",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaJ"
+    },
+    {
+        "Code": "GJ",
+        "name": "gigajoule"
+    },
+    {
+        "Code": "Nm",
+        "name": "newton metre",
+        "QudtUri": "http://qudt.org/vocab/unit/N-M"
+    },
+    {
+        "Code": "N/m\u00B2",
+        "name": "newton per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/N-PER-M2"
+    },
+    {
+        "Code": "m\u00B3 gas",
+        "name": "cubic metre natural gas"
+    },
+    {
+        "Code": "ft\u00B3 gas",
+        "name": "cubic feet natural gas"
+    },
+    {
+        "Code": "hundred cubic feet natural gas",
+        "name": "hundred cubic feet natural gas"
+    },
+    {
+        "Code": "thousand cubic feet natural gas",
+        "name": "thousand cubic feet natural gas"
+    },
+    {
+        "Code": "million cubic feet natural gas",
+        "name": "million cubic feet natural gas"
+    },
+    {
+        "Code": "VAh",
+        "name": "volt ampere hour",
+        "QudtUri": "http://qudt.org/vocab/unit/V-A-HR"
+    },
+    {
+        "Code": "kVAh",
+        "name": "kilovolt ampere hour",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloV-A-HR"
+    },
+    {
+        "Code": "MVAh",
+        "name": "megavolt ampere hour",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaV-A-HR"
+    },
+    {
+        "Code": "VARh",
+        "name": "volt ampere reactive hour",
+        "QudtUri": "http://qudt.org/vocab/unit/V-A_Reactive-HR"
+    },
+    {
+        "Code": "kVARh",
+        "name": "kilovolt ampere reactive hour",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloV-A_Reactive-HR"
+    },
+    {
+        "Code": "MVARh",
+        "name": "megavolt ampere reactive hour",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaV-A_Reactive-HR"
+    },
+    {
+        "Code": "J/m\u00B2",
+        "name": "joule per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-M2"
+    },
+    {
+        "Code": "Wh/m\u00B2",
+        "name": "watt hours per square metre"
+    },
+    {
+        "Code": "Wh/ft\u00B2",
+        "name": "watt hours per square foot"
+    },
+    {
+        "Code": "kWh/m\u00B2",
+        "name": "kilowatt hours per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloW-HR-PER-M2"
+    },
+    {
+        "Code": "kWh/ft\u00B2",
+        "name": "kilowatt hours per square foot"
+    },
+    {
+        "Code": "MWh/m\u00B2",
+        "name": "megawatt hours per square metre"
+    },
+    {
+        "Code": "MWh/ft\u00B2",
+        "name": "megawatt hours per square foot"
+    },
+    {
+        "Code": "MJ/m\u00B2",
+        "name": "megajoule per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaJ-PER-M2"
+    },
+    {
+        "Code": "MJ/ft\u00B2",
+        "name": "megajoule per square foot"
+    },
+    {
+        "Code": "kBTU/ft\u00B2",
+        "name": "kilobtu per square foot"
+    },
+    {
+        "Code": "MBTU/ft\u00B2",
+        "name": "megabtu per square foot"
+    },
+    {
+        "Code": "J/g",
+        "name": "joule per gram",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-GM"
+    },
+    {
+        "Code": "J/kg",
+        "name": "joule per kilogram",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-KiloGM"
+    },
+    {
+        "Code": "J/kg dry",
+        "name": "joule per kilogram dry air"
+    },
+    {
+        "Code": "BTU/lb",
+        "name": "btus per pound",
+        "QudtUri": "http://qudt.org/vocab/unit/BTU_IT-PER-LB"
+    },
+    {
+        "Code": "kJ/kg",
+        "name": "kilojoule per kilogram",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloJ-PER-KiloGM"
+    },
+    {
+        "Code": "kJ/kg dry",
+        "name": "kilojoule per kilogram dry air"
+    },
+    {
+        "Code": "MJ/kg dry",
+        "name": "megajoule per kilogram dry air"
+    },
+    {
+        "Code": "cal/g",
+        "name": "calorie per gram",
+        "QudtUri": "http://qudt.org/vocab/unit/CAL_IT-PER-GM"
+    },
+    {
+        "Code": "lbf",
+        "name": "pound force",
+        "QudtUri": "http://qudt.org/vocab/unit/LB_F"
+    },
+    {
+        "Code": "Hz",
+        "name": "hertz",
+        "QudtUri": "http://qudt.org/vocab/unit/HZ"
+    },
+    {
+        "Code": "kHz",
+        "name": "kilohertz",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloHZ"
+    },
+    {
+        "Code": "cph",
+        "name": "cycles per hour"
+    },
+    {
+        "Code": "cpm",
+        "name": "cycles per minute"
+    },
+    {
+        "Code": "MHz",
+        "name": "megahertz",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaHZ"
+    },
+    {
+        "Code": "%/s",
+        "name": "percent per second"
+    },
+    {
+        "Code": "ACH",
+        "name": "air changes per hour"
+    },
+    {
+        "Code": "kg/m\u00B2",
+        "name": "kilogram per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-M2"
+    },
+    {
+        "Code": "g/m\u00B2",
+        "name": "gram per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-M2"
+    },
+    {
+        "Code": "K/s",
+        "name": "kelvin per second",
+        "QudtUri": "http://qudt.org/vocab/unit/K-PER-SEC"
+    },
+    {
+        "Code": "\u00B0C/h",
+        "name": "degrees celsius per hour"
+    },
+    {
+        "Code": "\u00B0C/min",
+        "name": "degrees celsius per minute"
+    },
+    {
+        "Code": "\u00B0F/h",
+        "name": "degrees fahrenheit per hour"
+    },
+    {
+        "Code": "\u00B0F/min",
+        "name": "degrees fahrenheit per minute"
+    },
+    {
+        "Code": "K/h",
+        "name": "kelvin per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/K-PER-HR"
+    },
+    {
+        "Code": "K/min",
+        "name": "kelvin per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/K-PER-MIN"
+    },
+    {
+        "Code": "lx",
+        "name": "lux",
+        "QudtUri": "http://qudt.org/vocab/unit/LUX"
+    },
+    {
+        "Code": "fc",
+        "name": "footcandle",
+        "QudtUri": "http://qudt.org/vocab/unit/FC"
+    },
+    {
+        "Code": "phot",
+        "name": "phot"
+    },
+    {
+        "Code": "W/m\u00B2 irr",
+        "name": "watt per square metre irradiance"
+    },
+    {
+        "Code": "W/ft\u00B2 irr",
+        "name": "watt per square foot irradiance"
+    },
+    {
+        "Code": "m",
+        "name": "metre",
+        "QudtUri": "http://qudt.org/vocab/unit/M"
+    },
+    {
+        "Code": "\u00B5m",
+        "name": "micrometre",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroM"
+    },
+    {
+        "Code": "cm",
+        "name": "centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiM"
+    },
+    {
+        "Code": "km",
+        "name": "kilometre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloM"
+    },
+    {
+        "Code": "in",
+        "name": "inch",
+        "QudtUri": "http://qudt.org/vocab/unit/IN"
+    },
+    {
+        "Code": "ft",
+        "name": "foot",
+        "QudtUri": "http://qudt.org/vocab/unit/FT"
+    },
+    {
+        "Code": "yd",
+        "name": "yard",
+        "QudtUri": "http://qudt.org/vocab/unit/YD"
+    },
+    {
+        "Code": "mile",
+        "name": "mile",
+        "QudtUri": "http://qudt.org/vocab/unit/MI"
+    },
+    {
+        "Code": "cd/m\u00B2",
+        "name": "candelas per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/CD-PER-M2"
+    },
+    {
+        "Code": "cd/ft\u00B2",
+        "name": "candelas per square foot"
+    },
+    {
+        "Code": "lm",
+        "name": "lumen",
+        "QudtUri": "http://qudt.org/vocab/unit/LM"
+    },
+    {
+        "Code": "cd",
+        "name": "candela",
+        "QudtUri": "http://qudt.org/vocab/unit/CD"
+    },
+    {
+        "Code": "A/m",
+        "name": "ampere per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-M"
+    },
+    {
+        "Code": "Wb",
+        "name": "weber",
+        "QudtUri": "http://qudt.org/vocab/unit/WB"
+    },
+    {
+        "Code": "T",
+        "name": "tesla",
+        "QudtUri": "http://qudt.org/vocab/unit/T"
+    },
+    {
+        "Code": "kg",
+        "name": "kilogram",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM"
+    },
+    {
+        "Code": "mg",
+        "name": "milligram",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliGM"
+    },
+    {
+        "Code": "g",
+        "name": "gram",
+        "QudtUri": "http://qudt.org/vocab/unit/GM"
+    },
+    {
+        "Code": "oz",
+        "name": "ounce",
+        "QudtUri": "http://qudt.org/vocab/unit/OZ"
+    },
+    {
+        "Code": "lb",
+        "name": "pound",
+        "QudtUri": "http://qudt.org/vocab/unit/LB"
+    },
+    {
+        "Code": "klb",
+        "name": "kilopound"
+    },
+    {
+        "Code": "t",
+        "name": "short ton",
+        "QudtUri": "http://qudt.org/vocab/unit/TON_SHORT"
+    },
+    {
+        "Code": "kg/s",
+        "name": "kilogram per second",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-SEC"
+    },
+    {
+        "Code": "kg/min",
+        "name": "kilogram per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-MIN"
+    },
+    {
+        "Code": "kg/h",
+        "name": "kilogram per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-HR"
+    },
+    {
+        "Code": "lb/min",
+        "name": "pound per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/LB-PER-MIN"
+    },
+    {
+        "Code": "lb/h",
+        "name": "pound per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/LB-PER-HR"
+    },
+    {
+        "Code": "lb/s",
+        "name": "pound per second",
+        "QudtUri": "http://qudt.org/vocab/unit/LB-PER-SEC"
+    },
+    {
+        "Code": "klb/h",
+        "name": "kilopounds per hour"
+    },
+    {
+        "Code": "g/s",
+        "name": "gram per second",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-SEC"
+    },
+    {
+        "Code": "g/min",
+        "name": "gram per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-MIN"
+    },
+    {
+        "Code": "Ns",
+        "name": "newton second"
+    },
+    {
+        "Code": "W",
+        "name": "watt",
+        "QudtUri": "http://qudt.org/vocab/unit/W"
+    },
+    {
+        "Code": "mW",
+        "name": "milliwatt",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliW"
+    },
+    {
+        "Code": "kW",
+        "name": "kilowatt",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloW"
+    },
+    {
+        "Code": "MW",
+        "name": "megawatt",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaW"
+    },
+    {
+        "Code": "GW",
+        "name": "gigawatt"
+    },
+    {
+        "Code": "BTU/h",
+        "name": "btus per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/BTU_IT-PER-HR"
+    },
+    {
+        "Code": "therm/h",
+        "name": "therms per hour"
+    },
+    {
+        "Code": "hp",
+        "name": "horsepower",
+        "QudtUri": "http://qudt.org/vocab/unit/HP"
+    },
+    {
+        "Code": "tonref",
+        "name": "ton of refrigeration",
+        "QudtUri": "http://qudt.org/vocab/unit/TON_FG"
+    },
+    {
+        "Code": "kBTU/h",
+        "name": "kilobtus per hour"
+    },
+    {
+        "Code": "MBTU/h",
+        "name": "megabtus per hour",
+        "Symbol": "MMBTU/h"
+    },
+    {
+        "Code": "J/h",
+        "name": "joule per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-HR"
+    },
+    {
+        "Code": "kJ/h",
+        "name": "kilojoule per hour"
+    },
+    {
+        "Code": "MJ/h",
+        "name": "megajoule per hour"
+    },
+    {
+        "Code": "GJ/h",
+        "name": "gigajoule per hour"
+    },
+    {
+        "Code": "W/m\u00B2",
+        "name": "watt per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/W-PER-M2"
+    },
+    {
+        "Code": "W/ft\u00B2",
+        "name": "watt per square foot"
+    },
+    {
+        "Code": "kW/m\u00B2",
+        "name": "kilowatts per square metre"
+    },
+    {
+        "Code": "kW/ft\u00B2",
+        "name": "kilowatts per square foot"
+    },
+    {
+        "Code": "kBTU/h/ft\u00B2",
+        "name": "kilobtus per hour per square foot"
+    },
+    {
+        "Code": "W/m\u00B3/s",
+        "name": "watt per cubic metre per second"
+    },
+    {
+        "Code": "W/cfm",
+        "name": "watt per cubic feet per minute"
+    },
+    {
+        "Code": "kW/kcfm",
+        "name": "kilowatts per kilocubic feet per minute"
+    },
+    {
+        "Code": "kW/gal/min",
+        "name": "kilowatts per gallons per minute"
+    },
+    {
+        "Code": "VA",
+        "name": "volt ampere",
+        "QudtUri": "http://qudt.org/vocab/unit/V-A"
+    },
+    {
+        "Code": "kVA",
+        "name": "kilovolt ampere",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloV-A"
+    },
+    {
+        "Code": "VAR",
+        "name": "volt ampere reactive",
+        "QudtUri": "http://qudt.org/vocab/unit/V-A_Reactive"
+    },
+    {
+        "Code": "kVAR",
+        "name": "kilovolt ampere reactive",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloV-A_Reactive"
+    },
+    {
+        "Code": "MVAR",
+        "name": "megavolt ampere reactive",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaV-A_Reactive"
+    },
+    {
+        "Code": "Pa",
+        "name": "pascal",
+        "QudtUri": "http://qudt.org/vocab/unit/PA"
+    },
+    {
+        "Code": "kPa",
+        "name": "kilopascal",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloPA"
+    },
+    {
+        "Code": "bar",
+        "name": "bar",
+        "QudtUri": "http://qudt.org/vocab/unit/BAR"
+    },
+    {
+        "Code": "atm",
+        "name": "atmosphere",
+        "QudtUri": "http://qudt.org/vocab/unit/ATM"
+    },
+    {
+        "Code": "psi",
+        "name": "pound force per square inch (lbf/in\u00B2)",
+        "QudtUri": "http://qudt.org/vocab/unit/PSI"
+    },
+    {
+        "Code": "cmH\u2082O",
+        "name": "centimetre of water",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiM_H2O"
+    },
+    {
+        "Code": "in/wc",
+        "name": "inch of water",
+        "Symbol": "inH\u2082O",
+        "QudtUri": "http://qudt.org/vocab/unit/IN_H2O"
+    },
+    {
+        "Code": "mmHg",
+        "name": "millimetre of mercury",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM_HG"
+    },
+    {
+        "Code": "cmHg",
+        "name": "centimetre of mercury",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiM_HG"
+    },
+    {
+        "Code": "inHg",
+        "name": "inches of mercury",
+        "QudtUri": "http://qudt.org/vocab/unit/IN_HG"
+    },
+    {
+        "Code": "hPa",
+        "name": "hectopascal",
+        "QudtUri": "http://qudt.org/vocab/unit/HectoPA"
+    },
+    {
+        "Code": "mbar",
+        "name": "millibar",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliBAR"
+    },
+    {
+        "Code": "\u00B0F",
+        "name": "fahrenheit degrees",
+        "QudtUri": "http://qudt.org/vocab/unit/DEG_F"
+    },
+    {
+        "Code": "ns",
+        "name": "nanosecond"
+    },
+    {
+        "Code": "\u00B5s",
+        "name": "microsecond",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroSEC"
+    },
+    {
+        "Code": "ms",
+        "name": "millisecond",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliSEC"
+    },
+    {
+        "Code": "cs",
+        "name": "hundredths second"
+    },
+    {
+        "Code": "ds",
+        "name": "tenths second"
+    },
+    {
+        "Code": "min",
+        "name": "minute",
+        "QudtUri": "http://qudt.org/vocab/unit/MIN"
+    },
+    {
+        "Code": "hr",
+        "name": "hour",
+        "Symbol": "h",
+        "QudtUri": "http://qudt.org/vocab/unit/HR"
+    },
+    {
+        "Code": "day",
+        "name": "day",
+        "QudtUri": "http://qudt.org/vocab/unit/DAY"
+    },
+    {
+        "Code": "wk",
+        "name": "week"
+    },
+    {
+        "Code": "mo",
+        "name": "julian month",
+        "QudtUri": "http://qudt.org/vocab/unit/MO"
+    },
+    {
+        "Code": "yr",
+        "name": "year",
+        "QudtUri": "http://qudt.org/vocab/unit/YR"
+    },
+    {
+        "Code": "m/s",
+        "name": "metre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/M-PER-SEC"
+    },
+    {
+        "Code": "km/s",
+        "name": "kilometre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloM-PER-SEC"
+    },
+    {
+        "Code": "km/h",
+        "name": "kilometre per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloM-PER-HR"
+    },
+    {
+        "Code": "mph",
+        "name": "miles per hour"
+    },
+    {
+        "Code": "ft/s",
+        "name": "feet per second",
+        "QudtUri": "http://qudt.org/vocab/unit/FT-PER-SEC"
+    },
+    {
+        "Code": "ft/min",
+        "name": "feet per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/FT-PER-MIN"
+    },
+    {
+        "Code": "mm/s",
+        "name": "millimetre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM-PER-SEC"
+    },
+    {
+        "Code": "mm/min",
+        "name": "millimetre per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM-PER-MIN"
+    },
+    {
+        "Code": "m/min",
+        "name": "metre per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/M-PER-MIN"
+    },
+    {
+        "Code": "m/h",
+        "name": "metre per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/M-PER-HR"
+    },
+    {
+        "Code": "knot",
+        "name": "knot",
+        "QudtUri": "http://qudt.org/vocab/unit/KN"
+    },
+    {
+        "Code": "m\u00B3",
+        "name": "cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/M3"
+    },
+    {
+        "Code": "mm\u00B3",
+        "name": "cubic millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM3"
+    },
+    {
+        "Code": "cm\u00B3",
+        "name": "cubic centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiM3"
+    },
+    {
+        "Code": "hL",
+        "name": "hectolitre",
+        "QudtUri": "http://qudt.org/vocab/unit/HectoL"
+    },
+    {
+        "Code": "kL",
+        "name": "kilolitre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloL"
+    },
+    {
+        "Code": "in\u00B3",
+        "name": "cubic inch",
+        "QudtUri": "http://qudt.org/vocab/unit/IN3"
+    },
+    {
+        "Code": "ft\u00B3",
+        "name": "cubic foot",
+        "QudtUri": "http://qudt.org/vocab/unit/FT3"
+    },
+    {
+        "Code": "yd\u00B3",
+        "name": "cubic yard",
+        "QudtUri": "http://qudt.org/vocab/unit/YD3"
+    },
+    {
+        "Code": "gal",
+        "name": "gallon",
+        "QudtUri": "http://qudt.org/vocab/unit/GAL_IMP"
+    },
+    {
+        "Code": "kgal",
+        "name": "kilogallon"
+    },
+    {
+        "Code": "qt",
+        "name": "quart",
+        "QudtUri": "http://qudt.org/vocab/unit/QT_US"
+    },
+    {
+        "Code": "pt",
+        "name": "point",
+        "QudtUri": "http://qudt.org/vocab/unit/PT"
+    },
+    {
+        "Code": "fl oz",
+        "name": "fluid ounce"
+    },
+    {
+        "Code": "galUK",
+        "name": "imperial gallon",
+        "QudtUri": "http://qudt.org/vocab/unit/GAL_UK"
+    },
+    {
+        "Code": "hft\u00B3",
+        "name": "hecto cubic foot"
+    },
+    {
+        "Code": "m\u00B3/s",
+        "name": "cubic metre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/M3-PER-SEC"
+    },
+    {
+        "Code": "mL/s",
+        "name": "millilitre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliL-PER-SEC"
+    },
+    {
+        "Code": "hL/s",
+        "name": "hectolitres per second"
+    },
+    {
+        "Code": "cfs",
+        "name": "cubic feet per second"
+    },
+    {
+        "Code": "cfm",
+        "name": "cubic feet per minute"
+    },
+    {
+        "Code": "cfh",
+        "name": "cubic feet per hour"
+    },
+    {
+        "Code": "kcfm",
+        "name": "kilocubic feet per minute"
+    },
+    {
+        "Code": "galUK/min",
+        "name": "imperial gallons per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/GAL_UK-PER-MIN"
+    },
+    {
+        "Code": "gal/min",
+        "name": "gallons per minute"
+    },
+    {
+        "Code": "gal/hr",
+        "name": "gallons per hour",
+        "Symbol": "gph"
+    },
+    {
+        "Code": "m\u00B3/min",
+        "name": "cubic metre per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/M3-PER-MIN"
+    },
+    {
+        "Code": "m\u00B3/h",
+        "name": "cubic metre per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/M3-PER-HR"
+    },
+    {
+        "Code": "byte",
+        "name": "byte",
+        "QudtUri": "http://qudt.org/vocab/unit/BYTE"
+    },
+    {
+        "Code": "kB",
+        "name": "kilobyte",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloBYTE"
+    },
+    {
+        "Code": "MB",
+        "name": "megabyte"
+    },
+    {
+        "Code": "GB",
+        "name": "gigabyte",
+        "QudtUri": "http://qudt.org/vocab/unit/GigaBYTE"
+    },
+    {
+        "Code": "TB",
+        "name": "terabyte",
+        "QudtUri": "http://qudt.org/vocab/unit/TeraBYTE"
+    },
+    {
+        "Code": "PB",
+        "name": "petabyte",
+        "QudtUri": "http://qudt.org/vocab/unit/PetaBYTE"
+    },
+    {
+        "Code": "dBi",
+        "name": "dBi"
+    },
+    {
+        "Code": "Mbit/s",
+        "name": "Mbit/s",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaBIT-PER-SEC"
+    },
+    {
+        "Code": "Bft",
+        "name": "beaufort",
+        "QudtUri": "http://qudt.org/vocab/unit/BFT"
+    },
+    {
+        "Code": "kW/(m\u00B3/s)",
+        "name": "kW/(m\u00B3/s)"
+    },
+    {
+        "Code": "kg/24h",
+        "name": "kilogram per day",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-DAY"
+    },
+    {
+        "Code": "mH",
+        "name": "millihenry",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliH"
+    },
+    {
+        "Code": "dB(A)",
+        "name": "dB(A)"
+    },
+    {
+        "Code": "W/K",
+        "name": "W/K",
+        "QudtUri": "http://qudt.org/vocab/unit/W-PER-K"
+    },
+    {
+        "Code": "kN",
+        "name": "kilonewton",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloN"
+    },
+    {
+        "Code": "l/s",
+        "name": "litre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/L-PER-SEC"
+    },
+    {
+        "Code": "h",
+        "name": "h"
+    },
+    {
+        "Code": "GJ/jaar",
+        "name": "GJ/jaar"
+    },
+    {
+        "Code": "l",
+        "name": "litre",
+        "QudtUri": "http://qudt.org/vocab/unit/L"
+    },
+    {
+        "Code": "%/100%",
+        "name": "%/100%"
+    },
+    {
+        "Code": "AirWatt",
+        "name": "AirWatt"
+    },
+    {
+        "Code": "kWp",
+        "name": "kWp"
+    },
+    {
+        "Code": "m rad",
+        "name": "m rad"
+    },
+    {
+        "Code": "kJ/m\u00B2",
+        "name": "kJ/m\u00B2"
+    },
+    {
+        "Code": "kcmil",
+        "name": "kcmil"
+    },
+    {
+        "Code": "Jaar",
+        "name": "Jaar"
+    },
+    {
+        "Code": "dB(A) re 1 pW",
+        "name": "dB(A) re 1 pW"
+    },
+    {
+        "Code": "N/mm",
+        "name": "newton per millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/N-PER-MilliM"
+    },
+    {
+        "Code": "kJ/Ohm",
+        "name": "kJ/Ohm"
+    },
+    {
+        "Code": "Megapixel",
+        "name": "Megapixel"
+    },
+    {
+        "Code": "%/K",
+        "name": "%/K"
+    },
+    {
+        "Code": "mm/m",
+        "name": "millimetre per metre"
+    },
+    {
+        "Code": "cSt",
+        "name": "centistokes",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiST"
+    },
+    {
+        "Code": "c/min",
+        "name": "c/min"
+    },
+    {
+        "Code": "c/h",
+        "name": "c/h"
+    },
+    {
+        "Code": "1/min",
+        "name": "per minute"
+    },
+    {
+        "Code": "l/min",
+        "name": "litre per minute",
+        "QudtUri": "http://qudt.org/vocab/unit/L-PER-MIN"
+    },
+    {
+        "Code": "kBit/s",
+        "name": "kBit/s",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloBIT-PER-SEC"
+    },
+    {
+        "Code": "Mbyte",
+        "name": "Mbyte",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaBYTE"
+    },
+    {
+        "Code": "kByte",
+        "name": "kByte"
+    },
+    {
+        "Code": "kOhm",
+        "name": "kiloohm",
+        "Symbol": "k\u2126",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloOHM"
+    },
+    {
+        "Code": "l/h",
+        "name": "litre per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/L-PER-HR"
+    },
+    {
+        "Code": "mAh",
+        "name": "mAh",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliA-HR"
+    },
+    {
+        "Code": "opm",
+        "name": "opm"
+    },
+    {
+        "Code": "W/m",
+        "name": "W/m",
+        "QudtUri": "http://qudt.org/vocab/unit/W-PER-M"
+    },
+    {
+        "Code": "Bd",
+        "name": "Bd"
+    },
+    {
+        "Code": "DPI",
+        "name": "dots pre inch",
+        "QudtUri": "http://qudt.org/vocab/unit/DPI"
+    },
+    {
+        "Code": "lm/W",
+        "name": "lm/W",
+        "QudtUri": "http://qudt.org/vocab/unit/LM-PER-W"
+    },
+    {
+        "Code": "\u00B5H",
+        "name": "microhenry",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroH"
+    },
+    {
+        "Code": "\u00B5F",
+        "name": "microfarad",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroFARAD"
+    },
+    {
+        "Code": "AX",
+        "name": "AX"
+    },
+    {
+        "Code": "nm",
+        "name": "nm"
+    },
+    {
+        "Code": "\u00B0",
+        "name": "grad (angel degree)",
+        "QudtUri": "http://qudt.org/vocab/unit/GRAD"
+    },
+    {
+        "Code": "%",
+        "name": "percent",
+        "QudtUri": "http://qudt.org/vocab/unit/PERCENT"
+    },
+    {
+        "Code": "ml",
+        "name": "millilitre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliL"
+    },
+    {
+        "Code": "kg/m",
+        "name": "kilogram per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-M"
+    },
+    {
+        "Code": "GHz",
+        "name": "GHz"
+    },
+    {
+        "Code": "MOhm",
+        "name": "MOhm",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaOHM"
+    },
+    {
+        "Code": "mOhm",
+        "name": "mOhm"
+    },
+    {
+        "Code": "kA",
+        "name": "kA",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloA"
+    },
+    {
+        "Code": "Ohm",
+        "name": "ohm",
+        "Symbol": "\u03A9",
+        "QudtUri": "http://qudt.org/vocab/unit/OHM"
+    },
+    {
+        "Code": "s",
+        "name": "second",
+        "Symbol": "s",
+        "QudtUri": "http://qudt.org/vocab/unit/SEC"
+    },
+    {
+        "Code": "V",
+        "name": "V",
+        "QudtUri": "http://qudt.org/vocab/unit/V"
+    },
+    {
+        "Code": "Wp",
+        "name": "Wp"
+    },
+    {
+        "Code": "Imp/kWh (kvarh)",
+        "name": "Imp/kWh (kvarh)"
+    },
+    {
+        "Code": "dB(C)",
+        "name": "dB(C)",
+        "Symbol": "dBc",
+        "QudtUri": "http://qudt.org/vocab/unit/DeciB_C"
+    },
+    {
+        "Code": "% m/md",
+        "name": "% m/md"
+    },
+    {
+        "Code": "\u00B0dH",
+        "name": "\u00B0dH"
+    },
+    {
+        "Code": "\u00B5S/cm",
+        "name": "microsiemens per centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroS-PER-CentiM"
+    },
+    {
+        "Code": "cal/cm\u00B2",
+        "name": "calorie per square centimetre"
+    },
+    {
+        "Code": "dm",
+        "name": "decimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/DeciM"
+    },
+    {
+        "Code": "g/cm\u00B3",
+        "name": "gram per cubic centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-CentiM3"
+    },
+    {
+        "Code": "g/h",
+        "name": "gram per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-HR"
+    },
+    {
+        "Code": "g/l",
+        "name": "gram per litre",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-L"
+    },
+    {
+        "Code": "g/m\u00B3",
+        "name": "gram per cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/GM-PER-M3"
+    },
+    {
+        "Code": "Gbit/s",
+        "name": "Gigabits per second"
+    },
+    {
+        "Code": "HRC",
+        "name": "HRC"
+    },
+    {
+        "Code": "kg/cm/m\u00B2",
+        "name": "kg/cm/m\u00B2"
+    },
+    {
+        "Code": "kg/km",
+        "name": "kilogram per kilomter",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-PER-KiloGM"
+    },
+    {
+        "Code": "kN/m\u00B2",
+        "name": "kilonewton per square metre"
+    },
+    {
+        "Code": "m\u00B2/h",
+        "name": "square metre per hour"
+    },
+    {
+        "Code": "m\u00B2/l",
+        "name": "square metre per litre"
+    },
+    {
+        "Code": "m\u00B2/m",
+        "name": "square metre per metre"
+    },
+    {
+        "Code": "m\u00B3/m\u00B2h50Pa",
+        "name": "m\u00B3/m\u00B2h50Pa"
+    },
+    {
+        "Code": "mg/l",
+        "name": "milligram per litre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliGM-PER-L"
+    },
+    {
+        "Code": "mH2O",
+        "name": "mH2O"
+    },
+    {
+        "Code": "Month",
+        "name": "Month",
+        "QudtUri": "http://qudt.org/vocab/unit/MO"
+    },
+    {
+        "Code": "MP",
+        "name": "MP"
+    },
+    {
+        "Code": "N/mm\u00B2",
+        "name": "newton per square millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/N-PER-MilliM2"
+    },
+    {
+        "Code": "nmi",
+        "name": "nmi"
+    },
+    {
+        "Code": "Ohm/km",
+        "name": "ohm per kilometre"
+    },
+    {
+        "Code": "PSU",
+        "name": "practical salinity unit",
+        "QudtUri": "http://qudt.org/vocab/unit/PSU"
+    },
+    {
+        "Code": "Rpm",
+        "name": "Rates per minute"
+    },
+    {
+        "Code": "kg\u00B7m\u00B2",
+        "name": "kilogram square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloGM-M2"
+    },
+    {
+        "Code": "mm\u00B2/m",
+        "name": "square millimetre per metre"
+    },
+    {
+        "Code": "Gbit/sec",
+        "name": "Gbit/sec."
+    },
+    {
+        "Code": "MPa",
+        "name": "megapascal",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaPA"
+    },
+    {
+        "Code": "cm\u2074",
+        "name": "centimetre to the fourth power"
+    },
+    {
+        "Code": "kg/100m",
+        "name": "kg/100m"
+    },
+    {
+        "Code": "kg/dm\u00B3",
+        "name": "kilogram per cubic decimetre"
+    },
+    {
+        "Code": "m\u2074",
+        "name": "metre to the fourth power",
+        "QudtUri": "http://qudt.org/vocab/unit/M4"
+    },
+    {
+        "Code": "mm\u2074",
+        "name": "millimetre to the fourth power",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliM4"
+    },
+    {
+        "Code": "TPI",
+        "name": "turns per inch"
+    },
+    {
+        "Code": "\u0027",
+        "name": "arc minute",
+        "Symbol": "\u0027",
+        "QudtUri": "http://qudt.org/vocab/unit/ARCMIN"
+    },
+    {
+        "Code": "\u00B5A",
+        "name": "microampere",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroA"
+    },
+    {
+        "Code": "A/\u00B0C",
+        "name": "ampere per degree celsius",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-DEG_C"
+    },
+    {
+        "Code": "A/cm",
+        "name": "ampere per centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-CentiM"
+    },
+    {
+        "Code": "A/cm\u00B2",
+        "name": "ampere per square centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-CentiM2"
+    },
+    {
+        "Code": "A/J",
+        "name": "ampere per joule",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-J"
+    },
+    {
+        "Code": "A/mm",
+        "name": "ampere per millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-MilliM"
+    },
+    {
+        "Code": "A/mm\u00B2",
+        "name": "ampere per square millimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-MilliM2"
+    },
+    {
+        "Code": "A/(m\u00B2\u00B7K\u00B2)",
+        "name": "ampere per square metre square kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-M2-K2"
+    },
+    {
+        "Code": "A/rad",
+        "name": "ampere per radian",
+        "QudtUri": "http://qudt.org/vocab/unit/A-PER-RAD"
+    },
+    {
+        "Code": "Ao",
+        "name": "angstrom",
+        "Symbol": "\u00C5",
+        "QudtUri": "http://qudt.org/vocab/unit/ANGSTROM"
+    },
+    {
+        "Code": "ar",
+        "name": "are",
+        "Symbol": "a",
+        "QudtUri": "http://qudt.org/vocab/unit/ARE"
+    },
+    {
+        "Code": "As",
+        "name": "ampere second",
+        "QudtUri": "http://qudt.org/vocab/unit/A-SEC"
+    },
+    {
+        "Code": "At",
+        "name": "ampere turn",
+        "Symbol": "At",
+        "QudtUri": "http://qudt.org/vocab/unit/AT"
+    },
+    {
+        "Code": "bbl",
+        "name": "barrel",
+        "QudtUri": "http://qudt.org/vocab/unit/BBL"
+    },
+    {
+        "Code": "bit",
+        "name": "bit",
+        "QudtUri": "http://qudt.org/vocab/unit/BIT"
+    },
+    {
+        "Code": "bit/s",
+        "name": "bit per second",
+        "QudtUri": "http://qudt.org/vocab/unit/BIT-PER-SEC"
+    },
+    {
+        "Code": "Bq",
+        "name": "becquerel",
+        "QudtUri": "http://qudt.org/vocab/unit/BQ"
+    },
+    {
+        "Code": "BTU/lb dry",
+        "name": "btus per pound dry air"
+    },
+    {
+        "Code": "BTU/Wh",
+        "name": "energy efficiency ratio",
+        "Symbol": "EER"
+    },
+    {
+        "Code": "C\u00B7m",
+        "name": "coulomb metre",
+        "QudtUri": "http://qudt.org/vocab/unit/C-M"
+    },
+    {
+        "Code": "cL",
+        "name": "centilitre",
+        "QudtUri": "http://qudt.org/vocab/unit/CentiL"
+    },
+    {
+        "Code": "CYP",
+        "name": "cyprus pound",
+        "QudtUri": "http://qudt.org/vocab/unit/CyprusPound"
+    },
+    {
+        "Code": "J/K",
+        "name": "joule per kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-K"
+    },
+    {
+        "Code": "J/kg\u00B7K",
+        "name": "joule per kilogram kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/J-PER-KiloGM-K"
+    },
+    {
+        "Code": "kJ/K",
+        "name": "kilojoule per degree kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloJ-PER-K"
+    },
+    {
+        "Code": "MJ/K",
+        "name": "megajoule per degree kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaJ-PER-K"
+    },
+    {
+        "Code": "MVA",
+        "name": "megavolt ampere",
+        "QudtUri": "http://qudt.org/vocab/unit/MegaV-A"
+    },
+    {
+        "Code": "u",
+        "name": "atomic mass unit",
+        "Symbol": "\u03BC",
+        "QudtUri": "http://qudt.org/vocab/unit/AMU"
+    },
+    {
+        "Code": "kN/m",
+        "name": "kilonewton per metre"
+    },
+    {
+        "Code": "1/K",
+        "name": "per kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/PER-K"
+    },
+    {
+        "Code": "1/m",
+        "name": "per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/PER-M"
+    },
+    {
+        "Code": "1/m\u00B2",
+        "name": "per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/PER-M2"
+    },
+    {
+        "Code": "cm\u00B2/m",
+        "name": "square centimetre per metre"
+    },
+    {
+        "Code": "kPa\u00B7s/m\u00B3",
+        "name": "kilo pascal second per cubic metre"
+    },
+    {
+        "Code": "?",
+        "name": "[unknown]"
+    },
+    {
+        "Code": "kN/m\u00B3",
+        "name": "kilonewton per cubic metre"
+    },
+    {
+        "Code": "MN/m\u00B2",
+        "name": "meganewton per square metre"
+    },
+    {
+        "Code": "MN/m\u00B3",
+        "name": "meganewton per cubic metre"
+    },
+    {
+        "Code": "mol",
+        "name": "mol",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL"
+    },
+    {
+        "Code": "mol/l",
+        "name": "mol per litre",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-L"
+    },
+    {
+        "Code": "mS/cm",
+        "name": "millisecond per centimetre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliSEC-PER-CentiM"
+    },
+    {
+        "Code": "\u03BCT",
+        "name": "micro tesla",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroT"
+    },
+    {
+        "Code": "1/h",
+        "name": "per hour"
+    },
+    {
+        "Code": "1/s",
+        "name": "per second"
+    },
+    {
+        "Code": "mg/dm\u00B2",
+        "name": "milligram per square decimetre"
+    },
+    {
+        "Code": "CTUe",
+        "name": "comparative toxic units for ecotoxicity potential"
+    },
+    {
+        "Code": "CTUh",
+        "name": "comparative toxic units for human toxicity potential"
+    },
+    {
+        "Code": "kg CFC11 eq",
+        "name": "kilogram CFC11 equivalent"
+    },
+    {
+        "Code": "kg N eq",
+        "name": "kilogram nitrogen equivalent"
+    },
+    {
+        "Code": "kg NMVOC eq",
+        "name": "kilogram NMVOC equivalent"
+    },
+    {
+        "Code": "kg SO2 eq",
+        "name": "kilogram SO2 equivalent"
+    },
+    {
+        "Code": "m\u00B3/(h\u00B7m\u00B2) @ 50Pa",
+        "name": "cubic metre per hour per square metre at 50 pascal"
+    },
+    {
+        "Code": "mg/kg",
+        "name": "milligram per kilogram",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliGM-PER-KG"
+    },
+    {
+        "Code": "mg/m\u00B2/h",
+        "name": "milligram per square metre per hour"
+    },
+    {
+        "Code": "mg/m\u00B3",
+        "name": "milligram per cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/MilliGM-PER-M3"
+    },
+    {
+        "Code": "mol H\u002B eq",
+        "name": "increase in hydrogen ion concentration"
+    },
+    {
+        "Code": "mol N eq",
+        "name": "mol nitrogen equivalent"
+    },
+    {
+        "Code": "PTV",
+        "name": "pendulum test value"
+    },
+    {
+        "Code": "unitless",
+        "name": "unitless",
+        "Symbol": "-"
+    },
+    {
+        "Code": "kBq U235 eq",
+        "name": "kilobecquerel U235 equivalent"
+    },
+    {
+        "Code": "kg ethene eq",
+        "name": "kilogram ethene equivalent"
+    },
+    {
+        "Code": "kg Sb eq",
+        "name": "kilogram antimony equivalent"
+    },
+    {
+        "Code": "kg/m/s/Pa",
+        "name": "kilogram per metre second pascal"
+    },
+    {
+        "Code": "m\u00B3/m\u00B2sPa",
+        "name": "cubic metre per square metre second pascal"
+    },
+    {
+        "Code": "mol/m\u00B2",
+        "name": "mol per square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-M2"
+    },
+    {
+        "Code": "mol/m\u00B2/d",
+        "name": "mol per square metre per day",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-M2-DAY"
+    },
+    {
+        "Code": "mol/m\u00B2/s",
+        "name": "mol per square metre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-M2-SEC"
+    },
+    {
+        "Code": "mol/m\u00B3",
+        "name": "mol per cubic metre",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-M3"
+    },
+    {
+        "Code": "kW/tonne",
+        "name": "kilowatt per tonne"
+    },
+    {
+        "Code": "tonne",
+        "name": "metric tonne",
+        "QudtUri": "http://qudt.org/vocab/unit/TONNE"
+    },
+    {
+        "Code": "tonne/h",
+        "name": "metric tonne per hour",
+        "QudtUri": "http://qudt.org/vocab/unit/TONNE-PER-HR"
+    },
+    {
+        "Code": "dBm",
+        "name": "decibel-milliwatts",
+        "QudtUri": "http://qudt.org/vocab/unit/DeciB_M"
+    },
+    {
+        "Code": "kg C",
+        "name": "kilogram biogenic carbon"
+    },
+    {
+        "Code": "kg O\u2083 eq",
+        "name": "kilogram ozone equivalent"
+    },
+    {
+        "Code": "kg CO\u2082 eq",
+        "name": "kilogram CO2 equivalent"
+    },
+    {
+        "Code": "kg PO\u2084\u00B3\u207B eq",
+        "name": "kilogram PO43 equivalent"
+    },
+    {
+        "Code": "m\u00B2/s",
+        "name": "square metre per second",
+        "QudtUri": "http://qudt.org/vocab/unit/M2-PER-SEC"
+    },
+    {
+        "Code": "m\u00B3/m",
+        "name": "cubic metre per metre",
+        "QudtUri": "http://qudt.org/vocab/unit/M3-PER-M"
+    },
+    {
+        "Code": "mm/(m\u00B7K)",
+        "name": "mm/(m\u00B7K)"
+    },
+    {
+        "Code": "mol/(m\u00B7s\u00B7Pa)",
+        "name": "mol per metre second pascal"
+    },
+    {
+        "Code": "mol/(m\u00B3\u00B7Pa)",
+        "name": "mol per cubic metre pascal",
+        "QudtUri": "http://qudt.org/vocab/unit/MOL-PER-M3-PA"
+    },
+    {
+        "Code": "N\u00B7m\u00B2/rad",
+        "name": "newton square metre per radion"
+    },
+    {
+        "Code": "Ohm\u00B7m",
+        "name": "ohm metre",
+        "QudtUri": "http://qudt.org/vocab/unit/OHM-M"
+    },
+    {
+        "Code": "Pa\u00B7s",
+        "name": "pascal second",
+        "QudtUri": "http://qudt.org/vocab/unit/PA-SEC"
+    },
+    {
+        "Code": "A\u00B7m\u00B2",
+        "name": "ampere square metre",
+        "QudtUri": "http://qudt.org/vocab/unit/A-M2"
+    },
+    {
+        "Code": "A\u00B7m\u00B2/(J\u00B7s)",
+        "name": "ampere square metre per joule second",
+        "QudtUri": "http://qudt.org/vocab/unit/A-M2-PER-J-SEC"
+    },
+    {
+        "Code": "ft\u00B7lbs/sec",
+        "name": "foot pounds per second",
+        "QudtUri": "http://qudt.org/vocab/unit/FT-LB_F-PER-SEC"
+    },
+    {
+        "Code": "GJ/yr",
+        "name": "Gigajoule per year"
+    },
+    {
+        "Code": "kJ/(kg\u00B7K)",
+        "name": "kilojoule per kilogram kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/KiloJ-PER-KiloGM-K"
+    },
+    {
+        "Code": "m/(N\u00B7m\u00B2)",
+        "name": "metre per newton square metre"
+    },
+    {
+        "Code": "m\u00B2\u00B7K/W",
+        "name": "square metre kelvin per watt"
+    },
+    {
+        "Code": "Pa\u00B7\u221Am",
+        "name": "Pascal Square Root Metre",
+        "QudtUri": "http://qudt.org/vocab/unit/PA-M0dot5"
+    },
+    {
+        "Code": "ppmv",
+        "name": "Microlitre per Litre",
+        "QudtUri": "http://qudt.org/vocab/unit/MicroL-PER-L"
+    },
+    {
+        "Code": "W/(m\u00B2\u00B7K)",
+        "name": "watt per square metre kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/W-PER-M2-K"
+    },
+    {
+        "Code": "W/(m\u00B2\u00B7K\u00B2)",
+        "name": "watt per square metre square kelvin"
+    },
+    {
+        "Code": "W/(m\u00B7K)",
+        "name": "watt per metre kelvin",
+        "QudtUri": "http://qudt.org/vocab/unit/W-PER-M-K"
+    },
+    {
+        "Code": "Fps",
+        "name": "frames per second",
+        "Symbol": "fps",
+        "QudtUri": "http://qudt.org/vocab/unit/FRAME-PER-SEC"
+    },
+    {
+        "Code": "kWh/(m\u00B2\u00B7a)",
+        "name": "kilowatt hour per square metre per year"
+    },
+    {
+        "Code": "l/m",
+        "name": "litre per metre",
+        "Symbol": "l/m"
+    },
+    {
+        "Code": "Wh/\u00B0C",
+        "name": "watt hours per celsius"
+    }
+]

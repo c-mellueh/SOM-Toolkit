@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtCore import QModelIndex
-
+from SOMcreator.util.units import uri_to_code
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_window import ui
@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeView
 import SOMcreator
 
-from som_gui.module.property_.ui import UnitComboBox
 from som_gui.module.property_window.constants import (
     SEPERATOR_SECTION,
     SEPERATOR_STATUS,
@@ -90,9 +89,9 @@ def connect_window(
     widget_ui.combo_value_type.currentIndexChanged.connect(
         lambda i: property_window.set_valuetype(som_property, get_valuetype_text())
     )
-    widget_ui.combo_unit.currentIndexChanged.connect(
-        lambda i: property_window.set_unit(som_property, get_unit_text())
-    )
+    # widget_ui.combo_unit.currentIndexChanged.connect(
+    #     lambda i: property_window.set_unit(som_property, get_unit_text())
+    # )
 
     widget_ui.description.textChanged.connect(
         lambda: property_window.set_description(som_property, get_description_text())
@@ -119,13 +118,14 @@ def update_window(
     window: ui.PropertyWindow,
     property_window: Type[tool.PropertyWindow],
     util: Type[tool.Util],
+    units:Type[tool.Units]
 ):
     som_property = property_window.get_property_from_window(window)
     ui = window.ui
     ui.lineEdit_name.setText(som_property.name)
     ui.combo_data_type.setCurrentText(som_property.data_type)
     ui.combo_value_type.setCurrentText(som_property.value_type)
-    ui.combo_unit.setCurrentText(som_property.unit or "")
+    ui.combo_unit.setCurrentText(uri_to_code(som_property.unit))
     ui.description.setText(som_property.description)
     property_window.set_comboboxes_enabled(not som_property.is_child, window)
     inherits_values_checkstate = util.bool_to_checkstate(

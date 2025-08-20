@@ -1,9 +1,10 @@
 import os
 import logging
 
+
 def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        
+
         if ".venv" in dirpath:
             continue
         if dirpath.startswith(".\\plugins\\"):
@@ -11,16 +12,17 @@ def list_files_in_directory(root_dir):
             continue
         for file in filenames:
             if (
-                    file.endswith(".py")
-                    or file.endswith(".ts")
-                    or file.endswith(".qrc")
-                    or file.endswith(".ui")
+                file.endswith(".py")
+                or file.endswith(".ts")
+                or file.endswith(".qrc")
+                or file.endswith(".ui")
             ):
                 if dirpath.endswith("\\qt") and file.endswith(".py"):
                     continue
                 path = os.path.join(dirpath, file)
                 output_dict["files"].append(path)
                 print(path)
+
 
 # Example usage:
 output_dict = {"files": []}

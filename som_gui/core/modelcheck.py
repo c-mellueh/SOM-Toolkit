@@ -98,7 +98,9 @@ def check_element(
         modelcheck.ident_issue(element.GlobalId, main_pset_name, main_property_name)
         return
 
-    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
+    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(
+        main_property_value
+    )
 
     if class_rep is None:
         modelcheck.ident_unknown(

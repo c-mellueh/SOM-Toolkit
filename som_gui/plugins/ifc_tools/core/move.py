@@ -18,18 +18,23 @@ if TYPE_CHECKING:
     import ifcopenshell
 
 
-def create_main_menu_actions(move: Type[ifc_tool.Move], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    move: Type[ifc_tool.Move], main_window: Type[tool.MainWindow]
+):
     from som_gui.plugins.ifc_tools.module.move import trigger
+
     move_menu = main_window.add_submenu(None, "_IfcTool")
     action = move_menu.addAction("_Move")
     action.triggered.connect(trigger.open_window)
     move.set_action("open_window", action)
     move.set_action("menu", move_menu)
 
-def remove_main_menu_actions(move: Type[ifc_tool.Move], main_window: Type[tool.MainWindow]):
+
+def remove_main_menu_actions(
+    move: Type[ifc_tool.Move], main_window: Type[tool.MainWindow]
+):
     menu = move.get_action("menu")
     main_window.remove_submenu(None, menu)
-
 
 
 def retranslate_ui(move: Type[ifc_tool.Move], util: Type[tool.Util]):
@@ -48,15 +53,26 @@ def retranslate_ui(move: Type[ifc_tool.Move], util: Type[tool.Util]):
     widget.setWindowTitle(util.get_window_title(title))
 
 
-def open_window(move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Type[tool.Appdata]):
+def open_window(
+    move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Type[tool.Appdata]
+):
     widget = move.get_widget()
     if widget is None:
         widget = move.create_widget()
 
-    util.fill_file_selector(widget.ui.widget_file_selector, "_IFC path", "IFC Files (*.ifc *.IFC);;", "ifc_move")
+    util.fill_file_selector(
+        widget.ui.widget_file_selector,
+        "_IFC path",
+        "IFC Files (*.ifc *.IFC);;",
+        "ifc_move",
+    )
 
     coordinates: tuple[float, float, float] = tuple(
-        [appdata.get_float_setting(SECTION_NAME, path_name, 0.) for path_name in [X_PATH, Y_PATH, Z_PATH]])
+        [
+            appdata.get_float_setting(SECTION_NAME, path_name, 0.0)
+            for path_name in [X_PATH, Y_PATH, Z_PATH]
+        ]
+    )
     move.set_coordinate_values(coordinates)
     widget.ui.widget_progress_bar.hide()
     move.reset_buttons()
@@ -64,8 +80,12 @@ def open_window(move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Type[
     widget.show()
 
 
-def apply_clicked(move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Type[tool.Appdata],
-                  ifc_importer: Type[tool.IfcImporter]):
+def apply_clicked(
+    move: Type[ifc_tool.Move],
+    util: Type[tool.Util],
+    appdata: Type[tool.Appdata],
+    ifc_importer: Type[tool.IfcImporter],
+):
     logging.debug("Apply Clicked")
     widget = move.get_widget()
     path_list = util.get_path_from_fileselector(widget.ui.widget_file_selector)
@@ -109,7 +129,9 @@ def move_started(ifc_file: ifcopenshell.file, export_path, move: Type[ifc_tool.M
     logging.debug(f"Move Started")
     coordinates = move.get_coordinate_values()
 
-    status = QCoreApplication.translate("Move", "Move '{}'").format(os.path.basename(export_path))
+    status = QCoreApplication.translate("Move", "Move '{}'").format(
+        os.path.basename(export_path)
+    )
     move.set_status(status, 0)
     move.move_ifc(ifc_file, export_path, coordinates)
 

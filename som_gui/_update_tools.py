@@ -3,6 +3,8 @@ import inspect
 import sys
 import som_gui.tool
 import logging
+
+
 def get_class_methods_and_params(cls, file):
     methods = inspect.getmembers(cls, predicate=inspect.ismethod)
 

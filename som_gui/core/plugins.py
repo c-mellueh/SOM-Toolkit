@@ -24,6 +24,7 @@ def settings_accepted(plugins: Type[tool.Plugins], popups: Type[tool.Popups]):
         else:
             plugins.deactivate_plugin(plugin_name)
 
+
 def settings_widget_created(widget: ui.SettingsWidget, plugins: Type[tool.Plugins]):
     layout: QFormLayout = widget.layout()
     plugins.set_settings_widget(widget)

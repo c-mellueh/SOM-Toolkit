@@ -6,6 +6,7 @@ from som_gui.plugins.aggregation_window.core import modelcheck as core
 def activate():
     core.add_modelcheck_plugin(tool.Modelcheck, aw_tool.Modelcheck)
 
+
 def deactivate():
     pass
 

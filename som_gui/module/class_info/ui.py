@@ -24,6 +24,3 @@ class ClassInfoDialog(QDialog):
     def paintEvent(self, event):
         trigger.class_info_paint_event()
         super().paintEvent(event)
-
-
-
