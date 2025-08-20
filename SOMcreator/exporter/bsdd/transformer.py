@@ -116,7 +116,7 @@ def _create_class_property(
 ):
     code = to_code(som_property.name)
     pset_name = som_property.property_set.name
-    if pset_name.startswith("Pset_"):
+    if pset_name.startswith("Pset_") or pset_name.startswith("Qto_"):
         property_uri = f"{IFC_BSDD__PROPERTY_PATH}/{code}"
         class_property = bsdd.ClassProperty(code, "", property_uri)
     else:

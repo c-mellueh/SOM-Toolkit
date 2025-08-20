@@ -19,6 +19,15 @@ QTO = "qto"
 
 APPDATA_SECTION = "ifc_schema"
 VERSION_OPTION = "versions"
+QTO_MAPPING = {
+    "Q_WEIGHT": "IfcQuantityWeight",
+    "Q_AREA": "IfcQuantityArea",
+    "Q_COUNT": "IfcQuantityCount",
+    "Q_LENGTH": "IfcQuantityLength",
+    "Q_NUMBER": "IfcQuantityNumber",
+    "Q_TIME": "IfcQuantityTime",
+    "Q_VOLUME": "IfcQuantityVolume",
+}
 
 
 class IfcProperties:
@@ -30,7 +39,7 @@ def get_properties():
     return IfcProperties
 
 
-def get_newest_version(versions:list[VERSION_TYPE]):
+def get_newest_version(versions: list[VERSION_TYPE]):
     if IFC4_3 in versions:
         return IFC4_3
     if IFC4 in versions:
@@ -38,6 +47,7 @@ def get_newest_version(versions:list[VERSION_TYPE]):
     if IFC2X3 in versions:
         return IFC2X3
     return None
+
 
 def read_jsons(version: str):
     prop = get_properties()
@@ -73,7 +83,7 @@ def get_property_sets_of_class(
     property_dict = get_pset_class_dict(version)
     sets: set[str] = set()
     if PREDEFINED_SPLITTER in class_name:
-        class_name,predefined_type = class_name.split(PREDEFINED_SPLITTER)
+        class_name, predefined_type = class_name.split(PREDEFINED_SPLITTER)
     for c in parent_dict.get(class_name, []):
         sets.update(set(property_dict.get(c, set())))
     if predefined_type is not None:
@@ -111,22 +121,57 @@ def get_properties_by_pset_name(
 ) -> set[str]:
     file_path = get_property_set_path(property_set_name, version)
     etree = ET.parse(file_path)
-    definitions = etree.find("PropertyDefs")
+    definitions = etree.find("PropertyDefs") or etree.find("QtoDefs")
     if definitions is None:
         return set()
     definitions = [property_def.find("Name") for property_def in definitions]
     names = {n.text for n in definitions if n is not None and n.text is not None}
     return names
 
+def get_qto_data(qto_set_name:str,qto_name,version:VERSION_TYPE):
+    
+    def _get_qto_def():
+        for qto_def in etree.getroot().find("QtoDefs") or []:
+            n = qto_def.find("Name")
+            n = n.text if n is not None else ""
+            if n == qto_name:
+                return qto_def
+        raise ValueError(
+            f"Qto '{qto_name}' doesn't exist in QtoSet '{qto_set_name}' [{version}]"
+        )
+
+    def _get_type() -> str:
+        qto_type = definition.find("QtoType")
+        qto_short = qto_type.text
+        if not qto_short in QTO_MAPPING:
+            raise ValueError(f"Qto '{qto_short}' can not be found in IFC")
+        return QTO_MAPPING[qto_short]
+
+    file_path = get_property_set_path(qto_set_name, version)
+    etree = ET.parse(file_path)
+    
+    definition = _get_qto_def()
+    name = definition.find("Name")
+    name = name.text if name is not None and name.text is not None else ""
+    description = definition.find("Definition")
+    description = (
+        description.text
+        if description is not None and description.text is not None
+        else ""
+    )
+    datatype = _get_type()
+    values = []
+    unit = None
+    return name, description, datatype, values, unit
 
 def get_property_data(
     property_set_name: str, property_name: str, version: VERSION_TYPE
 ) -> tuple[str, str, str]:
-    def _get_property_def(name: str) -> Element:
+    def _get_property_def() -> Element:
         for property_def in etree.getroot().find("PropertyDefs") or []:
             n = property_def.find("Name")
             n = n.text if n is not None else ""
-            if n == name:
+            if n == property_name:
                 return property_def
         raise ValueError(
             f"Property '{property_name}' doesn't exist in PropertySet '{property_set_name}' [{version}]"
@@ -185,7 +230,7 @@ def get_property_data(
 
     file_path = get_property_set_path(property_set_name, version)
     etree = ET.parse(file_path)
-    definition = _get_property_def(property_name)
+    definition = _get_property_def()
 
     name = definition.find("Name")
     name = name.text if name is not None and name.text is not None else ""

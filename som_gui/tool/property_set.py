@@ -370,15 +370,28 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def create_ifc_pset(cls, name: str, ifc_version: list[ifc_schema.VERSION_TYPE]):
         existing_properties = set()
+        if  name.startswith("Pset"):
+            mode = 0
+        elif name.startswith("Qto"):
+            mode = 1
+        else:
+            raise(f"Pset Name '{name}' doesn't match IFC Requirements")
 
         if not ifc_schema.is_property_set_existing_in_version(name, ifc_version):
             return None
         for property_name in ifc_schema.get_properties_by_pset_name(name, ifc_version):
             if property_name in {p.name for p in existing_properties}:
                 continue
-            property_name, description, datatype, values, unit = (
-                ifc_schema.get_property_data(name, property_name, ifc_version)
+            if mode == 0:
+                property_name, description, datatype, values, unit = (
+                    ifc_schema.get_property_data(name, property_name, ifc_version)
+                )
+            else:
+                property_name, description, datatype, values, unit = (
+                ifc_schema.get_qto_data(name, property_name, ifc_version)
             )
+
+
             prop = SOMcreator.SOMProperty(
                 name=property_name,
                 description=description,
