@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtCore import QModelIndex
-
+from SOMcreator.util.units import uri_to_code
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_window import ui
@@ -125,7 +125,7 @@ def update_window(
     ui.lineEdit_name.setText(som_property.name)
     ui.combo_data_type.setCurrentText(som_property.data_type)
     ui.combo_value_type.setCurrentText(som_property.value_type)
-    ui.combo_unit.setCurrentText(units.uri_to_code(som_property.unit))
+    ui.combo_unit.setCurrentText(uri_to_code(som_property.unit))
     ui.description.setText(som_property.description)
     property_window.set_comboboxes_enabled(not som_property.is_child, window)
     inherits_values_checkstate = util.bool_to_checkstate(

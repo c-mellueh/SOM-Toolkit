@@ -103,15 +103,9 @@ class Units(som_gui.core.tool.Units):
             try:
                 unit_dict = cls.load_units(appdata_path)
             except:
+                logging.warning(f"Import Error of Unit Dict")
                 unit_dict = cls.load_units(UNIT_PATH)
         else:
             unit_dict = cls.load_units(UNIT_PATH)
         return unit_dict
     
-    @classmethod
-    def uri_to_code(cls,uri):
-        from SOMcreator.templates import UNITS_DICT
-        element =  UNITS_DICT.get(uri)
-        if not element:
-            return ""
-        return element.get("Code","")

@@ -224,8 +224,8 @@ class SettingsItemModel(QAbstractItemModel):
                 unit_data = units[row - child_count]
                 unit_data["parent"] = parent
                 unit_data["type"] = "unit"
-                if "checked" not in unit_data:
-                    unit_data["checked"] = True
+                if "is_active" not in unit_data:
+                    unit_data["is_active"] = True
                 index = self.createIndex(row, column, unit_data)
                 return index
             else:
@@ -339,8 +339,8 @@ class ComboboxItemModel(QAbstractItemModel):
                 unit_data = units[row - child_count]
                 unit_data["parent"] = parent
                 unit_data["type"] = "unit"
-                if "checked" not in unit_data:
-                    unit_data["checked"] = True
+                if "is_active" not in unit_data:
+                    unit_data["is_active"] = True
                 index = self.createIndex(row, column, unit_data)
                 return index
             else:

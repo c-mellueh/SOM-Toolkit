@@ -5,6 +5,7 @@ if TYPE_CHECKING:
     import SOMcreator
 from SOMcreator.exporter import bsdd
 from SOMcreator.constants import value_constants,ifc_datatypes
+from SOMcreator.util.units import uri_to_code
 import logging
 import datetime
 import json
@@ -89,9 +90,7 @@ def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
     p.DataType = DATATYPE_MAPPING.get(som_property.data_type) or STRING
 
     if som_property.unit:
-        val = UNITS.get(som_property.unit)
-        if not val:
-            print(som_property.unit)
+        p.Units = [uri_to_code(som_property.unit)]
     if (
         som_property.value_type == value_constants.FORMAT
         and som_property.allowed_values
