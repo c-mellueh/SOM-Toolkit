@@ -81,6 +81,8 @@ class Units(som_gui.core.tool.Units):
                 for un in element["units"]:
                     if "parent" in un: 
                         un.pop("parent")
+                if "parent" in element:
+                    element.pop("parent")
                 element["children"] = remove_parent_key(element["children"] )
             return d
 
@@ -98,7 +100,10 @@ class Units(som_gui.core.tool.Units):
         appdata_folder = tool.Appdata.get_appdata_folder()
         appdata_path  = os.path.join(appdata_folder,"units.json")
         if os.path.exists(appdata_path):
-            unit_dict = cls.load_units(appdata_path)
+            try:
+                unit_dict = cls.load_units(appdata_path)
+            except:
+                unit_dict = cls.load_units(UNIT_PATH)
         else:
             unit_dict = cls.load_units(UNIT_PATH)
         return unit_dict
