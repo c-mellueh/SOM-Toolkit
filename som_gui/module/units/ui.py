@@ -5,6 +5,7 @@ from som_gui.module.units import trigger
 from .qt import ui_UnitSettings
 from som_gui import tool
 
+CHECK_COLUMN = 2
 
 class UnitSettings(QWidget):
     def __init__(self, *args, **kwargs):
@@ -114,11 +115,11 @@ class SettingsItemModel(QAbstractItemModel):
                     return None
             else:
                 if index.column() == 0:
-                    return index.internalPointer().get("Code", "")
+                    return index.internalPointer().get("name", "")
                 if index.column() == 1:
                     return index.internalPointer().get("Code", "")
         else:
-            if index.column() != 2:
+            if index.column() != CHECK_COLUMN:
                 return None
             if data["type"] == "quantity":
                 return None
@@ -186,7 +187,7 @@ class SettingsItemModel(QAbstractItemModel):
         if column >= self.columnCount():
             return flags
 
-        if index.column() == 2:  # and index.internalPointer().get("type") == "unit":
+        if index.column() == CHECK_COLUMN:  # and index.internalPointer().get("type") == "unit":
             flags |= Qt.ItemFlag.ItemIsUserCheckable
         else:
             flags &= ~Qt.ItemFlag.ItemIsUserCheckable
