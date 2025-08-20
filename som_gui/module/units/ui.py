@@ -1,4 +1,4 @@
-from PySide6.QtCore import QRect, QSize, Qt, QAbstractItemModel, QModelIndex
+from PySide6.QtCore import QRect, QCoreApplication, Qt, QAbstractItemModel, QModelIndex
 from PySide6.QtWidgets import QHeaderView, QWidget, QComboBox, QTreeView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from som_gui.module.units import trigger
@@ -87,6 +87,17 @@ class SettingsItemModel(QAbstractItemModel):
         self.data_dict = data_dict
         # self.setHorizontalHeaderLabels(["Unit", "Prefix"])
         # self.setColumnCount(2)
+
+    def headerData(self, section, orientation, /, role=...):
+        if orientation == Qt.Orientation.Horizontal:
+            if role == Qt.ItemDataRole.DisplayRole:
+                if section == 0:
+                    return QCoreApplication.translate("Units", "Name")
+                if section == 1:
+                    return QCoreApplication.translate("Units", "Abbrev.")
+                if section == 2:
+                    return QCoreApplication.translate("Units", "Is Active")
+        return None
 
     def rowCount(self, parent=QModelIndex()):
         if not parent.isValid():
@@ -183,7 +194,7 @@ class SettingsItemModel(QAbstractItemModel):
         parent = self.parent(index).siblingAtColumn(CHECK_COLUMN)
         while parent.isValid():
             parent = parent
-            self.dataChanged.emit(parent,parent,parent.parent())
+            self.dataChanged.emit(parent, parent, parent.parent())
             parent = self.parent(parent).siblingAtColumn(CHECK_COLUMN)
         return True
 
