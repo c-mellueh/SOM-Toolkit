@@ -7,6 +7,7 @@ from som_gui import tool
 
 CHECK_COLUMN = 2
 
+
 class UnitSettings(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -93,8 +94,9 @@ class SettingsItemModel(QAbstractItemModel):
         else:
             data = parent.internalPointer()
             if data["type"] == "quantity":
-                return len(
-                    parent.internalPointer()["children"])+ len(parent.internalPointer()["units"])
+                return len(parent.internalPointer()["children"]) + len(
+                    parent.internalPointer()["units"]
+                )
             return 0
 
     def columnCount(self, parent=QModelIndex()):
@@ -121,18 +123,68 @@ class SettingsItemModel(QAbstractItemModel):
         else:
             if index.column() != CHECK_COLUMN:
                 return None
-            if data["type"] == "quantity":
-                return None
+
+            if self.hasChildren(index):
+                cs = {
+                    self.data(ci, role=Qt.ItemDataRole.CheckStateRole)
+                    for ci in self.get_children(index)
+                }
+                if {Qt.CheckState.Checked} == cs:
+                    return Qt.CheckState.Checked
+                elif {Qt.CheckState.Unchecked} == cs:
+                    return Qt.CheckState.Unchecked
+                else:
+                    return Qt.CheckState.PartiallyChecked
             return tool.Util.bool_to_checkstate(data.get("is_active", True))
+
+    def get_children(self, parent_index: QModelIndex):
+        column = parent_index.column()
+        return [
+            self.index(r, column, parent_index)
+            for r in range(self.rowCount(parent_index))
+        ]
+
+    def _emit_subtree_flags_changed(self, parent_index: QModelIndex):
+        """
+        Emittiert dataChanged für alle direkten Kinder-Ranges und läuft rekursiv/iterativ
+        durch die gesamte Teilstruktur. Leere Rollenliste ist ok; die View fragt flags() neu ab.
+        """
+        stack = [parent_index]
+        while stack:
+            p = stack.pop()
+            rows = self.rowCount(p)
+            if rows <= 0:
+                continue
+
+            cols = self.columnCount(p)
+            top_left = self.index(0, 0, p)
+            bottom_right = self.index(rows - 1, cols - 1, p)
+            # Flags haben sich „logisch“ geändert -> dataChanged ohne spezielle Rollen
+            self.dataChanged.emit(top_left, bottom_right, [])
+
+            # Tiefer gehen: Spalte 0 pro Zeile reicht zum Traversieren
+            for r in range(rows):
+                child_parent = self.index(r, 0, p)
+                stack.append(child_parent)
 
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         if not index.isValid():
             return False
-
         if role != Qt.ItemDataRole.CheckStateRole:
             return False
         data = index.internalPointer()
         data["is_active"] = bool(value)
+        if self.hasChildren(index):
+            for row in range(self.rowCount(index)):
+                child = self.index(row, CHECK_COLUMN, index)
+                self.setData(child, value, role)
+        self._emit_subtree_flags_changed(index)
+
+        parent = self.parent(index).siblingAtColumn(CHECK_COLUMN)
+        while parent.isValid():
+            parent = parent
+            self.dataChanged.emit(parent,parent,parent.parent())
+            parent = self.parent(parent).siblingAtColumn(CHECK_COLUMN)
         return True
 
     def index(self, row: int, column: int, parent=QModelIndex()):
@@ -187,7 +239,9 @@ class SettingsItemModel(QAbstractItemModel):
         if column >= self.columnCount():
             return flags
 
-        if index.column() == CHECK_COLUMN:  # and index.internalPointer().get("type") == "unit":
+        if (
+            index.column() == CHECK_COLUMN
+        ):  # and index.internalPointer().get("type") == "unit":
             flags |= Qt.ItemFlag.ItemIsUserCheckable
         else:
             flags &= ~Qt.ItemFlag.ItemIsUserCheckable
@@ -246,7 +300,9 @@ class ComboboxItemModel(QAbstractItemModel):
     def index(self, row: int, column: int, parent=QModelIndex()):
         # logging.debug(f"request Index {row}:{column} {parent}")
         if not parent.isValid():
-            first_layer_elements = [q for q in self.data_dict if _calculate_row_count(q)>0]
+            first_layer_elements = [
+                q for q in self.data_dict if _calculate_row_count(q) > 0
+            ]
             if 0 > row >= len(first_layer_elements):
                 return QModelIndex()
             element = first_layer_elements[row]
