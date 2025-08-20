@@ -5,19 +5,51 @@ from typing import Dict, List, Optional
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, SKOS as _SKOS
 import tqdm
+
 QUDT = Namespace("http://qudt.org/schema/qudt/")
 SKOS = _SKOS  # http://www.w3.org/2004/02/skos/core#
 GRAPH = Graph()
 GRAPH.parse(r".\QUDT-all-in-one-OWL.ttl")
+
+
+# ---------- Tree model ----------
+
+
+@dataclass
+class TreeNode:
+    id: str
+    name: str
+    label: Optional[str] = None
+    units: List[dict] = field(default_factory=list)
+    children: Dict[str, "TreeNode"] = field(default_factory=dict)
+    parents: set = field(default_factory=set)  # track parents to find roots later
+
+    def to_dict(self) -> dict:
+        # Sort children by label/name
+        sorted_children = sorted(
+            self.children.values(), key=lambda n: (n.label or n.name or "").lower()
+        )
+        return {
+            "id": self.id,
+            "name": self.name,
+            "label": self.label,
+            "units": self.units,  # units attached at this QK
+            "children": [c.to_dict() for c in sorted_children],
+        }
+
+
 # ---------- Helpers ----------
+
 
 @lru_cache(maxsize=4096)
 def load_graph(uri: str) -> Graph:
     """Load a QUDT resource (unit or quantitykind) as JSON-LD into an rdflib Graph."""
     return GRAPH
 
+
 def localname(uri: str) -> str:
     return uri.rstrip("/").split("/")[-1]
+
 
 def get_pref_label(uri: str) -> Optional[str]:
     print(uri)
@@ -28,10 +60,12 @@ def get_pref_label(uri: str) -> Optional[str]:
         return str(label)
     # fallback: try rdfs:label
     from rdflib.namespace import RDFS
+
     if label is None:
         return None
     label = [x for x in label if x[2].language == "en"][2]
     return str(label) if isinstance(label, Literal) else None
+
 
 def get_quantity_kind_uri(unit_uri: str) -> Optional[str]:
     if not unit_uri:
@@ -53,11 +87,13 @@ def get_quantity_kind_uri(unit_uri: str) -> Optional[str]:
             return str(qk)
     return None
 
+
 def get_broader(qk_uri: str) -> List[str]:
     """Return zero or more broader QK URIs."""
     g = load_graph(qk_uri)
     qkref = URIRef(qk_uri)
     return [str(b) for b in g.objects(qkref, SKOS.broader)]
+
 
 def climb_chain(qk_uri: str) -> List[str]:
     """
@@ -70,7 +106,7 @@ def climb_chain(qk_uri: str) -> List[str]:
     stack = [qk_uri]
     visited = set()
     chain = set()  # collect all QKs encountered
-    edges = []     # (child, parent)
+    edges = []  # (child, parent)
 
     while stack:
         cur = stack.pop()
@@ -86,29 +122,9 @@ def climb_chain(qk_uri: str) -> List[str]:
     # return as list, but also the edges for tree building
     return list(chain), edges
 
-# ---------- Tree model ----------
-
-@dataclass
-class TreeNode:
-    id: str
-    name: str
-    label: Optional[str] = None
-    units: List[dict] = field(default_factory=list)
-    children: Dict[str, "TreeNode"] = field(default_factory=dict)
-    parents: set = field(default_factory=set)  # track parents to find roots later
-
-    def to_dict(self) -> dict:
-        # Sort children by label/name
-        sorted_children = sorted(self.children.values(), key=lambda n: (n.label or n.name or "").lower())
-        return {
-            "id": self.id,
-            "name": self.name,
-            "label": self.label,
-            "units": self.units,  # units attached at this QK
-            "children": [c.to_dict() for c in sorted_children],
-        }
 
 # ---------- Build tree from units ----------
+
 
 def build_qk_forest(units: List[dict]) -> List[dict]:
     nodes: Dict[str, TreeNode] = {}
@@ -152,24 +168,30 @@ def build_qk_forest(units: List[dict]) -> List[dict]:
     roots = [n for n in nodes.values() if not n.parents]
 
     # 4) Serialize forest
-    forest = [r.to_dict() for r in sorted(roots, key=lambda n: (n.label or n.name or "").lower())]
+    forest = [
+        r.to_dict()
+        for r in sorted(roots, key=lambda n: (n.label or n.name or "").lower())
+    ]
     return forest
+
 
 # ---------- Main ----------
 
-def get_multiplier(unit:dict):
+
+def get_multiplier(unit: dict):
     if not "QudtUri" in unit:
-        return 0.
+        return 0.0
     uri = URIRef(unit["QudtUri"])
     cv = URIRef("http://qudt.org/schema/qudt/conversionMultiplier")
-    triples = list(GRAPH.triples((uri, cv,None)))
+    triples = list(GRAPH.triples((uri, cv, None)))
     if len(triples) == 0:
-        return 0.
+        return 0.0
     try:
         val = float(triples[0][2])
     except:
-        val =  0.
+        val = 0.0
     return val
+
 
 def sort_by_multiplier(data_dict):
     for element in data_dict:
@@ -177,17 +199,19 @@ def sort_by_multiplier(data_dict):
             element["units"].sort(key=get_multiplier, reverse=True)
         sort_by_multiplier(element["children"])
 
+
 if __name__ == "__main__":
-    INPUT = r"..\..\..\SOMcreator\templates\units_bsdd.json"         # your input units (list of dicts with QudtUri)
+    INPUT = r"..\..\..\SOMcreator\templates\units_bsdd.json"  # your input units (list of dicts with QudtUri)
     OUTPUT = r"..\..\resources\data\units_internal.json"
 
     with open(INPUT, "r", encoding="utf-8") as f:
         units = json.load(f)
 
     for unit in units:
-        unit["is_active"]=True
+        unit["is_active"] = True
     forest = build_qk_forest(units)
     sort_by_multiplier(forest)
+    forest.append(TreeNode("","","",dict(),dict()).to_dict())
     with open(OUTPUT, "w", encoding="utf-8") as f:
         json.dump(forest, f, indent=2, ensure_ascii=True)
 

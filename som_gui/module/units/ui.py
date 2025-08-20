@@ -93,9 +93,7 @@ class SettingsItemModel(QAbstractItemModel):
             data = parent.internalPointer()
             if data["type"] == "quantity":
                 return len(
-                    parent.internalPointer()["children"]
-                    + parent.internalPointer()["units"]
-                )
+                    parent.internalPointer()["children"])+ len(parent.internalPointer()["units"])
             return 0
 
     def columnCount(self, parent=QModelIndex()):

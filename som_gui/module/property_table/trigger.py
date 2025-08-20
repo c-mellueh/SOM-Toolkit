@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def connect():
-    core.init_property_columns(tool.PropertyTable)
+    core.init_property_columns(tool.PropertyTable,tool.Units)
     core.init_context_menu(tool.PropertyTable)
 
 
