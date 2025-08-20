@@ -262,9 +262,9 @@ def context_menu_requested(
     selected_nodes = scene.selectedItems()
     view_text = QCoreApplication.translate("Aggregation", "View")
     reset_zoom = QCoreApplication.translate("Aggregation", "Reset Zoom")
-    print_view = QCoreApplication.translate("Aggregation", "Print View")
+    export_view = QCoreApplication.translate("Aggregation", "Export View")
     menu_list.append([f"{view_text}/{reset_zoom}", view.autofit_view])
-    menu_list.append([f"{view_text}/{print_view}", lambda: view.print_scene(scene)])
+    menu_list.append([f"{view_text}/{export_view}", lambda: view.export_scene(scene)])
 
     if len(selected_nodes) > 1:
         layout = QCoreApplication.translate("Aggregation", "Layout")

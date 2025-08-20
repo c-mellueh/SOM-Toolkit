@@ -127,7 +127,7 @@
     </message>
     <message>
         <location filename="../../core/view.py" line="261"/>
-        <source>Print View</source>
+        <source>Export View</source>
         <translation>Ansicht exportieren</translation>
     </message>
     <message>

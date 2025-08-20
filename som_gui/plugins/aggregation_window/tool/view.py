@@ -367,7 +367,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return None
 
     @classmethod
-    def print_scene(
+    def export_scene(
         cls, scene: ui_view.AggregationScene, path: str | None = None
     ) -> None:
         view = cls.get_view()

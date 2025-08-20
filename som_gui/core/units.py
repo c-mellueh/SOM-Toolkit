@@ -62,4 +62,3 @@ def update_current_unit(widget,data_dict,units:Type[tool.Units],property_window:
     uri = data_dict["QudtUri"]
     som_property = property_window.get_property_from_window(widget)
     som_property.unit = uri
-    print(som_property.unit)

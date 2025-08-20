@@ -78,7 +78,7 @@ def create_mapping(
         header = ["Kenner"] + ["Wert", "Name"] * max_properties
         [
             worksheet.cell(1, i + 1, text) for i, text in enumerate(header)
-        ]  # print Header
+        ]  # export Header
         worksheet.cell(2, 1, kenner)
         row_index = 2
         for som_class in project.get_classes(filter=True):

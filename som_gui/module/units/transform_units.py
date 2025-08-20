@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, SKOS as _SKOS
 import tqdm
-
+import logging
 QUDT = Namespace("http://qudt.org/schema/qudt/")
 SKOS = _SKOS  # http://www.w3.org/2004/02/skos/core#
 GRAPH = Graph()
@@ -52,7 +52,6 @@ def localname(uri: str) -> str:
 
 
 def get_pref_label(uri: str) -> Optional[str]:
-    print(uri)
     g = load_graph(uri)
     ref = URIRef(uri)
     label = next(g.objects(ref, SKOS.prefLabel), None)
@@ -143,7 +142,7 @@ def build_qk_forest(units: List[dict]) -> List[dict]:
     for u in tqdm.tqdm(units):
         qk_uri = get_quantity_kind_uri(u.get("QudtUri", ""))
         if not qk_uri:
-            print(f"Skipping unit {u.get('Code', 'unknown')} without QK URI")
+            logging.info(f"Skipping unit {u.get('Code', 'unknown')} without QK URI")
             # Put unmapped units under a synthetic node if desired; here we skip.
             continue
 
@@ -215,4 +214,4 @@ if __name__ == "__main__":
     with open(OUTPUT, "w", encoding="utf-8") as f:
         json.dump(forest, f, indent=2, ensure_ascii=True)
 
-    print(f"Saved: {OUTPUT}")
+    logging.info(f"Saved: {OUTPUT}")

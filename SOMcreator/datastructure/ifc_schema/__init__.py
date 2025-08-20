@@ -154,7 +154,7 @@ def get_property_data(
             "TypeSimpleProperty",
             "TypePropertyTableValue",
         ]:
-            print(
+            logging.info(
                 f"[{version}]{property_set_name}:{property_name} ValueType {t.tag} unknown"
             )
             return "IfcLabel"
