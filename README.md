@@ -1,3 +1,25 @@
+## ⚠️ Repository archived
+
+This repository is **archived** and no longer under active development.  
+Only **critical bug fixes** will be applied if necessary.
+
+### Successor project
+
+Active development continues in the following repository:
+
+👉 **https://github.com/c-mellueh/bSDD-Toolkit**
+
+The **bSDD-Toolkit** offers most of the same functionality as this project, but is based on the **bSDD standard by buildingSMART** instead of a proprietary data structure.  
+This improves interoperability, standard compliance, and long-term sustainability.
+
+### Migration path
+
+You can **export your existing SOM as bSDD** using this toolkit and **import it directly into the bSDD-Toolkit**.  
+This enables a smooth migration without losing existing data or structure.
+
+Please use the new repository for all new projects and feature development.
+
+
 # SOM-Toolkit
 
 The **SOM-Toolkit** is an open-source project designed for the creation, management, and modification of Semantic Object Models (SOMs) in the context of Building Information Modeling (BIM). It provides both a powerful **Python library (SOMcreator)** for developers and a user-friendly **GUI (som_gui)** built with PySide6, catering to a wide range of users and use cases.
