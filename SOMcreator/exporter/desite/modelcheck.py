@@ -429,7 +429,7 @@ def _handle_attribute_rule(attribute: SOMcreator.SOMProperty) -> str:
         return ";".join(row)
 
     ident_text = f"{pset_name}:{attribute.name}"
-    allowed_values = " ".join([f"'{str(v)}'" for v in attribute.allowed_values])
+    allowed_values = " ".join([f'"{str(v)}"' for v in attribute.allowed_values])
     row = ["R", "", ident_text, data_type, allowed_values, f"Pruefung"]
 
     return ";".join(row)
@@ -535,7 +535,7 @@ def csv_export(
                     ident_attrib,
                     "",
                     data_type,
-                    f"'{som_class.ident_value}'",
+                    f'"{som_class.ident_value}"',
                     f"Nach Klasse {som_class.name} filtern",
                 ]
             )
